@@ -5,9 +5,10 @@ from pathlib import Path
 WORK_DIR_NAME = "source_skill_work"
 
 YOUTUBE_URL_PATTERNS = (
-    r"(?:https?://)?(?:www\.)?youtube\.com/watch\?",
+    r"(?:https?://)?(?:www\.|m\.|music\.)?youtube\.com/watch\?",
     r"(?:https?://)?youtu\.be/",
-    r"(?:https?://)?(?:www\.)?youtube\.com/shorts/",
+    r"(?:https?://)?(?:www\.|m\.|music\.)?youtube\.com/shorts/",
+    r"(?:https?://)?(?:www\.|m\.|music\.)?youtube\.com/live/",
 )
 
 # Modern arXiv ids only (e.g. 1706.03762, 2406.01234v2).
