@@ -1,0 +1,14 @@
+[project]
+name = "source-to-skill"
+version = "0.1.0"
+description = "Turn YouTube videos and academic papers into agent skills"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+youtube = ["yt-dlp"]
+paper = ["PyMuPDF"]
+dev = ["pytest", "yt-dlp", "PyMuPDF"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
