@@ -1,6 +1,7 @@
 """Academic paper parser: PyMuPDF text extraction + section heuristics."""
 import datetime
 import re
+import shutil
 import urllib.request
 from pathlib import Path
 
@@ -63,7 +64,18 @@ def _resolve(source: str) -> Path:
         arxiv_id = match.group("arxiv_id")
         target = config.work_dir() / f"arxiv-{arxiv_id}.pdf"
         target.parent.mkdir(parents=True, exist_ok=True)
-        urllib.request.urlretrieve(f"https://arxiv.org/pdf/{arxiv_id}", target)
+        pdf_url = f"https://arxiv.org/pdf/{arxiv_id}"
+        try:
+            with urllib.request.urlopen(
+                pdf_url, timeout=config.FETCH_TIMEOUT_S
+            ) as response, open(target, "wb") as pdf_file:
+                shutil.copyfileobj(response, pdf_file)
+        except OSError as err:
+            raise ExtractError(
+                f"Failed to download {pdf_url}: {err}\n"
+                "Check the arXiv id and your network, or save the PDF "
+                "locally and pass its file path instead."
+            ) from err
         return target
     if re.match(r"https?://", source):
         raise ExtractError(

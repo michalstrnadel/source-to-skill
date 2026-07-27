@@ -1,3 +1,5 @@
+import io
+
 import pytest
 
 fitz = pytest.importorskip("fitz")
@@ -92,16 +94,29 @@ def test_resolve_rejects_non_arxiv_urls():
         paper._resolve("https://openreview.net/pdf/x.pdf")
 
 
-def test_resolve_downloads_arxiv_pdf(tmp_path, monkeypatch):
-    downloaded = {}
+def test_resolve_downloads_arxiv_pdf_with_timeout(tmp_path, monkeypatch):
+    pdf_bytes = make_pdf(tmp_path, [PAGE1, PAGE2], name="dl.pdf").read_bytes()
+    calls = {}
 
-    def fake_urlretrieve(url, target):
-        downloaded["url"] = url
-        make_pdf(tmp_path, [PAGE1, PAGE2], name="dl.pdf").rename(target)
+    def fake_urlopen(url, timeout=None):
+        calls["url"] = url
+        calls["timeout"] = timeout
+        return io.BytesIO(pdf_bytes)
 
     monkeypatch.setattr(paper.config, "work_dir", lambda: tmp_path / "work")
-    monkeypatch.setattr(paper.urllib.request, "urlretrieve", fake_urlretrieve)
+    monkeypatch.setattr(paper.urllib.request, "urlopen", fake_urlopen)
     path = paper._resolve("https://arxiv.org/abs/1706.03762")
-    assert downloaded["url"] == "https://arxiv.org/pdf/1706.03762"
+    assert calls["url"] == "https://arxiv.org/pdf/1706.03762"
+    assert calls["timeout"] == paper.config.FETCH_TIMEOUT_S
     assert path.name == "arxiv-1706.03762.pdf"
-    assert path.exists()
+    assert path.read_bytes() == pdf_bytes
+
+
+def test_resolve_maps_download_errors_to_extract_error(tmp_path, monkeypatch):
+    def failing_urlopen(url, timeout=None):
+        raise OSError("connection timed out")
+
+    monkeypatch.setattr(paper.config, "work_dir", lambda: tmp_path / "work")
+    monkeypatch.setattr(paper.urllib.request, "urlopen", failing_urlopen)
+    with pytest.raises(ExtractError, match="Failed to download"):
+        paper._resolve("https://arxiv.org/abs/1706.03762")
