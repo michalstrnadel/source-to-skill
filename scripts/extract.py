@@ -1,9 +1,11 @@
 """source-to-skill extractor entrypoint.
 
 Usage:
-  python3 scripts/extract.py <youtube-url | arxiv-url | path/to/paper.pdf>
+  python3 scripts/extract.py <source> [--type youtube|paper|book]
   python3 scripts/extract.py --check     # report optional dependencies
 
+Sources: YouTube URLs, arXiv URLs, local .pdf files, local .epub books.
+`--type` overrides auto-detection (e.g. `--type book` for a PDF book).
 Writes full_text.txt + metadata.json into the work dir and prints a JSON
 summary with the work dir path.
 """
@@ -11,7 +13,25 @@ import json
 import sys
 
 from extractor import config, dependencies, utils
-from extractor.parsers import paper, youtube
+from extractor.parsers import book, paper, youtube
+
+PARSERS = {"youtube": youtube, "paper": paper, "book": book}
+
+
+def _parse_type_flag(rest):
+    """Return the --type value from the args after <source>, or None."""
+    if not rest:
+        return None
+    if rest == ["--type"]:
+        raise utils.ExtractError(
+            "--type requires a value: youtube, paper, or book."
+        )
+    if len(rest) == 2 and rest[0] == "--type":
+        return rest[1]
+    raise utils.ExtractError(
+        f"Unrecognized arguments: {' '.join(rest)}\n"
+        "Usage: extract.py <source> [--type youtube|paper|book]"
+    )
 
 
 def main(argv) -> int:
@@ -23,9 +43,9 @@ def main(argv) -> int:
         return 0
     source = argv[0]
     try:
-        kind = utils.detect_source(source)
-        parser = youtube if kind == "youtube" else paper
-        full_text, metadata = parser.parse(source)
+        forced = _parse_type_flag(list(argv[1:]))
+        kind = utils.detect_source(source, forced)
+        full_text, metadata = PARSERS[kind].parse(source)
         work = config.work_dir()
         utils.write_outputs(work, full_text, metadata)
     except utils.ExtractError as err:

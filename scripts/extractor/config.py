@@ -4,6 +4,9 @@ from pathlib import Path
 
 WORK_DIR_NAME = "source_skill_work"
 
+# Valid values for --type / detect_source's forced parameter.
+SOURCE_TYPES = ("youtube", "paper", "book")
+
 YOUTUBE_URL_PATTERNS = (
     r"(?:https?://)?(?:www\.|m\.|music\.)?youtube\.com/watch\?",
     r"(?:https?://)?youtu\.be/",
@@ -28,7 +31,7 @@ MIN_PDF_WORDS = 50
 
 OPTIONAL_DEPS = {
     "yt_dlp": {"pip": "yt-dlp", "needed_for": "YouTube videos"},
-    "fitz": {"pip": "PyMuPDF", "needed_for": "PDF papers"},
+    "fitz": {"pip": "PyMuPDF", "needed_for": "PDF papers and books"},
 }
 
 

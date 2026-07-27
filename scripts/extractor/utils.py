@@ -15,18 +15,43 @@ def slugify(title: str) -> str:
     return slug[:60].rstrip("-") or "untitled"
 
 
-def detect_source(source: str) -> str:
+def _possible_types(source: str) -> tuple:
+    """Source types this source can plausibly be, best guess first."""
     for pattern in config.YOUTUBE_URL_PATTERNS:
         if re.match(pattern, source):
-            return "youtube"
+            return ("youtube",)
     if re.match(config.ARXIV_URL_PATTERN, source):
-        return "paper"
-    if source.lower().endswith(".pdf"):
-        return "paper"
-    raise ExtractError(
-        f"Unsupported source: {source}\n"
-        "Supported: YouTube URLs, arXiv URLs, local .pdf files."
-    )
+        return ("paper",)
+    lowered = source.lower()
+    if lowered.endswith(".pdf"):
+        return ("paper", "book")
+    if lowered.endswith(".epub"):
+        return ("book",)
+    return ()
+
+
+def detect_source(source: str, forced=None) -> str:
+    """Detect the source type; `forced` overrides it after validation."""
+    if forced is not None and forced not in config.SOURCE_TYPES:
+        raise ExtractError(
+            f"Unknown source type: {forced}\n"
+            f"Supported types: {', '.join(config.SOURCE_TYPES)}."
+        )
+    possible = _possible_types(source)
+    if not possible:
+        raise ExtractError(
+            f"Unsupported source: {source}\n"
+            "Supported: YouTube URLs, arXiv URLs, local .pdf and .epub files."
+        )
+    if forced is None:
+        return possible[0]
+    if forced not in possible:
+        raise ExtractError(
+            f"{source} cannot be extracted as {forced} "
+            f"(this source can be: {', '.join(possible)}).\n"
+            f"Drop --type or use --type {possible[0]}."
+        )
+    return forced
 
 
 def estimate_tokens(words: int) -> int:
