@@ -1,14 +1,16 @@
 ---
 name: source-to-skill
-description: Turn a YouTube video or academic paper (PDF / arXiv URL) into an installable agent skill. Use when the user runs /source-to-skill, or asks to convert a video, talk, lecture, paper, or PDF into a skill / structured reference.
+description: Turn a YouTube video, academic paper (PDF / arXiv URL), or book (EPUB, or PDF book via --type book) into an installable agent skill. Use when the user runs /source-to-skill, or asks to convert a video, talk, lecture, paper, PDF, book, or EPUB into a skill / structured reference.
 ---
 
 # source-to-skill
 
 Turn a knowledge source into a structured agent skill the user can load on
-demand. Supported sources: YouTube URLs, arXiv URLs, local PDF papers.
+demand. Supported sources: YouTube URLs, arXiv URLs, local PDF papers, and
+books — EPUB files, or PDF books via `--type book`.
 
-Usage: `/source-to-skill <url-or-pdf> [skill-slug]`
+Usage: `/source-to-skill <url-or-file> [skill-slug]` — for a PDF that is a
+book rather than a paper, extract with `--type book`.
 
 ## Step 1 — Extract
 
@@ -16,6 +18,10 @@ Run from the source-to-skill repo root:
 
     python3 scripts/extract.py "<source>"
 
+- `.epub` files are detected as books automatically. A `.pdf` defaults to
+  the paper parser — when the PDF is a book, add the override:
+  `python3 scripts/extract.py "<source>" --type book`. If it is unclear
+  whether a PDF is a paper or a book, ask the user before extracting.
 - On dependency errors, run `python3 scripts/extract.py --check` and show the
   user the install hints. Do not install anything without asking.
 - On any other ERROR, report it verbatim and stop.
@@ -76,6 +82,19 @@ For `source_type: paper`:
 - `glossary.md` — terms alphabetically, each with a one-line definition.
 - `citations.md` — how to cite this paper (title, authors, year, DOI when
   present in metadata.json) and the reference list from `references`.
+
+For `source_type: book`:
+
+- `SKILL.md` — frontmatter as above, the book's core mental models and
+  frameworks front-loaded, then a chapter index table: chapter, one-line
+  takeaway, link `chapters/NN-<slug>.md`.
+- `chapters/NN-<slug>.md` — one per chapter (numbered in reading order),
+  loaded on demand: the chapter's frameworks, arguments, and concrete
+  examples — not a retelling.
+- `glossary.md` — key terms alphabetically, each with a one-line definition
+  and the chapter it comes from.
+- `cheatsheet.md` — decision rules, named techniques, and anti-patterns
+  from the whole book.
 
 ## Step 6 — Verify
 
