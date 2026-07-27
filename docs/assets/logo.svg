@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- source-to-skill logo: three sources (video, paper, text) funnel into one skill spark -->
+
+  <!-- spark glow -->
+  <circle cx="392" cy="256" r="96" fill="#7c3aed" fill-opacity="0.13"/>
+  <circle cx="392" cy="256" r="62" fill="#7c3aed" fill-opacity="0.15"/>
+
+  <!-- beams: each source flows into the spark -->
+  <path d="M148 86 C 252 86 306 234 356 248 L 356 264 C 306 254 252 126 148 126 Z" fill="#a78bfa" fill-opacity="0.85"/>
+  <path d="M148 238 L 356 249 L 356 263 L 148 274 Z" fill="#a78bfa" fill-opacity="0.85"/>
+  <path d="M148 426 C 252 426 306 278 356 264 L 356 248 C 306 258 252 386 148 386 Z" fill="#a78bfa" fill-opacity="0.85"/>
+
+  <!-- source tiles -->
+  <rect x="48" y="56" width="96" height="96" rx="22" fill="#7c3aed"/>
+  <rect x="48" y="208" width="96" height="96" rx="22" fill="#7c3aed"/>
+  <rect x="48" y="360" width="96" height="96" rx="22" fill="#7c3aed"/>
+
+  <!-- video: play triangle -->
+  <path d="M82 80 L 82 128 L 124 104 Z" fill="#ffffff"/>
+
+  <!-- paper: page with folded corner -->
+  <path d="M74 226 L 104 226 L 118 240 L 118 286 L 74 286 Z" fill="#ffffff"/>
+  <path d="M104 226 L 118 240 L 104 240 Z" fill="#a78bfa"/>
+
+  <!-- text: document with lines -->
+  <rect x="72" y="380" width="48" height="56" rx="6" fill="#ffffff"/>
+  <rect x="80" y="392" width="32" height="7" rx="3.5" fill="#7c3aed"/>
+  <rect x="80" y="405" width="32" height="7" rx="3.5" fill="#7c3aed"/>
+  <rect x="80" y="418" width="22" height="7" rx="3.5" fill="#7c3aed"/>
+
+  <!-- skill spark -->
+  <path d="M392 168 C 400 226 422 238 480 256 C 422 274 400 286 392 344 C 384 286 362 274 304 256 C 362 238 384 226 392 168 Z" fill="#7c3aed"/>
+  <path d="M452 168 C 455 187 463 192 482 198 C 463 204 455 209 452 228 C 449 209 441 204 422 198 C 441 192 449 187 452 168 Z" fill="#a78bfa"/>
+</svg>
