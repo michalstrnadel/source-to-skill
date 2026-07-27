@@ -31,8 +31,7 @@ via a type override.
 - **Book skill template** (repo-root `SKILL.md`, Step 5) — core mental
   models plus a chapter index table in the generated SKILL.md, on-demand
   `chapters/NN-<slug>.md` files, `glossary.md` with chapter references, and
-  `cheatsheet.md` with decision rules and anti-patterns. Shape mirrors
-  book layout, with credit.
+  `cheatsheet.md` with decision rules and anti-patterns.
 
 ## [0.1.0] - 2026-07-27
 
@@ -74,4 +73,4 @@ agent skills out.
   parsing, segmentation, paper section detection, dependency probing, the
   CLI, and the validator; yt-dlp is mocked and the PDF fixture is generated
   locally, so no test touches the network.
-- MIT license; Python ≥ 3.10; architecture credit to
+- MIT license; Python ≥ 3.10.
