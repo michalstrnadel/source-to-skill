@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "source-to-skill"
-version = "0.1.0"
-description = "Turn YouTube videos and academic papers into agent skills"
+version = "0.2.0"
+description = "Turn YouTube videos, academic papers, and books into agent skills"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
@@ -16,6 +16,8 @@ keywords = [
     "youtube",
     "arxiv",
     "pdf",
+    "epub",
+    "book",
     "skill",
     "llm",
     "yt-dlp",
