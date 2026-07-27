@@ -1,7 +1,7 @@
 # Contributing to source-to-skill
 
 Thanks for wanting to improve source-to-skill. The project turns YouTube
-videos and academic papers into agent skills; contributions that make
+videos, academic papers, and books into agent skills; contributions that make
 extraction more robust, generated skills higher-signal, or the docs clearer
 are all welcome.
 
@@ -63,13 +63,14 @@ Open an issue first, covering:
    generated skill's support files should be.
 
 Implementation then touches a known, small surface: a new module in
-`scripts/extractor/parsers/`, detection patterns and the optional-dependency
-entry in `config.py`, a `detect_source` branch in `utils.py`, a generation
-template in `SKILL.md`, and offline tests.
+`scripts/extractor/parsers/`, detection patterns, `SOURCE_TYPES`, and the
+optional-dependency entry in `config.py`, a `_possible_types` branch in
+`utils.py`, a generation template in `SKILL.md`, and offline tests.
 
 ## Where the design lives
 
-The approved v1 design spec and the implementation plan are in
-`docs/superpowers/` (`specs/` and `plans/`). Read the spec before proposing
-scope changes — v1 boundaries (no Whisper, no OCR, no books) are deliberate,
-and the roadmap in the README lists what comes next.
+The approved design specs and the implementation plan are in
+`docs/superpowers/` (`specs/` and `plans/`) — the v1 spec plus the book
+support addendum. Read them before proposing scope changes — the current
+boundaries (no Whisper, no OCR, no MOBI/DOCX/folders) are deliberate, and
+the roadmap in the README lists what comes next.

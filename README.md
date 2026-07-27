@@ -5,14 +5,14 @@
 <h1 align="center">source-to-skill</h1>
 
 <p align="center">
-  <strong>Turn YouTube videos and academic papers into agent skills — watch a lecture or read a paper once, then query it forever from Claude Code, GitHub Copilot CLI, or Amp.</strong>
+  <strong>Turn YouTube videos, academic papers, and books into agent skills — watch a lecture, read a paper, or finish a book once, then query it forever from Claude Code, GitHub Copilot CLI, or Amp.</strong>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License">
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/Agent_Skills-Open_Standard-blueviolet?style=for-the-badge" alt="Agent Skills open standard">
-  <img src="https://img.shields.io/badge/YouTube%20%E2%80%A2%20PDF%20%E2%80%A2%20arXiv-supported-green?style=for-the-badge" alt="YouTube, PDF and arXiv supported">
+  <img src="https://img.shields.io/badge/YouTube%20%E2%80%A2%20PDF%20%E2%80%A2%20arXiv%20%E2%80%A2%20EPUB-supported-green?style=for-the-badge" alt="YouTube, PDF, arXiv and EPUB supported">
   <img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=for-the-badge" alt="PRs welcome">
 </p>
 
@@ -38,7 +38,7 @@
 
 ## 🤔 Why
 
-You watch a brilliant two-hour lecture. Three weeks later all you remember is that one diagram — and no idea at which minute it appeared. Papers are worse: you *know* the answer is in there somewhere.
+You watch a brilliant two-hour lecture. Three weeks later all you remember is that one diagram — and no idea at which minute it appeared. Papers are worse: you *know* the answer is in there somewhere. And that great technical book you finished last spring? You can't remember chapter 7 existed.
 
 The usual workarounds fail in familiar ways:
 
@@ -46,7 +46,7 @@ The usual workarounds fail in familiar ways:
 - 📄 "I'll search the PDF" → you get a list of page hits, not an answer
 - 🧠 "I'll ask my AI agent about the paper" → it hallucinates confident details the paper never claimed
 
-**source-to-skill turns YouTube videos and papers into agent skills** — structured references your agent loads on demand and answers from, grounded in the actual transcript or paper text. Ask about the lecture and the answer arrives with a `&t=` link that drops you at the right second of the video. Ask about the paper and you get its real methods, findings, and limitations — not a plausible invention.
+**source-to-skill turns YouTube videos, papers, and books into agent skills** — structured references your agent loads on demand and answers from, grounded in the actual transcript, paper, or book text. Ask about the lecture and the answer arrives with a `&t=` link that drops you at the right second of the video. Ask about the paper and you get its real methods, findings, and limitations — not a plausible invention. Ask about the book and the answer comes from the chapter that actually says it.
 
 Because generated skills follow the open [Agent Skills](https://github.com/agentskills/agentskills) standard, one build serves Claude Code, GitHub Copilot CLI, and Amp alike.
 
@@ -56,13 +56,13 @@ Because generated skills follow the open [Agent Skills](https://github.com/agent
 
 Three steps, one command:
 
-1. **Point** it at a source — `/source-to-skill https://youtube.com/watch?v=...` or `/source-to-skill paper.pdf` (arXiv URLs work too).
-2. **The extractor runs** — deterministic Python, no LLM involved: `yt-dlp` pulls captions and chapter timestamps from the video, or `PyMuPDF` pulls text and detected sections from the paper.
+1. **Point** it at a source — `/source-to-skill https://youtube.com/watch?v=...`, `/source-to-skill paper.pdf`, or `/source-to-skill book.epub` (arXiv URLs work too; a PDF book takes `--type book`).
+2. **The extractor runs** — deterministic Python, no LLM involved: `yt-dlp` pulls captions and chapter timestamps from the video, `PyMuPDF` pulls text and detected sections from the paper, or the standard library unpacks an EPUB into its ordered chapters.
 3. **Your agent distills** the extracted text into a skill by following this repo's `SKILL.md` — it pulls out the frameworks, the decision rules, the hard numbers, and anchors each one to its timestamp or section. What lands on disk is a structured reference, not a condensed retelling.
 
 The split matters: **extraction is deterministic code, distillation is your own agent**. There is no API key, no cloud service, and no second model — the AI agent you already run does the thinking, and the extractor guarantees it thinks about the real content.
 
-From then on, the YouTube-to-skill and paper-to-skill outputs behave like any other skill: `SKILL.md` stays resident at ~4k tokens, and segment or findings files load only when a question needs them.
+From then on, the generated video, paper, and book skills behave like any other skill: `SKILL.md` stays resident at ~4k tokens, and segment, findings, or chapter files load only when a question needs them.
 
 ---
 
@@ -109,6 +109,26 @@ my-paper/
 | `glossary.md` | Terms alphabetically, one-line definitions | ~800 tokens |
 | `citations.md` | How to cite + extracted reference list | ~500 tokens |
 
+**From a book (EPUB, or PDF with `--type book`):**
+
+```
+my-book/
+├── SKILL.md          # core mental models + chapter index
+├── chapters/
+│   ├── 01-foundations.md   # one per chapter, loaded on demand
+│   ├── 02-deliberate-practice.md
+│   └── …
+├── glossary.md       # key terms with chapter references
+└── cheatsheet.md     # decision rules, techniques, anti-patterns
+```
+
+| File | Purpose | Size |
+|------|---------|------|
+| `SKILL.md` | Core mental models + chapter index table | ~4,000 tokens |
+| `chapters/NN-*.md` | One per chapter, loaded on demand | ~1,000 tokens each |
+| `glossary.md` | Key terms alphabetically, each with its chapter reference | ~800 tokens |
+| `cheatsheet.md` | Decision rules, named techniques, anti-patterns | ~1,000 tokens |
+
 Support files load on demand — they cost nothing until a question needs them.
 
 ---
@@ -116,7 +136,7 @@ Support files load on demand — they cost nothing until a question needs them.
 ## 🚀 Usage
 
 ```
-/source-to-skill <url-or-pdf> [skill-slug]
+/source-to-skill <url-or-file> [skill-slug]
 ```
 
 **Examples:**
@@ -130,6 +150,12 @@ Support files load on demand — they cost nothing until a question needs them.
 
 # Local PDF paper
 /source-to-skill ~/papers/attention-is-all-you-need.pdf
+
+# EPUB book — auto-detected, no extra dependency needed
+/source-to-skill ~/books/deep-work.epub
+
+# A book that ships as PDF — tell the extractor it's a book, not a paper
+/source-to-skill ~/books/algorithm-design.pdf --type book
 
 # Pick your own skill slug
 /source-to-skill https://youtu.be/dQw4w9WgXcQ transformer-lecture
@@ -164,7 +190,8 @@ Then install only what your sources need:
 
 ```bash
 pip install yt-dlp     # for YouTube videos
-pip install PyMuPDF    # for PDF papers
+pip install PyMuPDF    # for PDF papers and PDF books
+# EPUB books need nothing extra — the standard library handles them
 ```
 
 Verify your setup any time with `python3 scripts/extract.py --check` — it reports each optional dependency and the exact install hint for anything missing.
@@ -185,7 +212,8 @@ Honest constraints, stated up front:
 
 - **Python ≥ 3.10.** The extractor itself has no required dependencies.
 - **YouTube videos must have captions.** Manual captions are preferred; auto-generated captions are the fallback. A video with no captions at all fails with a clear error — v1 does **not** transcribe audio (Whisper is on the [roadmap](#-roadmap)). Needs `yt-dlp`.
-- **Papers must have a text layer.** Scanned PDFs are rejected — there is no OCR yet. Needs `PyMuPDF`.
+- **PDFs must have a text layer** — papers and PDF books alike. Scanned PDFs are rejected — there is no OCR yet. Needs `PyMuPDF`.
+- **EPUB books need no extra dependency.** An EPUB is a zip of XHTML, and the extractor reads it with the Python standard library alone. PDF books use the same PyMuPDF path as papers (pass `--type book`); chapters come from the PDF outline when one exists.
 - **arXiv URLs use modern IDs** — `arxiv.org/abs/2406.01234`-style (2007+). Older `math/0605197`-style IDs aren't recognized; download the PDF and pass the file instead.
 
 `python3 scripts/extract.py --check` tells you exactly where you stand.
@@ -240,12 +268,13 @@ You can — once. But you'll pay the full ~16k tokens again on every question, a
 Two halves with a hard boundary — deterministic extraction, agent-driven generation:
 
 ```
-/source-to-skill <url|pdf> [slug]
+/source-to-skill <url|pdf|epub> [slug]
         │
         ▼
 scripts/extract.py            deterministic Python — no LLM, no API keys
-        ├─ YouTube URL ──► parsers/youtube.py   (yt-dlp: captions, chapters, timestamps)
-        └─ PDF / arXiv ──► parsers/paper.py     (PyMuPDF: text, section detection, references)
+        ├─ YouTube URL ─────────► parsers/youtube.py   (yt-dlp: captions, chapters, timestamps)
+        ├─ PDF / arXiv ─────────► parsers/paper.py     (PyMuPDF: text, section detection, references)
+        └─ EPUB / --type book ──► parsers/book.py      (stdlib EPUB unzip; PDF outline chapters)
         │
         ▼
 <tmp>/source_skill_work/
@@ -262,7 +291,7 @@ Your agent follows SKILL.md   distills structure — frameworks, rules, numbers
 tools/validate_skill.py       every promised file exists, frontmatter valid
 ```
 
-Both parsers emit the same `full_text.txt` + `metadata.json` contract, so the generator never branches on parser internals — a new source type needs a parser, a `SKILL.md` template, and a little wiring ([Extending](docs/ARCHITECTURE.md#extending)), while the contract stays fixed.
+All three parsers emit the same `full_text.txt` + `metadata.json` contract, so the generator never branches on parser internals — a new source type needs a parser, a `SKILL.md` template, and a little wiring ([Extending](docs/ARCHITECTURE.md#extending)), while the contract stays fixed.
 
 ```
 source-to-skill/
@@ -275,7 +304,8 @@ source-to-skill/
 │       ├── utils.py         # source detection, slugify, segmentation
 │       └── parsers/
 │           ├── youtube.py   # yt-dlp: captions, chapters, timestamps
-│           └── paper.py     # PyMuPDF: text, sections, references
+│           ├── paper.py     # PyMuPDF: text, sections, references
+│           └── book.py      # EPUB via stdlib; PDF books via outline
 ├── tools/
 │   └── validate_skill.py    # lint a generated skill before you trust it
 ├── tests/                   # pytest suite — fixtures only, no network
@@ -288,4 +318,4 @@ source-to-skill/
 
 ## License
 
-MIT — covers this tool. The videos and papers you convert keep their own rights; treat generated skills of third-party content as personal notes and don't redistribute them.
+MIT — covers this tool. The videos, papers, and books you convert keep their own rights; treat generated skills of third-party content as personal notes and don't redistribute them.

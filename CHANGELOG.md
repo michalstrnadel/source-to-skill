@@ -5,6 +5,35 @@ All notable changes to **source-to-skill** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-07-27
+
+Books join videos and papers: EPUBs with zero new dependencies, PDF books
+via a type override.
+
+### Added
+
+- **Book parser** (`scripts/extractor/parsers/book.py`) — EPUB books parsed
+  with the Python standard library alone (zip → `META-INF/container.xml` →
+  OPF spine; chapter titles from `toc.ncx` or the EPUB3 `nav.xhtml`, falling
+  back to the first `<h1>`, the document `<title>`, then "Chapter N"; tags
+  stripped and entities decoded via `html.parser`). PDF books reuse PyMuPDF:
+  chapters come from the top-level PDF outline, falling back to section
+  detection. Metadata uses `source_type: "book"` and adds `author` (EPUB
+  `dc:creator` / PDF metadata). Malformed EPUBs (bad zip, missing
+  container.xml, unreadable OPF, empty spine) fail with clear errors; a
+  malformed `toc.ncx` falls back to nav/heading titles instead of aborting,
+  spine items missing from the archive are skipped with a stderr warning,
+  and unresolved PDF outline destinations are ignored.
+- **`--type` override** — `extract.py <source> [--type youtube|paper|book]`
+  forces the parser when auto-detection is not enough (a PDF book vs. a PDF
+  paper); `.epub` auto-detects as book, unknown types and impossible
+  source/type combinations are rejected with clear errors.
+- **Book skill template** (repo-root `SKILL.md`, Step 5) — core mental
+  models plus a chapter index table in the generated SKILL.md, on-demand
+  `chapters/NN-<slug>.md` files, `glossary.md` with chapter references, and
+  `cheatsheet.md` with decision rules and anti-patterns. Shape mirrors
+  book layout, with credit.
+
 ## [0.1.0] - 2026-07-27
 
 First public release: YouTube videos and academic papers in, installable
