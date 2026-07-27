@@ -121,3 +121,30 @@ def test_parse_fails_on_empty_caption_download(monkeypatch):
     monkeypatch.setattr(youtube, "_fetch", lambda url: "WEBVTT\n\n")
     with pytest.raises(ExtractError, match="no cues"):
         youtube.parse("https://youtu.be/abc")
+
+
+class _FakeCaptionResponse:
+    def __init__(self, raw):
+        self._raw = raw
+
+    def read(self):
+        return self._raw
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        return False
+
+
+def test_fetch_passes_timeout(monkeypatch):
+    # A stalled caption server must not hang the CLI forever.
+    seen = {}
+
+    def fake_urlopen(url, timeout=None):
+        seen["timeout"] = timeout
+        return _FakeCaptionResponse(b"WEBVTT\n\n")
+
+    monkeypatch.setattr(youtube.urllib.request, "urlopen", fake_urlopen)
+    assert youtube._fetch("https://captions.example/x.vtt") == "WEBVTT\n\n"
+    assert seen["timeout"] == youtube.config.FETCH_TIMEOUT_S

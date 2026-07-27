@@ -100,7 +100,9 @@ def segment_text(cues, segments):
 
 
 def _fetch(url: str) -> str:
-    with urllib.request.urlopen(url) as response:
+    with urllib.request.urlopen(
+        url, timeout=config.FETCH_TIMEOUT_S
+    ) as response:
         return response.read().decode("utf-8")
 
 
