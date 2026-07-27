@@ -108,6 +108,21 @@ The skill folder `skills/source-to-skill/` is self-contained (SKILL.md + extract
 
 Project-local `.claude/skills/`, `.agents/skills/`, or `.github/skills/` work too. A symlink keeps `git pull` updates flowing; a copy freezes the version.
 
+## Repository layout
+
+```
+skills/                     the installable skills — start here
+└── source-to-skill/        the one skill this repo ships, self-contained:
+    ├── SKILL.md              agent instructions: extract → confirm → generate → verify
+    ├── scripts/extract.py    deterministic extractor (YouTube, arXiv, PDF, EPUB, web, GitHub)
+    └── tools/                validator for generated skills
+.claude-plugin/             plugin + marketplace manifests (/plugin install)
+docs/                       architecture deep-dive, demo assets
+tests/                      offline test suite (182 tests, no network)
+```
+
+Skills this tool *generates* are not stored here — they install into your own `~/.claude/skills/` (or wherever you choose in step 4). This repo ships exactly one skill: the converter itself.
+
 ## How it works
 
 Everything lives in the self-contained skill folder `skills/source-to-skill/`. Its `scripts/extract.py` detects the source type (YouTube video or playlist URL, arXiv URL, GitHub repository URL, any other web URL as an article, local PDF or EPUB — with an optional `--type` override), parses it with the matching parser, and writes normalized `full_text.txt` + `metadata.json` to a work directory. Your agent then follows the skill's `SKILL.md`: it confirms the token cost with you, distills the text through the template for that source type, installs the skill where you choose, and validates the result with `tools/validate_skill.py`. Details in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
