@@ -1,9 +1,33 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "source-to-skill"
 version = "0.1.0"
 description = "Turn YouTube videos and academic papers into agent skills"
+readme = "README.md"
+license = "MIT"
 requires-python = ">=3.10"
 dependencies = []
+keywords = [
+    "agent-skills",
+    "claude-code",
+    "youtube",
+    "arxiv",
+    "pdf",
+    "skill",
+    "llm",
+    "yt-dlp",
+    "pymupdf",
+]
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
 
 [project.optional-dependencies]
 youtube = ["yt-dlp"]
