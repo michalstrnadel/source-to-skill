@@ -17,34 +17,34 @@
 </p>
 
 <p align="center">
-  <a href="#-why">Why</a> ·
-  <a href="#-how-it-works">How it works</a> ·
-  <a href="#-what-it-generates">What it generates</a> ·
-  <a href="#-usage">Usage</a> ·
-  <a href="#-requirements">Requirements</a> ·
-  <a href="#-faq">FAQ</a> ·
-  <a href="#-roadmap">Roadmap</a> ·
-  <a href="#-architecture">Architecture</a>
+  <a href="#why">Why</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#what-it-generates">What it generates</a> ·
+  <a href="#usage">Usage</a> ·
+  <a href="#requirements">Requirements</a> ·
+  <a href="#faq">FAQ</a> ·
+  <a href="#roadmap">Roadmap</a> ·
+  <a href="#architecture">Architecture</a>
 </p>
 
 <p align="center">
   <strong>~5,000 tokens per question instead of ~16,000</strong> for a one-hour talk —
-  and every answer deep-links back to the exact timestamp (<a href="#-token-math">how it's counted</a>).
+  and every answer deep-links back to the exact timestamp (<a href="#token-math">how it's counted</a>).
 </p>
 
 <!-- Demo GIF coming soon: /source-to-skill on a lecture URL → generated skill → agent answering with a &t= timestamp deep link. Drop the recording at docs/assets/demo.gif and embed it here. -->
 
 ---
 
-## 🤔 Why
+## Why
 
 You watch a brilliant two-hour lecture. Three weeks later all you remember is that one diagram — and no idea at which minute it appeared. Papers are worse: you *know* the answer is in there somewhere. And that great technical book you finished last spring? You can't remember chapter 7 existed.
 
 The usual workarounds fail in familiar ways:
 
-- 🎥 "I'll rewatch the relevant part" → you scrub through two hours to find ninety seconds
-- 📄 "I'll search the PDF" → you get a list of page hits, not an answer
-- 🧠 "I'll ask my AI agent about the paper" → it hallucinates confident details the paper never claimed
+- "I'll rewatch the relevant part" → you scrub through two hours to find ninety seconds
+- "I'll search the PDF" → you get a list of page hits, not an answer
+- "I'll ask my AI agent about the paper" → it hallucinates confident details the paper never claimed
 
 **source-to-skill turns YouTube videos, papers, and books into agent skills** — structured references your agent loads on demand and answers from, grounded in the actual transcript, paper, or book text. Ask about the lecture and the answer arrives with a `&t=` link that drops you at the right second of the video. Ask about the paper and you get its real methods, findings, and limitations — not a plausible invention. Ask about the book and the answer comes from the chapter that actually says it.
 
@@ -52,7 +52,7 @@ Because generated skills follow the open [Agent Skills](https://github.com/agent
 
 ---
 
-## 🔩 How it works
+## How it works
 
 Three steps, one command:
 
@@ -66,7 +66,7 @@ From then on, the generated video, paper, and book skills behave like any other 
 
 ---
 
-## 📦 What it generates
+## What it generates
 
 Running `/source-to-skill <source>` writes a complete skill into your agent's skills directory (`~/.claude/skills/<slug>/` for Claude Code, `~/.copilot/skills/<slug>/` for Copilot CLI, `~/.agents/skills/<slug>/` for Amp or cross-agent use).
 
@@ -133,7 +133,7 @@ Support files load on demand — they cost nothing until a question needs them.
 
 ---
 
-## 🚀 Usage
+## Usage
 
 ```
 /source-to-skill <url-or-file> [skill-slug]
@@ -198,7 +198,7 @@ Verify your setup any time with `python3 scripts/extract.py --check` — it repo
 
 ---
 
-## 🧮 Token math
+## Token math
 
 Pasting a transcript is the expensive way to ask about a video. A one-hour talk is roughly 12k words — **~16k tokens** of raw transcript that you pay on *every* question, crowding out the rest of your context. As a skill, the same talk costs ~4k tokens for the resident `SKILL.md` plus ~1k for the one segment your question touches — **~5k tokens per question instead of ~16k**, and it persists across sessions instead of scrolling out of the chat.
 
@@ -206,12 +206,12 @@ The gap widens with length: the transcript cost grows linearly with the video, w
 
 ---
 
-## 🔧 Requirements
+## Requirements
 
 Honest constraints, stated up front:
 
 - **Python ≥ 3.10.** The extractor itself has no required dependencies.
-- **YouTube videos must have captions.** Manual captions are preferred; auto-generated captions are the fallback. A video with no captions at all fails with a clear error — v1 does **not** transcribe audio (Whisper is on the [roadmap](#-roadmap)). Needs `yt-dlp`.
+- **YouTube videos must have captions.** Manual captions are preferred; auto-generated captions are the fallback. A video with no captions at all fails with a clear error — v1 does **not** transcribe audio (Whisper is on the [roadmap](#roadmap)). Needs `yt-dlp`.
 - **PDFs must have a text layer** — papers and PDF books alike. Scanned PDFs are rejected — there is no OCR yet. Needs `PyMuPDF`.
 - **EPUB books need no extra dependency.** An EPUB is a zip of XHTML, and the extractor reads it with the Python standard library alone. PDF books use the same PyMuPDF path as papers (pass `--type book`); chapters come from the PDF outline when one exists.
 - **arXiv URLs use modern IDs** — `arxiv.org/abs/2406.01234`-style (2007+). Older `math/0605197`-style IDs aren't recognized; download the PDF and pass the file instead.
@@ -220,7 +220,7 @@ Honest constraints, stated up front:
 
 ---
 
-## ❓ FAQ
+## FAQ
 
 **"Does it transcribe the audio?"**
 
@@ -251,11 +251,11 @@ Claude Code, GitHub Copilot CLI, and Amp — and anything else built on the open
 
 **"Can't I just paste the transcript into context?"**
 
-You can — once. But you'll pay the full ~16k tokens again on every question, and the transcript scrolls away when the session ends. The skill costs ~5k per question and survives forever. See [Token math](#-token-math).
+You can — once. But you'll pay the full ~16k tokens again on every question, and the transcript scrolls away when the session ends. The skill costs ~5k per question and survives forever. See [Token math](#token-math).
 
 ---
 
-## 🚧 Roadmap
+## Roadmap
 
 - **Whisper fallback** for caption-less videos
 - **OCR** for scanned PDFs without a text layer
@@ -263,7 +263,7 @@ You can — once. But you'll pay the full ~16k tokens again on every question, a
 
 ---
 
-## 🧭 Architecture
+## Architecture
 
 Two halves with a hard boundary — deterministic extraction, agent-driven generation:
 
