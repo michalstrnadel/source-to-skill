@@ -7,7 +7,9 @@ One command to turn YouTube videos, playlists, papers, books, web articles, and 
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-Open_Standard-7c3aed)](https://github.com/agentskills/agentskills)
 [![Sources](https://img.shields.io/badge/YouTube_%E2%80%A2_Playlists_%E2%80%A2_PDF_%E2%80%A2_arXiv_%E2%80%A2_EPUB_%E2%80%A2_Articles_%E2%80%A2_GitHub-supported-green)](#supported-sources)
 
-<!-- Demo GIF: /source-to-skill on a lecture URL → generated skill → agent answering with a &t= timestamp deep link. Drop the recording at docs/assets/demo.gif and embed it here. -->
+<p align="center">
+  <img src="docs/assets/demo.gif" width="800" alt="source-to-skill turning a 3Blue1Brown lecture into an agent skill with timestamp deep links">
+</p>
 
 Point it at a source and your coding agent (Claude Code, GitHub Copilot CLI, Amp — any [Agent Skills](https://github.com/agentskills/agentskills) host) distills it into a structured AI agent skill it loads on demand. Video answers deep-link back to the exact `&t=` timestamp, YouTube playlists become course skills with one linked lesson per video, academic papers (arXiv or PDF) keep their methods/findings/limitations structure, books (EPUB) keep their chapters, web articles boil down to thesis and key claims, and GitHub repositories turn their README and docs into a library guide. Everything runs locally through your own agent — no API keys, no cloud.
 
