@@ -17,7 +17,8 @@ with `--type playlist`.
 
 ## Step 1 — Extract
 
-Run from the source-to-skill repo root:
+Run from this skill's directory (the folder containing this SKILL.md —
+`scripts/` and `tools/` live next to it):
 
     python3 scripts/extract.py "<source>"
 

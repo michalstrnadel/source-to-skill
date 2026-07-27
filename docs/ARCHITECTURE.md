@@ -8,10 +8,16 @@ source-to-skill is split into two halves that never blur:
    and playlists, PyMuPDF for papers and PDF books, the standard library
    for EPUBs, web articles, and GitHub repos), and normalizes the result
    into two files with a shared contract.
-2. **Generator** — the user's own agent following the repo-root `SKILL.md`.
+2. **Generator** — the user's own agent following the skill's `SKILL.md`.
    It reads the normalized output and distills it into an installable skill.
    No API keys, no cloud calls: the LLM work happens inside whatever agent
    the user already runs (Claude Code, GitHub Copilot CLI, Amp).
+
+Everything ships in the self-contained skill folder
+`skills/source-to-skill/` (SKILL.md + `scripts/` + `tools/`), which is
+what gets installed — as a Claude Code plugin via the repo's
+`.claude-plugin/` marketplace, or by copying/symlinking the folder into an
+agent's skills directory. All paths below are relative to that folder.
 
 ```
  <youtube-url> | <playlist-url> | <arxiv-url> | <article-url> |

@@ -12,7 +12,7 @@ git clone https://github.com/michalstrnadel/source-to-skill
 cd source-to-skill
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"          # or: pip install pytest yt-dlp PyMuPDF
-python3 scripts/extract.py --check   # confirm which extractors you have
+python3 skills/source-to-skill/scripts/extract.py --check   # confirm which extractors you have
 ```
 
 Python ≥ 3.10. The extractor itself has zero required dependencies —
@@ -46,8 +46,8 @@ Do not trust exit codes when verifying your work — check that
   `feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`, `ci:`, `perf:`
   (e.g. `fix(paper): strip trailing punctuation from DOIs`).
 - Update `CHANGELOG.md` for user-visible changes.
-- Keep the repo-root `SKILL.md` lean — it is loaded on every run of the
-  skill, so net additions to it need a clear justification.
+- Keep `skills/source-to-skill/SKILL.md` lean — it is loaded on every run
+  of the skill, so net additions to it need a clear justification.
 
 ## Proposing a new source type
 
@@ -62,10 +62,11 @@ Open an issue first, covering:
    `segments` contract (`title`, `start_s`, `pages`, `offset`) and what the
    generated skill's support files should be.
 
-Implementation then touches a known, small surface: a new module in
-`scripts/extractor/parsers/`, detection patterns, `SOURCE_TYPES`, and the
-optional-dependency entry in `config.py`, a `_possible_types` branch in
-`utils.py`, a generation template in `SKILL.md`, and offline tests.
+Implementation then touches a known, small surface (all inside
+`skills/source-to-skill/`): a new module in `scripts/extractor/parsers/`,
+detection patterns, `SOURCE_TYPES`, and the optional-dependency entry in
+`config.py`, a `_possible_types` branch in `utils.py`, a generation
+template in `SKILL.md`, and offline tests.
 
 ## Where the design lives
 

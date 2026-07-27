@@ -11,12 +11,27 @@ One command to turn YouTube videos, playlists, papers, books, web articles, and 
   <img src="docs/assets/demo.gif" width="800" alt="source-to-skill turning a 3Blue1Brown lecture into an agent skill with timestamp deep links">
 </p>
 
+> **This repo is itself an installable agent skill.** Install it as a Claude Code plugin (`/plugin marketplace add michalstrnadel/source-to-skill`) or copy [`skills/source-to-skill/`](skills/source-to-skill/) into the skills folder your agent reads — see [Quick start](#quick-start).
+
 Point it at a source and your coding agent (Claude Code, GitHub Copilot CLI, Amp — any [Agent Skills](https://github.com/agentskills/agentskills) host) distills it into a structured AI agent skill it loads on demand. Video answers deep-link back to the exact `&t=` timestamp, YouTube playlists become course skills with one linked lesson per video, academic papers (arXiv or PDF) keep their methods/findings/limitations structure, books (EPUB) keep their chapters, web articles boil down to thesis and key claims, and GitHub repositories turn their README and docs into a library guide. Everything runs locally through your own agent — no API keys, no cloud.
 
 ## Quick start
 
+In Claude Code, install it as a plugin:
+
+```
+/plugin marketplace add michalstrnadel/source-to-skill
+/plugin install source-to-skill@source-to-skill
+```
+
+Or install manually — clone and link the skill folder into the skills folder your agent reads:
+
 ```bash
-git clone https://github.com/michalstrnadel/source-to-skill ~/.claude/skills/source-to-skill
+git clone https://github.com/michalstrnadel/source-to-skill
+ln -s "$PWD/source-to-skill/skills/source-to-skill" ~/.claude/skills/source-to-skill
+```
+
+```bash
 pip install yt-dlp PyMuPDF   # only what your sources need; EPUB, articles, and repos need neither
 ```
 
@@ -78,12 +93,12 @@ Papers and books work the same way — `/source-to-skill https://arxiv.org/abs/1
 Check your setup anytime:
 
 ```bash
-python3 scripts/extract.py --check
+python3 skills/source-to-skill/scripts/extract.py --check
 ```
 
 ## Install for other agents
 
-Clone into the skills folder your agent reads:
+The skill folder `skills/source-to-skill/` is self-contained (SKILL.md + extractor scripts + validator). Clone the repo and symlink or copy that folder into the skills folder your agent reads:
 
 ```
 ~/.claude/skills/    # Claude Code
@@ -91,11 +106,11 @@ Clone into the skills folder your agent reads:
 ~/.agents/skills/    # Amp / cross-agent
 ```
 
-Project-local `.claude/skills/`, `.agents/skills/`, or `.github/skills/` work too.
+Project-local `.claude/skills/`, `.agents/skills/`, or `.github/skills/` work too. A symlink keeps `git pull` updates flowing; a copy freezes the version.
 
 ## How it works
 
-`scripts/extract.py` detects the source type (YouTube video or playlist URL, arXiv URL, GitHub repository URL, any other web URL as an article, local PDF or EPUB — with an optional `--type` override), parses it with the matching parser, and writes normalized `full_text.txt` + `metadata.json` to a work directory. Your agent then follows the repo-root `SKILL.md`: it confirms the token cost with you, distills the text through the template for that source type, installs the skill where you choose, and validates the result with `tools/validate_skill.py`. Details in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Everything lives in the self-contained skill folder `skills/source-to-skill/`. Its `scripts/extract.py` detects the source type (YouTube video or playlist URL, arXiv URL, GitHub repository URL, any other web URL as an article, local PDF or EPUB — with an optional `--type` override), parses it with the matching parser, and writes normalized `full_text.txt` + `metadata.json` to a work directory. Your agent then follows the skill's `SKILL.md`: it confirms the token cost with you, distills the text through the template for that source type, installs the skill where you choose, and validates the result with `tools/validate_skill.py`. Details in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Troubleshooting
 
@@ -105,7 +120,7 @@ Project-local `.claude/skills/`, `.agents/skills/`, or `.github/skills/` work to
 - **"GitHub returned 404"** — the repository does not exist or is private; check the URL — private repos are not supported.
 - **A `watch?v=...&list=...` link extracted a single video** — that is the default; pass `--type playlist` to extract the whole playlist.
 - **"no usable text layer (scanned PDF?)"** — the PDF is image-only; run it through OCR first.
-- **"Missing dependency"** — run `python3 scripts/extract.py --check` and install what it suggests.
+- **"Missing dependency"** — run `python3 skills/source-to-skill/scripts/extract.py --check` and install what it suggests.
 - **A PDF book parsed as a paper** — PDFs default to the paper parser; pass `--type book` to use the book parser with outline chapters.
 - **Wrong chapters on a PDF book** — the PDF has no outline; the parser falls back to heading detection, then full text.
 

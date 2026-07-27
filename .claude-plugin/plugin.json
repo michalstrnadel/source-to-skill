@@ -1,0 +1,22 @@
+{
+  "name": "source-to-skill",
+  "description": "Turn YouTube videos, playlists, academic papers, books, web articles, and GitHub repos into agent skills",
+  "version": "0.4.0",
+  "author": {
+    "name": "Michal Strnadel",
+    "url": "https://github.com/michalstrnadel"
+  },
+  "homepage": "https://github.com/michalstrnadel/source-to-skill",
+  "repository": "https://github.com/michalstrnadel/source-to-skill",
+  "license": "MIT",
+  "keywords": [
+    "agent-skills",
+    "youtube",
+    "playlist",
+    "arxiv",
+    "pdf",
+    "epub",
+    "article",
+    "github"
+  ]
+}

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "source-to-skill"
-version = "0.3.0"
+version = "0.4.0"
 description = "Turn YouTube videos, playlists, academic papers, books, web articles, and GitHub repos into agent skills"
 readme = "README.md"
 license = "MIT"

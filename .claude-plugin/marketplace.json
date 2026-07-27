@@ -1,0 +1,15 @@
+{
+  "name": "source-to-skill",
+  "owner": {
+    "name": "Michal Strnadel",
+    "url": "https://github.com/michalstrnadel"
+  },
+  "plugins": [
+    {
+      "name": "source-to-skill",
+      "source": "./",
+      "description": "Turn YouTube videos, playlists, academic papers, books, web articles, and GitHub repos into agent skills",
+      "category": "productivity"
+    }
+  ]
+}

@@ -5,6 +5,27 @@ All notable changes to **source-to-skill** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-07-27
+
+The repo is now a Claude Code plugin marketplace, and the skill lives in a
+self-contained folder.
+
+### Added
+
+- **Plugin install** — `.claude-plugin/marketplace.json` +
+  `.claude-plugin/plugin.json`: install with
+  `/plugin marketplace add michalstrnadel/source-to-skill` and
+  `/plugin install source-to-skill@source-to-skill`.
+
+### Changed
+
+- **Breaking (install layout):** the skill moved from the repo root to the
+  self-contained `skills/source-to-skill/` folder (`SKILL.md`, `scripts/`,
+  `tools/` together). Existing installs that cloned the whole repo into
+  `~/.claude/skills/source-to-skill` must re-install: clone anywhere and
+  symlink/copy `skills/source-to-skill/` into the agent's skills folder
+  (see README Quick start).
+
 ## [0.3.0] - 2026-07-27
 
 Three new source types: YouTube playlists become course skills, web
