@@ -5,6 +5,57 @@ All notable changes to **source-to-skill** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-07-27
+
+Three new source types: YouTube playlists become course skills, web
+articles become claims-and-highlights skills, GitHub repositories become
+library skills — articles and repos with zero new dependencies.
+
+### Added
+
+- **Playlist parser** (`scripts/extractor/parsers/playlist.py`) — YouTube
+  playlists via a yt-dlp flat listing plus per-video caption extraction
+  reusing the video parser. One segment per video with an extra `url` field;
+  videos without captions are skipped with a stderr warning and recorded in
+  `metadata["skipped"]` — one bad video never fails the playlist, which
+  errors only when no video has usable captions. Playlists over 30 videos
+  warn on stderr before proceeding. Metadata adds `channel`, `video_count`,
+  and `skipped` under `source_type: "playlist"`. A `watch?v=...&list=...`
+  URL stays a single video unless forced with `--type playlist`.
+- **Article parser** (`scripts/extractor/parsers/article.py`) — any other
+  `http(s)` URL becomes a web article, parsed with the standard library
+  alone: urllib fetch with a browser User-Agent, charset from the HTTP
+  header or meta tag, and an `html.parser` extractor that drops
+  script/style/nav/header/footer/aside/form subtrees, prefers `<article>`
+  over `<main>` over `<body>`, and splits segments at h1–h3 headings.
+  Title from `og:title` or `<title>`, best-effort `author` and `date`.
+  Pages yielding under 100 words fail with "Couldn't extract a readable
+  article" and a next step.
+- **Repo parser** (`scripts/extractor/parsers/repo.py`) — bare
+  `github.com/<owner>/<repo>` URLs download the codeload tarball (no git
+  clone) with path-traversal-safe extraction, then read the root README*,
+  top-level `*.md` (excluding LICENSE*), and `docs/**/*.md` in that order,
+  one segment per file titled by its first H1. Total text is capped at
+  ~2 MB with a warning listing dropped files. Missing or private repos
+  (404), other HTTP errors, and repos without any README or docs all fail
+  with clear errors. Metadata adds `owner`, `repo`, and `file_count` under
+  `source_type: "repo"`.
+- **Detection order** (`scripts/extractor/utils.py`) — YouTube video →
+  playlist → arXiv → GitHub repo → generic http(s) article → `.pdf` →
+  `.epub`; `--type` validation extended (`playlist` valid on
+  `watch?list=` URLs, `article` on any http URL, `repo` only on GitHub
+  repo URLs).
+- **Skill templates** (repo-root `SKILL.md`, Step 5) — playlist/course
+  skills get a course overview, a lesson index table, per-video
+  `lessons/NN-<slug>.md` files opening with the video URL, and a
+  course-wide cheatsheet; article skills get thesis plus key claims with a
+  link to the original and `highlights.md` quotes; repo skills get what
+  the project does, install, core usage patterns, a doc index,
+  `guides/*.md` per doc area, and a commands-and-snippets cheatsheet.
+- **Docs** — README gains a Supported sources table, quick-start examples,
+  features, and troubleshooting entries for the three new types;
+  architecture docs cover the new parsers and detection order.
+
 ## [0.2.0] - 2026-07-27
 
 Books join videos and papers: EPUBs with zero new dependencies, PDF books
