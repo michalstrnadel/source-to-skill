@@ -35,7 +35,7 @@ def test_main_check_reports_dependencies(capsys):
 
 
 def test_main_unsupported_source_exits_1(capsys):
-    assert extract.main(["https://example.com/post"]) == 1
+    assert extract.main(["notes.docx"]) == 1
     assert "Unsupported source" in capsys.readouterr().err
 
 
@@ -98,3 +98,67 @@ def test_main_type_without_value_exits_1(capsys):
     err = capsys.readouterr().err
     assert err.startswith("ERROR")
     assert "--type" in err
+
+
+def make_fake_parse(source_type):
+    def fake_typed_parse(source):
+        metadata = {
+            "source_type": source_type,
+            "title": f"Fake {source_type}",
+            "origin": source,
+            "words": 2,
+            "est_tokens": 2,
+            "segments": [
+                {"title": "All", "start_s": None, "pages": None, "offset": 0}
+            ],
+        }
+        return f"{source_type} text", metadata
+
+    return fake_typed_parse
+
+
+def test_main_playlist_url_routes_to_playlist_parser(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(config, "work_dir", lambda: tmp_path / "work")
+    monkeypatch.setattr(extract.playlist, "parse", make_fake_parse("playlist"))
+    assert extract.main(["https://www.youtube.com/playlist?list=PL1"]) == 0
+    summary = json.loads(capsys.readouterr().out)
+    assert summary["source_type"] == "playlist"
+    assert summary["segments"] == 1
+
+
+def test_main_type_playlist_routes_watch_list_url_to_playlist_parser(
+    tmp_path, monkeypatch, capsys
+):
+    monkeypatch.setattr(config, "work_dir", lambda: tmp_path / "work")
+    monkeypatch.setattr(extract.playlist, "parse", make_fake_parse("playlist"))
+    source = "https://www.youtube.com/watch?v=abc&list=PL1"
+    assert extract.main([source, "--type", "playlist"]) == 0
+    assert json.loads(capsys.readouterr().out)["source_type"] == "playlist"
+
+
+def test_main_article_url_routes_to_article_parser(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(config, "work_dir", lambda: tmp_path / "work")
+    monkeypatch.setattr(extract.article, "parse", make_fake_parse("article"))
+    assert extract.main(["https://example.com/post"]) == 0
+    assert json.loads(capsys.readouterr().out)["source_type"] == "article"
+
+
+def test_main_repo_url_routes_to_repo_parser(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(config, "work_dir", lambda: tmp_path / "work")
+    monkeypatch.setattr(extract.repo, "parse", make_fake_parse("repo"))
+    assert extract.main(["https://github.com/anthropics/claude-code"]) == 0
+    assert json.loads(capsys.readouterr().out)["source_type"] == "repo"
+
+
+def test_main_github_tree_url_routes_to_article_parser(
+    tmp_path, monkeypatch, capsys
+):
+    monkeypatch.setattr(config, "work_dir", lambda: tmp_path / "work")
+    monkeypatch.setattr(extract.article, "parse", make_fake_parse("article"))
+    assert extract.main(["https://github.com/o/r/tree/main/docs"]) == 0
+    assert json.loads(capsys.readouterr().out)["source_type"] == "article"
+
+
+def test_main_type_repo_on_non_github_url_exits_1(capsys):
+    assert extract.main(["https://example.com/post", "--type", "repo"]) == 1
+    assert "cannot be extracted as" in capsys.readouterr().err

@@ -1,11 +1,13 @@
 """source-to-skill extractor entrypoint.
 
 Usage:
-  python3 scripts/extract.py <source> [--type youtube|paper|book]
+  python3 scripts/extract.py <source> [--type youtube|playlist|paper|book|article|repo]
   python3 scripts/extract.py --check     # report optional dependencies
 
-Sources: YouTube URLs, arXiv URLs, local .pdf files, local .epub books.
-`--type` overrides auto-detection (e.g. `--type book` for a PDF book).
+Sources: YouTube video and playlist URLs, arXiv URLs, GitHub repo URLs,
+web article URLs, local .pdf files, local .epub books.
+`--type` overrides auto-detection (e.g. `--type book` for a PDF book,
+`--type playlist` for a watch?v=...&list=... URL).
 Writes full_text.txt + metadata.json into the work dir and prints a JSON
 summary with the work dir path.
 """
@@ -13,9 +15,16 @@ import json
 import sys
 
 from extractor import config, dependencies, utils
-from extractor.parsers import book, paper, youtube
+from extractor.parsers import article, book, paper, playlist, repo, youtube
 
-PARSERS = {"youtube": youtube, "paper": paper, "book": book}
+PARSERS = {
+    "youtube": youtube,
+    "playlist": playlist,
+    "paper": paper,
+    "book": book,
+    "article": article,
+    "repo": repo,
+}
 
 
 def _parse_type_flag(rest):
@@ -24,13 +33,13 @@ def _parse_type_flag(rest):
         return None
     if rest == ["--type"]:
         raise utils.ExtractError(
-            "--type requires a value: youtube, paper, or book."
+            f"--type requires a value: {', '.join(config.SOURCE_TYPES)}."
         )
     if len(rest) == 2 and rest[0] == "--type":
         return rest[1]
     raise utils.ExtractError(
         f"Unrecognized arguments: {' '.join(rest)}\n"
-        "Usage: extract.py <source> [--type youtube|paper|book]"
+        f"Usage: extract.py <source> [--type {'|'.join(config.SOURCE_TYPES)}]"
     )
 
 
