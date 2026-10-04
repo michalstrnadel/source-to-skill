@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" width="1200" height="380" role="img" aria-labelledby="t d">
+  <title id="t">How source-to-skill works</title>
+  <desc id="d">A source (video, podcast, paper, book, article or repo) goes through a deterministic Python extractor that writes full_text.txt and metadata.json. Your own coding agent reads those and generates a SKILL.md of about 4k tokens plus support files that load on demand.</desc>
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1c1430"/>
+      <stop offset="1" stop-color="#130e1d"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#a78bfa"/>
+    </marker>
+    <style>
+      .h { font: 700 19px Helvetica, Arial, sans-serif; fill: #ffffff; }
+      .s { font: 400 14px Helvetica, Arial, sans-serif; fill: #b9acdf; }
+      .m { font: 400 14px Menlo, 'SF Mono', Consolas, monospace; fill: #e9e3fb; }
+      .k { font: 700 11px Helvetica, Arial, sans-serif; fill: #a78bfa; letter-spacing: 1.6px; }
+      .box { fill: #ffffff; fill-opacity: 0.05; stroke: #a78bfa; stroke-opacity: 0.35; }
+      .hot { fill: #7c3aed; fill-opacity: 0.28; stroke: #c4b5fd; stroke-opacity: 0.75; }
+      .flow { stroke: #a78bfa; stroke-width: 2.5; fill: none; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="380" rx="24" fill="url(#panel)"/>
+
+  <!-- step labels -->
+  <text class="k" x="40" y="56">1 · SOURCE</text>
+  <text class="k" x="282" y="56">2 · EXTRACT</text>
+  <text class="k" x="524" y="56">3 · CONTRACT</text>
+  <text class="k" x="766" y="56">4 · YOUR AGENT</text>
+  <text class="k" x="1008" y="56">5 · SKILL</text>
+
+  <!-- 1 source -->
+  <rect class="box" x="40" y="76" width="196" height="268" rx="16"/>
+  <g transform="translate(60,96)">
+    <rect width="36" height="36" rx="9" fill="#7c3aed"/><path d="M14 10 L14 26 L27 18 Z" fill="#fff"/>
+    <text class="s" x="48" y="23" style="fill:#e9e3fb">Video / playlist</text>
+  </g>
+  <g transform="translate(60,138)">
+    <rect width="36" height="36" rx="9" fill="#7c3aed"/>
+    <rect x="14" y="8" width="8" height="14" rx="4" fill="#fff"/><path d="M10 18 a8 8 0 0 0 16 0" stroke="#fff" stroke-width="2.2" fill="none"/><rect x="17" y="26" width="2.2" height="4" fill="#fff"/>
+    <text class="s" x="48" y="23" style="fill:#e9e3fb">Podcast / audio</text>
+  </g>
+  <g transform="translate(60,180)">
+    <rect width="36" height="36" rx="9" fill="#7c3aed"/><path d="M11 8 L22 8 L27 13 L27 29 L11 29 Z" fill="#fff"/>
+    <text class="s" x="48" y="23" style="fill:#e9e3fb">Paper (arXiv, PDF)</text>
+  </g>
+  <g transform="translate(60,222)">
+    <rect width="36" height="36" rx="9" fill="#7c3aed"/><path d="M8 11 Q13 8 18 11 L18 28 Q13 25 8 28 Z M18 11 Q23 8 28 11 L28 28 Q23 25 18 28 Z" fill="#fff"/>
+    <text class="s" x="48" y="23" style="fill:#e9e3fb">Book (EPUB, PDF)</text>
+  </g>
+  <g transform="translate(60,264)">
+    <rect width="36" height="36" rx="9" fill="#7c3aed"/><rect x="10" y="10" width="16" height="3" rx="1.5" fill="#fff"/><rect x="10" y="17" width="16" height="3" rx="1.5" fill="#fff"/><rect x="10" y="24" width="10" height="3" rx="1.5" fill="#fff"/>
+    <text class="s" x="48" y="23" style="fill:#e9e3fb">Article / repo</text>
+  </g>
+
+  <!-- 2 extractor -->
+  <rect class="box" x="282" y="76" width="196" height="268" rx="16"/>
+  <text class="h" x="302" y="114">extract.py</text>
+  <text class="s" x="302" y="140">Deterministic Python.</text>
+  <text class="s" x="302" y="160">No LLM, no API keys.</text>
+  <text class="s" x="302" y="196">captions · yt-dlp</text>
+  <text class="s" x="302" y="218">local Whisper</text>
+  <text class="s" x="302" y="240">PyMuPDF · EPUB</text>
+  <text class="s" x="302" y="262">readable HTML</text>
+  <text class="s" x="302" y="284">GitHub tarball</text>
+  <text class="s" x="302" y="320" style="fill:#8d7fb8">runs on your machine</text>
+
+  <!-- 3 contract -->
+  <rect class="box" x="524" y="76" width="196" height="268" rx="16"/>
+  <rect x="544" y="100" width="156" height="44" rx="10" fill="#0d0914" stroke="#a78bfa" stroke-opacity="0.3"/>
+  <text class="m" x="558" y="127">full_text.txt</text>
+  <rect x="544" y="156" width="156" height="44" rx="10" fill="#0d0914" stroke="#a78bfa" stroke-opacity="0.3"/>
+  <text class="m" x="558" y="183">metadata.json</text>
+  <text class="s" x="544" y="234">segments, start_s,</text>
+  <text class="s" x="544" y="254">offsets, est_tokens</text>
+  <text class="s" x="544" y="290" style="fill:#8d7fb8">one contract for</text>
+  <text class="s" x="544" y="310" style="fill:#8d7fb8">every source type</text>
+
+  <!-- 4 agent -->
+  <rect class="box" x="766" y="76" width="196" height="268" rx="16"/>
+  <text class="h" x="786" y="114">Your agent</text>
+  <text class="s" x="786" y="140">Claude Code, Copilot</text>
+  <text class="s" x="786" y="160">CLI, Amp, any host</text>
+  <text class="s" x="786" y="196">confirms token cost</text>
+  <text class="s" x="786" y="218">distills by template</text>
+  <text class="s" x="786" y="240">validates the result</text>
+  <path d="M864 268 C 868 292 876 298 898 302 C 876 306 868 312 864 336 C 860 312 852 306 830 302 C 852 298 860 292 864 268 Z" fill="#7c3aed"/>
+
+  <!-- 5 skill -->
+  <rect class="hot" x="1008" y="76" width="152" height="268" rx="16"/>
+  <text class="m" x="1024" y="114" style="font-weight:700;fill:#fff">SKILL.md</text>
+  <text class="s" x="1024" y="136" style="fill:#e9e3fb">~4k tokens</text>
+  <line x1="1024" y1="156" x2="1144" y2="156" stroke="#c4b5fd" stroke-opacity="0.35"/>
+  <text class="s" x="1024" y="180" style="fill:#c9bcf2">on demand:</text>
+  <text class="m" x="1024" y="206">segments/</text>
+  <text class="m" x="1024" y="228">lessons/</text>
+  <text class="m" x="1024" y="250">chapters/</text>
+  <text class="m" x="1024" y="272">findings.md</text>
+  <text class="m" x="1024" y="294">cheatsheet.md</text>
+
+  <!-- flow arrows -->
+  <line class="flow" x1="238" y1="210" x2="278" y2="210" marker-end="url(#arrow)"/>
+  <line class="flow" x1="480" y1="210" x2="520" y2="210" marker-end="url(#arrow)"/>
+  <line class="flow" x1="722" y1="210" x2="762" y2="210" marker-end="url(#arrow)"/>
+  <line class="flow" x1="964" y1="210" x2="1004" y2="210" marker-end="url(#arrow)"/>
+</svg>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://michalstrnadel.github.io/source-to-skill/sitemap.xml

@@ -4,10 +4,11 @@ source-to-skill is split into two halves that never blur:
 
 1. **Extractor** — deterministic Python (`scripts/extract.py` + the
    `extractor` package). Detects the source type (with an optional `--type`
-   override), parses it with the right tool (`yt-dlp` for YouTube videos
-   and playlists, PyMuPDF for papers and PDF books, the standard library
-   for EPUBs, web articles, and GitHub repos), and normalizes the result
-   into two files with a shared contract.
+   override), parses it with the right tool (`yt-dlp` for YouTube videos,
+   playlists, channels and podcast downloads, a local Whisper backend for
+   audio and captionless videos, PyMuPDF for papers and PDF books, the
+   standard library for EPUBs, web articles, and GitHub repos), and
+   normalizes the result into files with a shared contract.
 2. **Generator** — the user's own agent following the skill's `SKILL.md`.
    It reads the normalized output and distills it into an installable skill.
    No API keys, no cloud calls: the LLM work happens inside whatever agent
@@ -20,8 +21,9 @@ what gets installed — as a Claude Code plugin via the repo's
 agent's skills directory. All paths below are relative to that folder.
 
 ```
- <youtube-url> | <playlist-url> | <arxiv-url> | <article-url> |
- <github-repo-url> | paper.pdf | book.epub | book.pdf --type book
+ <youtube-url> | <playlist-url> | <channel-url> | <podcast/media-url> |
+ <arxiv-url> | <article-url> | <github-repo-url> | paper.pdf |
+ book.epub | book.pdf --type book | episode.mp3 / talk.mp4
         │
         ▼
 ┌────────────────────── EXTRACTOR (Python, deterministic) ─────────────────┐
@@ -35,14 +37,23 @@ agent's skills directory. All paths below are relative to that folder.
 │    ├─ utils.py             detect_source (--type validation) · slugify · │
 │    │                       token estimate · output writing · ExtractError│
 │    ├─ dependencies.py      probe optional deps · require() with install  │
-│    │                       hint · `--check` report                       │
+│    │                       hint · `--check` report (Whisper, ffmpeg,     │
+│    │                       stale yt-dlp warning)                         │
+│    ├─ transcribe.py        local Whisper: mlx-whisper → faster-whisper → │
+│    │                       openai-whisper · cues in the caption contract │
+│    ├─ media.py             yt-dlp best-audio download (no ffmpeg needed) │
 │    └─ parsers/                                                           │
 │         ├─ youtube.py      yt-dlp metadata · caption track pick (manual  │
 │         │                  preferred, auto fallback) · VTT parsing ·     │
 │         │                  chapter segmentation (10-min windows fallback)│
-│         ├─ playlist.py     yt-dlp flat listing · per-video captions via  │
-│         │                  the youtube parser · captionless videos       │
-│         │                  skipped with a warning (never fatal)          │
+│         │                  · Whisper fallback when captions are missing  │
+│         ├─ playlist.py     yt-dlp flat listing (channels → /videos tab,  │
+│         │                  latest 20 by default, --limit) · per-video    │
+│         │                  captions or Whisper · failures skipped with a │
+│         │                  warning (never fatal)                         │
+│         ├─ audio.py        podcasts, media URLs, local audio/video →     │
+│         │                  Whisper · chapters or 10-min windows · deep-  │
+│         │                  link template when the origin is seekable     │
 │         ├─ paper.py        PyMuPDF text · section heuristics · DOI/year  │
 │         │                  detection · reference list · arXiv download   │
 │         ├─ book.py         EPUB via stdlib (zip · OPF spine · toc.ncx /  │
@@ -52,12 +63,13 @@ agent's skills directory. All paths below are relative to that folder.
 │         │                  article > main > body scoping · h1-h3         │
 │         │                  segment boundaries · og:title/author/date     │
 │         └─ repo.py         codeload tarball (no git clone) · README +    │
-│                            top-level *.md + docs/**/*.md · safe tar      │
-│                            extraction · ~2 MB text cap                   │
+│                            top-level *.md + docs/ (md, mdx, rst) · safe  │
+│                            tar extraction · ~2 MB text cap               │
 │                                                                          │
-│  output → <tempdir>/source_skill_work/                                   │
+│  output → <tempdir>/source_skill_work/ (or --work-dir)                   │
 │    full_text.txt    normalized text, segment-addressable by offset       │
 │    metadata.json    shared contract (see below)                          │
+│    source.json      refresh manifest: origin, options, segment keys      │
 └──────────────────────────────────────────────────────────────────────────┘
         │
         ▼
@@ -69,6 +81,8 @@ agent's skills directory. All paths below are relative to that folder.
 │  Step 4  ask install target (user-level or project-local skills dir)     │
 │  Step 5  generate from the `source_type` template                        │
 │  Step 6  verify artefacts + run tools/validate_skill.py                  │
+│  + several sources → one topic skill (per-source work dirs)              │
+│  + update <skill-dir> → re-extract, tools/diff_source.py, add only new   │
 └──────────────────────────────────────────────────────────────────────────┘
         │
         ▼
@@ -78,10 +92,17 @@ agent's skills directory. All paths below are relative to that folder.
         │    SKILL.md           core ideas + timestamped segment index
         │    segments/NN-*.md   one per segment, opens with a &t= deep link
         │    cheatsheet.md      actionable steps and decision rules
-        ├─ playlist (course) skill:
+        ├─ audio (podcast) skill: same shape as a video skill; segments
+        │    open with a deep link when seekable, else [hh:mm:ss]
+        ├─ playlist (course) / channel skill:
         │    SKILL.md           course overview + lesson index
         │    lessons/NN-*.md    one per video, opens with the video URL
         │    cheatsheet.md      steps and rules across the course
+        ├─ topic skill (several sources):
+        │    SKILL.md           synthesized ideas tagged [S1].. + sources
+        │    sources/NN-*.md    one per source, by its type's rules
+        │    disagreements.md   where sources contradict - never averaged
+        │    cheatsheet.md      steps tagged with source ids
         ├─ paper skill:
         │    SKILL.md           TL;DR + key claims with evidence
         │    methods.md · findings.md · limitations.md
@@ -108,7 +129,7 @@ source types cheap to add.
 
 ```json
 {
-  "source_type": "youtube | playlist | paper | book | article | repo",
+  "source_type": "youtube | playlist | audio | paper | book | article | repo",
   "title": "...",
   "origin": "url or file path",
   "language": "en",
@@ -122,22 +143,27 @@ source types cheap to add.
 
 Per segment:
 
-- `start_s` — start timestamp in seconds (video only; `null` for papers and
-  books). This is what lets the generator emit `<origin>&t=<start_s>s` deep
-  links.
+- `start_s` — start timestamp in seconds (video and audio; `null` for
+  papers and books). With the top-level `deep_link_template` (`{s}` →
+  seconds) this is what lets the generator emit deep links like
+  `<origin>&t=<start_s>s`.
 - `pages` — 1-based page where the section or chapter starts (PDF sources
   only; `null` for video and EPUB books).
 - `offset` — character offset into `full_text.txt`. Each segment's text runs
   from its own offset to the next segment's offset, so the generator can read
   a large source one slice at a time.
 - `url` — playlist segments only: the video's URL, which generated lesson
-  files open with. Other source types omit the key.
+  files open with, plus `captions` (`manual`, `auto`, or `whisper`). Other
+  source types omit the keys.
 
 Each parser also adds type-specific fields the templates use: video adds
-`channel`, `upload_date`, `duration_s`, `captions` (`manual` or `auto`);
-playlist adds `channel`, `video_count`, and `skipped` (videos dropped for
-missing captions, each with title, url, and reason); paper adds `authors`,
-`year`, `doi`, `page_count`, and a raw `references` list; book adds
+`channel`, `upload_date`, `duration_s`, `captions` (`manual`, `auto`, or
+`whisper`), `deep_link_template`; audio adds the same plus
+`transcribed_with` (backend and model); playlist adds `kind` (`playlist`
+or `channel`), `channel`, `video_count`, and `skipped` (videos that
+failed, each with title, url, and reason); paper adds `authors` (a list),
+`year`, `doi`, `arxiv_id`, `abstract_url`, `page_count`, and a
+`references` list (one entry per reference); book adds
 `author` (and `page_count` for PDF books); article adds `author`, `date`,
 and `language` when the page declares them; repo adds `owner`, `repo`, and
 `file_count`.
@@ -151,8 +177,10 @@ and `language` when the page declares them; repo adds `owner`, `repo`, and
    segments, findings, and glossaries cost tokens only when a question
    actually needs them.
 3. **Graceful degradation.** A video without chapters segments into fixed
-   10-minute windows; a playlist video without captions is skipped with a
-   warning and recorded in `skipped`, never failing the playlist; a paper
+   10-minute windows; a video without captions is transcribed locally
+   when a Whisper backend is installed; a playlist video that still has
+   no transcript is skipped with a warning and recorded in `skipped`,
+   never failing the playlist; a paper
    with unrecognized headings falls back to a single "Full text" section;
    a PDF book without an outline falls back to the same section detection;
    an EPUB chapter missing from the table of contents (or a whole
@@ -177,12 +205,17 @@ and `language` when the page declares them; repo adds `owner`, `repo`, and
 | `scripts/extractor/utils.py` | source detection (validates forced `--type`), slugify, token estimate, output writing |
 | `scripts/extractor/dependencies.py` | dependency probing, `--check` report |
 | `scripts/extractor/parsers/youtube.py` | captions + chapter segmentation via yt-dlp |
-| `scripts/extractor/parsers/playlist.py` | flat playlist listing + per-video captions; captionless videos skipped |
+| `scripts/extractor/parsers/playlist.py` | flat playlist/channel listing + per-video captions or Whisper; failures skipped |
+| `scripts/extractor/parsers/audio.py` | podcasts, media URLs, local audio/video → Whisper transcript with timestamps |
+| `scripts/extractor/transcribe.py` | local Whisper backends (mlx-whisper, faster-whisper, openai-whisper) |
+| `scripts/extractor/media.py` | best-audio download through yt-dlp |
 | `scripts/extractor/parsers/paper.py` | PDF text + section/reference detection via PyMuPDF |
 | `scripts/extractor/parsers/book.py` | EPUB chapters via stdlib zip/XML; PDF book chapters via outline |
 | `scripts/extractor/parsers/article.py` | web page fetch + readable-article extraction via stdlib HTMLParser |
 | `scripts/extractor/parsers/repo.py` | GitHub tarball download + README/docs selection, traversal-safe extract |
 | `tools/validate_skill.py` | lints a generated skill (frontmatter, links, empty files) |
+| `tools/diff_source.py` | compares a skill's `source.json` with a fresh extraction (refresh) |
+| `src/source_to_skill/cli.py` | PyPI CLI: `install`, `extract`, `check`, `validate` around the bundled skill |
 | `SKILL.md` | the generator spec (Steps 1–6) — this *is* the skill |
 
 ## Extending
@@ -190,7 +223,8 @@ and `language` when the page declares them; repo adds `owner`, `repo`, and
 **Adding a source type** is a four-file change plus a template:
 
 1. `scripts/extractor/parsers/<type>.py` — implement
-   `parse(source) -> (full_text, metadata)` returning the shared contract.
+   `parse(source, **options) -> (full_text, metadata)` returning the
+   shared contract.
    Fill `start_s`/`pages` with `null` where they do not apply, but always
    emit `offset`.
 2. `scripts/extractor/config.py` — add the new name to `SOURCE_TYPES`, add

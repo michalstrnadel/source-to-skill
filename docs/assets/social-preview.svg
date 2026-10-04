@@ -1,10 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
-  <!-- source-to-skill GitHub social preview (1280x640) -->
+  <!-- source-to-skill GitHub social preview (1280x640), v0.5.0 -->
+  <defs>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7c3aed" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a1228"/>
+      <stop offset="1" stop-color="#110c19"/>
+    </linearGradient>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.1" fill="#ffffff" fill-opacity="0.05"/>
+    </pattern>
+  </defs>
 
   <!-- background -->
-  <rect x="0" y="0" width="1280" height="640" fill="#150f1f"/>
+  <rect x="0" y="0" width="1280" height="640" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1280" height="640" fill="url(#dots)"/>
   <circle cx="1220" cy="-40" r="300" fill="#7c3aed" fill-opacity="0.08"/>
   <circle cx="60" cy="680" r="260" fill="#7c3aed" fill-opacity="0.07"/>
+  <circle cx="368" cy="320" r="230" fill="url(#glow)"/>
 
   <!-- logo motif, left -->
   <g transform="translate(80,132) scale(0.735)">
@@ -27,10 +42,52 @@
     <path d="M452 168 C 455 187 463 192 482 198 C 463 204 455 209 452 228 C 449 209 441 204 422 198 C 441 192 449 187 452 168 Z" fill="#a78bfa"/>
   </g>
 
+  <!-- version badge -->
+  <rect x="540" y="168" width="88" height="32" rx="16" fill="#7c3aed" fill-opacity="0.22" stroke="#a78bfa" stroke-opacity="0.5"/>
+  <text x="584" y="190" text-anchor="middle" font-family="Menlo, 'SF Mono', Consolas, monospace" font-size="16" font-weight="bold" fill="#c4b5fd">v0.5.0</text>
+
   <!-- wordmark and tagline -->
-  <text x="540" y="308" font-family="Helvetica, Arial, sans-serif" font-size="72" font-weight="bold" fill="#ffffff">source-to-skill</text>
-  <text x="542" y="366" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#b3a1e6">Turn YouTube videos &amp; papers into agent skills</text>
+  <text x="536" y="282" font-family="Helvetica, Arial, sans-serif" font-size="76" font-weight="bold" fill="#ffffff" letter-spacing="-1.5">source-to-skill</text>
+  <text x="540" y="334" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#c9bcf2">Turn videos, podcasts, papers &amp; books</text>
+  <text x="540" y="370" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#c9bcf2">into skills your coding agent loads on demand</text>
+
+  <!-- source chips -->
+  <g font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#e9e3fb">
+    <g transform="translate(540,410)">
+      <rect width="108" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="54" y="24" text-anchor="middle">YouTube</text>
+    </g>
+    <g transform="translate(658,410)">
+      <rect width="196" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="98" y="24" text-anchor="middle">Playlists &amp; channels</text>
+    </g>
+    <g transform="translate(864,410)">
+      <rect width="112" height="36" rx="10" fill="#7c3aed" fill-opacity="0.35" stroke="#c4b5fd" stroke-opacity="0.7"/>
+      <text x="56" y="24" text-anchor="middle" fill="#ffffff">Podcasts</text>
+    </g>
+    <g transform="translate(986,410)">
+      <rect width="80" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="40" y="24" text-anchor="middle">arXiv</text>
+    </g>
+    <g transform="translate(540,456)">
+      <rect width="172" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="86" y="24" text-anchor="middle">PDF &amp; EPUB books</text>
+    </g>
+    <g transform="translate(722,456)">
+      <rect width="100" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="50" y="24" text-anchor="middle">Articles</text>
+    </g>
+    <g transform="translate(832,456)">
+      <rect width="140" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="70" y="24" text-anchor="middle">GitHub repos</text>
+    </g>
+    <g transform="translate(982,456)">
+      <rect width="114" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="57" y="24" text-anchor="middle">Audio files</text>
+    </g>
+  </g>
 
   <!-- footer -->
-  <text x="542" y="576" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#6f6193">yt-dlp &#183; PyMuPDF &#183; Agent Skills</text>
+  <text x="540" y="572" font-family="Menlo, 'SF Mono', Consolas, monospace" font-size="18" fill="#8d7fb8">uvx source-to-skill install</text>
+  <text x="540" y="600" font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#6f6193">Claude Code &#183; Copilot CLI &#183; Amp &#183; any Agent Skills host &#183; no API keys</text>
 </svg>
