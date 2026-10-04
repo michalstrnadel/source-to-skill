@@ -1,0 +1,105 @@
+# Release: build sdist + wheel, attach them to the GitHub release, publish to PyPI.
+#
+# One-time PyPI setup (trusted publishing, no API token stored in the repo):
+#   1. pypi.org -> Your account -> Publishing -> "Add a new pending publisher":
+#        PyPI project name: source-to-skill
+#        Owner:             michalstrnadel
+#        Repository:        source-to-skill
+#        Workflow name:     release.yml
+#        Environment name:  pypi
+#   2. GitHub repo -> Settings -> Environments -> create environment "pypi"
+#      (optionally require a reviewer before it deploys).
+#   3. GitHub repo -> Settings -> Secrets and variables -> Actions -> Variables:
+#      add repository variable PYPI_PUBLISH = true.
+# Until step 3 is done the `publish` job is skipped; build + GitHub release
+# assets still run.
+
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build sdist + wheel
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Build
+        run: |
+          python -m pip install --upgrade pip build twine
+          python -m build
+          ls -l dist
+
+      - name: twine check
+        run: python -m twine check --strict dist/*
+
+      - name: Verify release tag matches package version
+        if: github.event_name == 'release'
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          version=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          if [ "${TAG#v}" != "$version" ]; then
+            echo "::error::release tag $TAG does not match pyproject version $version"
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  github-release:
+    name: attach to GitHub release
+    if: github.event_name == 'release'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" dist/* --clobber --repo "${{ github.repository }}"
+
+  publish:
+    name: publish to PyPI
+    if: vars.PYPI_PUBLISH == 'true'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: pypi
+      url: https://pypi.org/project/source-to-skill/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - uses: pypa/gh-action-pypi-publish@release/v1

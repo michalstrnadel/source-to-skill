@@ -1,0 +1,4 @@
+# sdist only (the wheel's contents come from [tool.setuptools] in pyproject.toml)
+include CHANGELOG.md
+graft tests
+global-exclude *.py[cod] .DS_Store

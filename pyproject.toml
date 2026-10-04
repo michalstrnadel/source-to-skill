@@ -4,18 +4,26 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "source-to-skill"
-version = "0.4.0"
-description = "Turn YouTube videos, playlists, academic papers, books, web articles, and GitHub repos into agent skills"
-readme = "README.md"
+version = "0.5.0"
+description = "Turn YouTube videos, playlists & channels, podcasts, papers, books, articles and GitHub repos into AI agent skills — Claude Code plugin, local Whisper, no API keys"
+readme = { file = "README.md", content-type = "text/markdown" }
 license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Michal Strnadel" }]
 requires-python = ">=3.10"
 dependencies = []
 keywords = [
     "agent-skills",
+    "claude-skills",
     "claude-code",
+    "claude-code-plugin",
     "youtube",
+    "youtube-transcript",
     "playlist",
     "course",
+    "podcast",
+    "whisper",
+    "transcript",
     "arxiv",
     "pdf",
     "epub",
@@ -23,22 +31,79 @@ keywords = [
     "article",
     "github",
     "skill",
+    "knowledge-base",
+    "notebooklm-alternative",
+    "rag-alternative",
+    "mcp",
     "llm",
     "yt-dlp",
     "pymupdf",
 ]
 classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing",
 ]
 
 [project.optional-dependencies]
 youtube = ["yt-dlp"]
 paper = ["PyMuPDF"]
-dev = ["pytest", "yt-dlp", "PyMuPDF"]
+audio = [
+    "yt-dlp",
+    "mlx-whisper; sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "faster-whisper; sys_platform != 'darwin' or platform_machine != 'arm64'",
+]
+all = [
+    "yt-dlp",
+    "PyMuPDF",
+    "mlx-whisper; sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "faster-whisper; sys_platform != 'darwin' or platform_machine != 'arm64'",
+]
+dev = ["pytest", "yt-dlp", "PyMuPDF", "build", "twine"]
+
+[project.scripts]
+source-to-skill = "source_to_skill.cli:main"
+
+[project.urls]
+Homepage = "https://michalstrnadel.github.io/source-to-skill/"
+Repository = "https://github.com/michalstrnadel/source-to-skill"
+Issues = "https://github.com/michalstrnadel/source-to-skill/issues"
+Changelog = "https://github.com/michalstrnadel/source-to-skill/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/michalstrnadel/source-to-skill/blob/main/docs/ARCHITECTURE.md"
+
+# The canonical agent skill lives in skills/source-to-skill/ (no __init__.py
+# there on purpose). It is mapped into the wheel as source_to_skill/skill/;
+# each folder holding .py files is listed explicitly so build_py copies its
+# modules, and SKILL.md ships as package data.
+[tool.setuptools]
+include-package-data = false
+packages = [
+    "source_to_skill",
+    "source_to_skill.skill",
+    "source_to_skill.skill.scripts",
+    "source_to_skill.skill.scripts.extractor",
+    "source_to_skill.skill.scripts.extractor.parsers",
+    "source_to_skill.skill.tools",
+]
+
+[tool.setuptools.package-dir]
+"" = "src"
+"source_to_skill.skill" = "skills/source-to-skill"
+
+[tool.setuptools.package-data]
+"source_to_skill.skill" = ["SKILL.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
