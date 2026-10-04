@@ -55,9 +55,9 @@
       "datePublished": "2026-10-04",
       "license": "https://opensource.org/licenses/MIT",
       "isAccessibleForFree": true,
-      "downloadUrl": "https://pypi.org/project/source-to-skill/",
+      "downloadUrl": "https://github.com/michalstrnadel/source-to-skill/releases",
       "installUrl": "https://github.com/michalstrnadel/source-to-skill#quick-start",
-      "sameAs": ["https://github.com/michalstrnadel/source-to-skill", "https://pypi.org/project/source-to-skill/"],
+      "sameAs": ["https://github.com/michalstrnadel/source-to-skill"],
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
       "featureList": [
         "YouTube video to agent skill with &t= timestamp deep links",
@@ -77,7 +77,7 @@
       "@id": "https://michalstrnadel.github.io/source-to-skill/#faq",
       "mainEntity": [
         { "@type": "Question", "name": "How do I turn a YouTube video into a Claude skill?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Install source-to-skill in Claude Code with /plugin marketplace add michalstrnadel/source-to-skill and /plugin install source-to-skill@source-to-skill (or run uvx source-to-skill install), then run /source-to-skill followed by the video URL. The extractor pulls the captions, splits them by the video's own chapters and shows a token estimate; your agent then writes a SKILL.md plus one segment file per chapter. Every answer links back to the exact second with &t=. Videos without captions fall back to local Whisper transcription." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "Install source-to-skill in Claude Code with /plugin marketplace add michalstrnadel/source-to-skill and /plugin install source-to-skill@source-to-skill (or install from git with uvx), then run /source-to-skill followed by the video URL. The extractor pulls the captions, splits them by the video's own chapters and shows a token estimate; your agent then writes a SKILL.md plus one segment file per chapter. Every answer links back to the exact second with &t=. Videos without captions fall back to local Whisper transcription." } },
         { "@type": "Question", "name": "Can Claude Code learn from a podcast?",
           "acceptedAnswer": { "@type": "Answer", "text": "Yes. Pass an Apple Podcasts link, a direct mp3 URL, a local audio or video file, or any page yt-dlp supports (Vimeo, SoundCloud, TED and 1000+ more) with --type audio. source-to-skill transcribes it locally with Whisper (mlx-whisper on Apple Silicon or faster-whisper elsewhere), so no API key is needed, and turns the transcript into a timestamped skill Claude Code loads on demand." } },
         { "@type": "Question", "name": "Is there a NotebookLM alternative for Claude Code?",
@@ -156,7 +156,9 @@ body {
   font-size: 17px;
   line-height: 1.6;
   overflow-x: hidden;
+  overflow-x: clip;
 }
+html { overflow-x: clip; }
 body::before {
   content: "";
   position: fixed; inset: 0;
@@ -433,7 +435,7 @@ footer a:hover { color: var(--ink); }
         <div class="install" id="install">
           <div class="install-tabs" role="tablist" aria-label="Install method">
             <button role="tab" id="tab-plugin" aria-selected="true" aria-controls="panel-plugin">Claude Code plugin</button>
-            <button role="tab" id="tab-uvx" aria-selected="false" aria-controls="panel-uvx" tabindex="-1">uvx / PyPI</button>
+            <button role="tab" id="tab-uvx" aria-selected="false" aria-controls="panel-uvx" tabindex="-1">uvx</button>
             <button role="tab" id="tab-git" aria-selected="false" aria-controls="panel-git" tabindex="-1">Any agent</button>
           </div>
           <div class="install-panel" id="panel-plugin" role="tabpanel" aria-labelledby="tab-plugin">
@@ -442,7 +444,7 @@ footer a:hover { color: var(--ink); }
             <p class="install-note">Then: <code>/source-to-skill &lt;url-or-file&gt;</code></p>
           </div>
           <div class="install-panel" id="panel-uvx" role="tabpanel" aria-labelledby="tab-uvx" hidden>
-            <div class="cmd"><code>uvx source-to-skill install</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy uvx command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
+            <div class="cmd"><code>uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy uvx command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
             <p class="install-note">Installs the skill into the skills folder your agent reads. Then: <code>/source-to-skill &lt;url-or-file&gt;</code></p>
           </div>
           <div class="install-panel" id="panel-git" role="tabpanel" aria-labelledby="tab-git" hidden>
@@ -780,7 +782,7 @@ footer a:hover { color: var(--ink); }
       <div class="faq">
         <details open>
           <summary><span class="ts">15:48</span><span>How do I turn a YouTube video into a Claude skill?</span></summary>
-          <div class="ans"><p>Install the plugin in Claude Code (<code>/plugin marketplace add michalstrnadel/source-to-skill</code>, then <code>/plugin install source-to-skill@source-to-skill</code>) or run <code>uvx source-to-skill install</code>. Then run <code>/source-to-skill</code> with the video URL. The extractor pulls the captions, splits them by the video's own chapters and shows a token estimate; your agent writes a SKILL.md plus one segment file per chapter. Every answer links back to the exact second with <code>&amp;t=</code>. Videos without captions fall back to local Whisper transcription.</p></div>
+          <div class="ans"><p>Install the plugin in Claude Code (<code>/plugin marketplace add michalstrnadel/source-to-skill</code>, then <code>/plugin install source-to-skill@source-to-skill</code>) or run <code>uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install</code>. Then run <code>/source-to-skill</code> with the video URL. The extractor pulls the captions, splits them by the video's own chapters and shows a token estimate; your agent writes a SKILL.md plus one segment file per chapter. Every answer links back to the exact second with <code>&amp;t=</code>. Videos without captions fall back to local Whisper transcription.</p></div>
         </details>
         <details>
           <summary><span class="ts">16:20</span><span>Can Claude Code learn from a podcast?</span></summary>
@@ -827,7 +829,7 @@ footer a:hover { color: var(--ink); }
           </div>
         </div>
         <div>
-          <div class="cmd"><code>uvx source-to-skill install</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy uvx command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
+          <div class="cmd"><code>uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy uvx command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
           <div class="cmd"><code class="slash">/source-to-skill &lt;url-or-file&gt;</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy usage command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
         </div>
       </div>
@@ -841,7 +843,7 @@ footer a:hover { color: var(--ink); }
     <span>MIT License · v0.5.0 · by <a href="https://github.com/michalstrnadel">Michal Strnadel</a></span>
     <nav aria-label="Footer">
       <a href="https://github.com/michalstrnadel/source-to-skill">GitHub</a>
-      <a href="https://pypi.org/project/source-to-skill/">PyPI</a>
+      <a href="https://github.com/michalstrnadel/source-to-skill/releases">Releases</a>
       <a href="https://github.com/michalstrnadel/source-to-skill/blob/main/LICENSE">License</a>
       <a href="https://github.com/michalstrnadel/source-to-skill/issues">Issues</a>
     </nav>
