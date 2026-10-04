@@ -160,3 +160,18 @@ def test_write_outputs(tmp_path):
     assert (work / "full_text.txt").read_text(encoding="utf-8") == "hello world"
     meta = json.loads((work / "metadata.json").read_text(encoding="utf-8"))
     assert meta["title"] == "T"
+
+
+def test_write_manifest_never_publishes_absolute_home_paths(tmp_path, monkeypatch):
+    monkeypatch.setattr(utils.Path, "home", lambda: tmp_path)
+    book_path = tmp_path / "books" / "progit.epub"
+    meta = {
+        "source_type": "book", "title": "Pro Git", "origin": str(book_path),
+        "est_tokens": 10, "segments": [{"title": "Ch 1"}],
+    }
+    utils.write_manifest(tmp_path / "w", str(book_path), meta, {"type": None})
+    manifest = json.loads((tmp_path / "w" / "source.json").read_text())
+    assert manifest["source"] == "~/books/progit.epub"
+    assert manifest["origin"] == "~/books/progit.epub"
+    assert manifest["est_tokens"] == 10
+    assert manifest["options"] == {}

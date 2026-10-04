@@ -56,3 +56,17 @@ def test_segment_text_assigns_cues_and_records_offsets():
         "pages": None,
         "offset": out[1]["offset"],
     }
+
+
+def test_segment_text_marks_timestamps_inside_long_segments():
+    cues = [
+        {"start_s": 0.0, "text": "a"},
+        {"start_s": 30.0, "text": "b"},
+        {"start_s": 61.5, "text": "c"},
+        {"start_s": 90.0, "text": "d"},
+        {"start_s": 125.0, "text": "e"},
+    ]
+    full_text, _ = youtube.segment_text(cues, [{"title": "All", "start_s": 0}])
+    assert full_text.strip().splitlines()[1:] == [
+        "a", "b", "[t=61s] c", "d", "[t=125s] e",
+    ]

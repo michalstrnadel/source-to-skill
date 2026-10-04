@@ -3,12 +3,13 @@ import html
 import re
 import urllib.request
 
-from .. import config, dependencies, utils
+from .. import config, dependencies, transcribe, utils
 from ..utils import ExtractError
 
 TIMESTAMP_RE = re.compile(r"(?:(\d+):)?(\d{2}):(\d{2})[.,](\d{3})\s*-->")
 INLINE_TAG_RE = re.compile(r"<[^>]+>")
 HEADER_PREFIXES = ("WEBVTT", "Kind:", "Language:")
+BRACKET_ONLY_RE = re.compile(r"^\[[^\]]*\]$")
 
 
 def parse_vtt(vtt_text: str) -> list[dict]:
@@ -46,7 +47,8 @@ def parse_vtt(vtt_text: str) -> list[dict]:
         if line.startswith(HEADER_PREFIXES) or current_start is None:
             continue
         text = html.unescape(INLINE_TAG_RE.sub("", line)).strip()
-        if not text:
+        if not text or BRACKET_ONLY_RE.match(text):
+            # [Music], [Applause], "[Submit subtitle corrections at ...]"
             continue
         if cues and cues[-1]["text"] == text:
             continue
@@ -70,6 +72,23 @@ def build_segments(chapters, duration_s) -> list[dict]:
     ]
 
 
+def marked_lines(cues, since=0) -> list[str]:
+    """Cue texts, prefixed with [t=Ns] about once a minute.
+
+    Inline markers let skills deep-link moments inside long chapters and
+    lessons, not just their starts.
+    """
+    lines = []
+    last_mark = since
+    for cue in cues:
+        text = cue["text"]
+        if cue["start_s"] - last_mark >= config.INLINE_TIMESTAMP_EVERY_S:
+            last_mark = cue["start_s"]
+            text = f"[t={int(cue['start_s'])}s] {text}"
+        lines.append(text)
+    return lines
+
+
 def segment_text(cues, segments):
     """Assign cues to segments; return (full_text, segments with offsets)."""
     # The first segment absorbs everything from t=0 even if its chapter
@@ -80,7 +99,9 @@ def segment_text(cues, segments):
     offset = 0
     for i, seg in enumerate(segments):
         end = starts[i + 1] if i + 1 < len(starts) else float("inf")
-        texts = [c["text"] for c in cues if starts[i] <= c["start_s"] < end]
+        texts = marked_lines(
+            [c for c in cues if starts[i] <= c["start_s"] < end], starts[i]
+        )
         chunk = (
             f"=== {seg['title']} [t={seg['start_s']}s] ===\n"
             + "\n".join(texts)
@@ -132,38 +153,72 @@ def _pick_track(info: dict):
     return None, None, None
 
 
-def parse(url: str):
+def _whisper_cues(ydl_mod, url):
+    """Transcribe a video's audio locally; return (cues, language, label)."""
+    from ..media import download_audio
+
+    _, path = download_audio(ydl_mod, url)
+    try:
+        return transcribe.transcribe(path)
+    finally:
+        path.unlink(missing_ok=True)
+
+
+def video_cues(ydl_mod, url, info, force_transcribe=False):
+    """Caption cues for a video, falling back to local Whisper.
+
+    Returns (cues, language, captions kind: manual|auto|whisper).
+    Without captions and without a Whisper backend, raises ExtractError
+    naming both ways forward.
+    """
+    if not force_transcribe:
+        kind, lang, vtt_url = _pick_track(info)
+        if vtt_url:
+            cues = parse_vtt(_fetch(vtt_url))
+            if cues:
+                return cues, lang, (
+                    "manual" if kind == "subtitles" else "auto"
+                )
+            if transcribe.available_backend() is None:
+                raise ExtractError(
+                    f"Caption download for {url} returned no cues ({lang}).\n"
+                    "YouTube sometimes serves empty caption files - retry, "
+                    "or transcribe locally: " + transcribe.install_hint()
+                )
+        elif transcribe.available_backend() is None:
+            raise ExtractError(
+                f"No captions available for {url}.\n"
+                "Transcribe it locally instead: " + transcribe.install_hint()
+            )
+    cues, lang, _ = _whisper_cues(ydl_mod, url)
+    return cues, lang, "whisper"
+
+
+def parse(url: str, transcribe: bool = False):
     ydl_mod = dependencies.require("yt_dlp")
     opts = {"quiet": True, "skip_download": True, "noplaylist": True}
     with ydl_mod.YoutubeDL(opts) as ydl:
         info = ydl.extract_info(url, download=False)
 
-    kind, lang, vtt_url = _pick_track(info)
-    if not vtt_url:
-        raise ExtractError(
-            f"No captions available for {url}.\n"
-            "v1 needs manual or auto captions; Whisper transcription "
-            "is not supported yet."
-        )
-    cues = parse_vtt(_fetch(vtt_url))
-    if not cues:
-        raise ExtractError(
-            f"Caption download for {url} returned no cues ({lang}).\n"
-            "YouTube sometimes serves empty caption files - retry, or try "
-            "another caption language or video."
-        )
+    cues, lang, captions = video_cues(
+        ydl_mod, url, info, force_transcribe=transcribe
+    )
     segments = build_segments(info.get("chapters"), info.get("duration"))
     full_text, out_segments = segment_text(cues, segments)
     words = len(full_text.split())
+    origin = info.get("webpage_url") or url
     metadata = {
         "source_type": "youtube",
         "title": info.get("title") or "Untitled video",
-        "origin": info.get("webpage_url") or url,
+        "origin": origin,
         "channel": info.get("channel"),
         "upload_date": info.get("upload_date"),
         "duration_s": info.get("duration"),
         "language": lang,
-        "captions": "manual" if kind == "subtitles" else "auto",
+        "captions": captions,
+        "deep_link_template": (
+            origin + ("&" if "?" in origin else "?") + "t={s}s"
+        ),
         "words": words,
         "est_tokens": utils.estimate_tokens(words),
         "segments": out_segments,

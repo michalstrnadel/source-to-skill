@@ -162,3 +162,12 @@ def test_main_github_tree_url_routes_to_article_parser(
 def test_main_type_repo_on_non_github_url_exits_1(capsys):
     assert extract.main(["https://example.com/post", "--type", "repo"]) == 1
     assert "cannot be extracted as" in capsys.readouterr().err
+
+
+def test_main_rate_limit_gets_specific_hint(monkeypatch, capsys):
+    def limited(source):
+        raise RuntimeError("HTTP Error 429: Too Many Requests")
+
+    monkeypatch.setattr(extract.youtube, "parse", limited)
+    assert extract.main(["https://youtu.be/abc"]) == 1
+    assert "rate-limiting" in capsys.readouterr().err

@@ -3,7 +3,7 @@ from types import SimpleNamespace
 import pytest
 
 from extractor import config
-from extractor.parsers import playlist
+from extractor.parsers import playlist, youtube
 from extractor.utils import ExtractError
 
 PLAYLIST_URL = "https://www.youtube.com/playlist?list=PLdemo"
@@ -87,7 +87,7 @@ def _install_fakes(monkeypatch, infos, captions):
         playlist.dependencies, "require",
         lambda module: SimpleNamespace(YoutubeDL=FakeYDL),
     )
-    monkeypatch.setattr(playlist, "_fetch", lambda url: captions[url])
+    monkeypatch.setattr(youtube, "_fetch", lambda url: captions[url])
 
 
 def _install_course(monkeypatch, *, captionless=(), broken=()):
@@ -262,3 +262,22 @@ def test_parse_no_warning_at_video_threshold(monkeypatch, capsys):
     _install_fakes(monkeypatch, infos, captions)
     playlist.parse(PLAYLIST_URL)
     assert capsys.readouterr().err == ""
+
+
+def test_parse_stops_early_when_rate_limited(monkeypatch):
+    infos = {PLAYLIST_URL: flat_info([flat_entry(f"v{i}", f"V{i}") for i in range(6)])}
+    for i in range(6):
+        infos[watch_url(f"v{i}")] = RuntimeError("HTTP Error 429: Too Many Requests")
+    _install_fakes(monkeypatch, infos, {})
+    with pytest.raises(ExtractError, match="rate-limiting"):
+        playlist.parse(PLAYLIST_URL)
+    # Three videos tried, then it stopped instead of hammering the rest.
+    assert len(FakeYDL.opts_seen) == 1 + config.RATE_LIMIT_ABORT_AFTER
+
+
+def test_parse_all_rate_limited_reports_rate_limit_not_captions(monkeypatch):
+    infos = {PLAYLIST_URL: flat_info([flat_entry("v1", "V1")])}
+    infos[watch_url("v1")] = RuntimeError("HTTP Error 429: Too Many Requests")
+    _install_fakes(monkeypatch, infos, {})
+    with pytest.raises(ExtractError, match="rate-limiting"):
+        playlist.parse(PLAYLIST_URL)

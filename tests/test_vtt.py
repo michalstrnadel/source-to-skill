@@ -47,3 +47,13 @@ def test_parse_vtt_skips_note_blocks_and_cue_identifiers():
     )
     cues = youtube.parse_vtt(vtt)
     assert [c["text"] for c in cues] == ["real text", "more text"]
+
+
+def test_parse_vtt_drops_bracket_only_caption_notices():
+    vtt = (
+        "WEBVTT\n\n00:00:01.000 --> 00:00:02.000\n[Music]\n\n"
+        "00:00:02.000 --> 00:00:03.000\nhello [laughs] there\n\n"
+        "00:00:03.000 --> 00:00:04.000\n"
+        "[Submit subtitle corrections at criblate.com]\n"
+    )
+    assert [c["text"] for c in youtube.parse_vtt(vtt)] == ["hello [laughs] there"]
