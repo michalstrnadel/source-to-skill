@@ -29,3 +29,15 @@ def test_check_report_mentions_every_dep():
     report = dependencies.check_report()
     assert "yt-dlp" in report
     assert "PyMuPDF" in report
+
+
+def test_require_prefers_modern_pymupdf_name(monkeypatch):
+    seen = []
+
+    def fake_import(name):
+        seen.append(name)
+        return name
+
+    monkeypatch.setattr(dependencies.importlib, "import_module", fake_import)
+    assert dependencies.require("fitz") == "pymupdf"
+    assert seen == ["pymupdf"]

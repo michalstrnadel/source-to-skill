@@ -11,7 +11,7 @@ def probe() -> dict:
     report = {}
     for module, info in config.OPTIONAL_DEPS.items():
         try:
-            importlib.import_module(module)
+            _import(module)
             available = True
         except ImportError:
             available = False
@@ -19,10 +19,24 @@ def probe() -> dict:
     return report
 
 
+# Preferred import names; PyMuPDF >= 1.24.3 ships `pymupdf` and warns on
+# the legacy `fitz` name (on stdout, which would corrupt the JSON summary).
+MODULE_ALIASES = {"fitz": ("pymupdf", "fitz")}
+
+
+def _import(module: str):
+    for name in MODULE_ALIASES.get(module, (module,)):
+        try:
+            return importlib.import_module(name)
+        except ImportError:
+            continue
+    raise ImportError(module)
+
+
 def require(module: str):
     """Import and return a module, or raise ExtractError with an install hint."""
     try:
-        return importlib.import_module(module)
+        return _import(module)
     except ImportError:
         info = config.OPTIONAL_DEPS.get(
             module, {"pip": module, "needed_for": "this source type"}

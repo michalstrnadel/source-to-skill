@@ -23,6 +23,7 @@ Options:
 Writes full_text.txt + metadata.json + source.json into the work dir and
 prints a JSON summary with the work dir path.
 """
+import contextlib
 import json
 import sys
 from pathlib import Path
@@ -136,7 +137,10 @@ def main(argv) -> int:
         else:
             work = config.work_dir()
         config.set_work_dir(work)
-        full_text, metadata = PARSERS[kind].parse(source, **kwargs)
+        # stdout carries only the JSON summary; anything a library prints
+        # while parsing (deprecation notices, progress) goes to stderr.
+        with contextlib.redirect_stdout(sys.stderr):
+            full_text, metadata = PARSERS[kind].parse(source, **kwargs)
         utils.write_outputs(work, full_text, metadata)
         utils.write_manifest(work, source, metadata, options)
     except utils.ExtractError as err:

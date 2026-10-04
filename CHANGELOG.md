@@ -82,6 +82,10 @@ examples gallery, CI, and a landing page.
   one "Background" segment. References split into one entry per
   reference (`[n]`, `[ADG+16]`, or numbered), with wrapped lines joined.
   Metadata adds `arxiv_id` and `abstract_url`; `authors` is a list.
+- **JSON summary corrupted by library output** — stdout now carries only
+  the JSON summary; anything a library prints while parsing goes to
+  stderr, and PyMuPDF is imported as `pymupdf` (its legacy `fitz` name
+  prints a deprecation notice on new versions).
 - **Rate limits reported as missing captions** — a playlist whose videos
   all hit YouTube's HTTP 429 now fails with "rate-limiting, wait and
   retry" instead of suggesting Whisper, and stops after 3 rate-limited

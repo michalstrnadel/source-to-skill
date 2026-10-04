@@ -171,3 +171,18 @@ def test_main_rate_limit_gets_specific_hint(monkeypatch, capsys):
     monkeypatch.setattr(extract.youtube, "parse", limited)
     assert extract.main(["https://youtu.be/abc"]) == 1
     assert "rate-limiting" in capsys.readouterr().err
+
+
+def test_main_stdout_is_pure_json_even_if_a_library_prints(
+    tmp_path, monkeypatch, capsys
+):
+    def noisy_parse(source):
+        print("warning: The `fitz` API is deprecated")
+        return fake_parse(source)
+
+    monkeypatch.setattr(config, "work_dir", lambda: tmp_path / "work")
+    monkeypatch.setattr(extract.youtube, "parse", noisy_parse)
+    assert extract.main(["https://youtu.be/abc"]) == 0
+    captured = capsys.readouterr()
+    assert json.loads(captured.out)["title"] == "Fake"
+    assert "deprecated" in captured.err
