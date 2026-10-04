@@ -1,0 +1,96 @@
+{
+  "source": "https://www.youtube.com/watch?v=zjkBMFhNj_g",
+  "origin": "https://www.youtube.com/watch?v=zjkBMFhNj_g",
+  "source_type": "youtube",
+  "title": "[1hr Talk] Intro to Large Language Models",
+  "extracted_at": "2026-10-04T20:31:14Z",
+  "extractor_version": "0.5.0",
+  "options": {},
+  "segments": [
+    {
+      "key": "Intro: Large Language Model (LLM) talk",
+      "title": "Intro: Large Language Model (LLM) talk"
+    },
+    {
+      "key": "LLM Inference",
+      "title": "LLM Inference"
+    },
+    {
+      "key": "LLM Training",
+      "title": "LLM Training"
+    },
+    {
+      "key": "LLM dreams",
+      "title": "LLM dreams"
+    },
+    {
+      "key": "How do they work?",
+      "title": "How do they work?"
+    },
+    {
+      "key": "Finetuning into an Assistant",
+      "title": "Finetuning into an Assistant"
+    },
+    {
+      "key": "Summary so far",
+      "title": "Summary so far"
+    },
+    {
+      "key": "Appendix: Comparisons, Labeling docs, RLHF, Synthetic data, Leaderboard",
+      "title": "Appendix: Comparisons, Labeling docs, RLHF, Synthetic data, Leaderboard"
+    },
+    {
+      "key": "LLM Scaling Laws",
+      "title": "LLM Scaling Laws"
+    },
+    {
+      "key": "Tool Use (Browser, Calculator, Interpreter, DALL-E)",
+      "title": "Tool Use (Browser, Calculator, Interpreter, DALL-E)"
+    },
+    {
+      "key": "Multimodality (Vision, Audio)",
+      "title": "Multimodality (Vision, Audio)"
+    },
+    {
+      "key": "Thinking, System 1/2",
+      "title": "Thinking, System 1/2"
+    },
+    {
+      "key": "Self-improvement, LLM AlphaGo",
+      "title": "Self-improvement, LLM AlphaGo"
+    },
+    {
+      "key": "LLM Customization, GPTs store",
+      "title": "LLM Customization, GPTs store"
+    },
+    {
+      "key": "LLM OS",
+      "title": "LLM OS"
+    },
+    {
+      "key": "LLM Security Intro",
+      "title": "LLM Security Intro"
+    },
+    {
+      "key": "Jailbreaks",
+      "title": "Jailbreaks"
+    },
+    {
+      "key": "Prompt Injection",
+      "title": "Prompt Injection"
+    },
+    {
+      "key": "Data poisoning",
+      "title": "Data poisoning"
+    },
+    {
+      "key": "LLM Security conclusions",
+      "title": "LLM Security conclusions"
+    },
+    {
+      "key": "Outro",
+      "title": "Outro"
+    }
+  ],
+  "est_tokens": 16370
+}

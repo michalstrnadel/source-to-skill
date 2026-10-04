@@ -1,0 +1,35 @@
+# Glossary
+
+- **Adam** - the optimizer used, with β1 = 0.9, β2 = 0.98, ε = 1e-9 (§5.3).
+- **Additive attention** - compatibility computed by a feed-forward network with one hidden layer; slower than dot-product in practice (§3.2.1).
+- **Auto-regressive** - each output symbol is generated from previously generated ones (§3).
+- **BLEU** - the translation quality metric reported in Tables 2-3.
+- **Byte-pair encoding (BPE)** - subword tokenization used for EN-DE, shared vocabulary of ~37000 tokens (§5.1).
+- **Checkpoint averaging** - averaging the weights of the last 5 (base) or 20 (big) saved checkpoints into one model (§6.1).
+- **Compatibility function** - the score between a query and a key that sets that key's value weight (§3.2).
+- **d_ff** - inner dimension of the feed-forward sub-layer; 2048 in base (§3.3).
+- **d_k, d_v** - per-head key/query and value dimensions; 64 in base (§3.2.2).
+- **d_model** - width of all sub-layer outputs and embeddings; 512 in base, 1024 in big (§3.1).
+- **Decoder** - stack that generates the output sequence, attending to itself (masked) and to the encoder output (§3.1).
+- **Dot-product (multiplicative) attention** - compatibility as the query-key dot product; the paper's version adds the 1/√d_k scale (§3.2.1).
+- **Encoder** - stack mapping input symbols to continuous representations (§3.1).
+- **Encoder-decoder attention** - attention with queries from the decoder and keys/values from the encoder output (§3.2.3).
+- **Label smoothing (ε_ls)** - training target softening, 0.1; hurts perplexity, helps BLEU (§5.4).
+- **Layer normalization** - normalization applied after each residual add: LayerNorm(x + Sublayer(x)) (§3.1).
+- **Masking** - setting softmax inputs for future positions to -inf so decoder self-attention cannot look ahead (§3.2.3).
+- **Maximum path length** - most operations a signal needs to travel between any two positions; O(1) for self-attention (§4).
+- **Multi-head attention** - h parallel attention functions on separately projected Q, K, V, concatenated and re-projected (§3.2.2).
+- **Position-wise feed-forward network (FFN)** - two linear layers with ReLU, applied to each position independently (§3.3).
+- **Positional encoding** - sinusoidal vectors added to embeddings to give the model token order (§3.5).
+- **Query, key, value (Q, K, V)** - the vectors attention operates on: queries score keys, scores weight values (§3.2).
+- **Residual dropout (P_drop)** - dropout on sub-layer outputs and on embedding + position sums; 0.1 base, 0.3 big EN-DE (§5.4, Table 3).
+- **Restricted self-attention** - attention limited to a neighborhood of size r; cheaper, longer paths (§4).
+- **Scaled dot-product attention** - softmax(QKᵀ/√d_k)V (§3.2.1).
+- **Self-attention (intra-attention)** - attention relating positions within one sequence to build its representation (§2).
+- **Sequence transduction** - mapping one sequence to another, such as translation or parsing (§1).
+- **Sequential operations** - minimum steps that cannot run in parallel; O(1) for self-attention, O(n) for recurrence (§4).
+- **Shared embeddings** - one weight matrix for input embeddings, output embeddings and the pre-softmax projection (§3.4).
+- **tensor2tensor** - the codebase the models were trained and evaluated with (§7).
+- **Transformer** - the attention-only encoder-decoder proposed in the paper.
+- **Warmup steps** - 4000 steps of linearly rising learning rate before inverse-square-root decay (§5.3).
+- **Word-piece** - subword tokenization used for EN-FR, 32000-token vocabulary (§5.1).

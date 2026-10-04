@@ -1,0 +1,76 @@
+{
+  "source": "https://jalammar.github.io/illustrated-transformer/",
+  "origin": "https://jalammar.github.io/illustrated-transformer/",
+  "source_type": "article",
+  "title": "The Illustrated Transformer",
+  "est_tokens": 5514,
+  "extracted_at": "2026-10-04T20:44:07Z",
+  "extractor_version": "0.5.0",
+  "options": {},
+  "segments": [
+    {
+      "key": "The Illustrated Transformer",
+      "title": "The Illustrated Transformer"
+    },
+    {
+      "key": "A High-Level Look",
+      "title": "A High-Level Look"
+    },
+    {
+      "key": "Bringing The Tensors Into The Picture",
+      "title": "Bringing The Tensors Into The Picture"
+    },
+    {
+      "key": "Now We’re Encoding!",
+      "title": "Now We’re Encoding!"
+    },
+    {
+      "key": "Self-Attention at a High Level",
+      "title": "Self-Attention at a High Level"
+    },
+    {
+      "key": "Self-Attention in Detail",
+      "title": "Self-Attention in Detail"
+    },
+    {
+      "key": "Matrix Calculation of Self-Attention",
+      "title": "Matrix Calculation of Self-Attention"
+    },
+    {
+      "key": "The Beast With Many Heads",
+      "title": "The Beast With Many Heads"
+    },
+    {
+      "key": "Representing The Order of The Sequence Using Positional Encoding",
+      "title": "Representing The Order of The Sequence Using Positional Encoding"
+    },
+    {
+      "key": "The Residuals",
+      "title": "The Residuals"
+    },
+    {
+      "key": "The Decoder Side",
+      "title": "The Decoder Side"
+    },
+    {
+      "key": "The Final Linear and Softmax Layer",
+      "title": "The Final Linear and Softmax Layer"
+    },
+    {
+      "key": "Recap Of Training",
+      "title": "Recap Of Training"
+    },
+    {
+      "key": "The Loss Function",
+      "title": "The Loss Function"
+    },
+    {
+      "key": "Go Forth And Transform",
+      "title": "Go Forth And Transform"
+    },
+    {
+      "key": "Acknowledgements",
+      "title": "Acknowledgements"
+    }
+  ]
+}

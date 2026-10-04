@@ -1,0 +1,60 @@
+{
+  "source": "https://www.youtube.com/watch?v=eMlx5fFNoYc",
+  "origin": "https://www.youtube.com/watch?v=eMlx5fFNoYc",
+  "source_type": "youtube",
+  "title": "Attention in transformers, step-by-step | Deep Learning Chapter 6",
+  "extracted_at": "2026-10-04T20:31:15Z",
+  "extractor_version": "0.5.0",
+  "options": {},
+  "segments": [
+    {
+      "key": "Recap on embeddings",
+      "title": "Recap on embeddings"
+    },
+    {
+      "key": "Motivating examples",
+      "title": "Motivating examples"
+    },
+    {
+      "key": "The attention pattern",
+      "title": "The attention pattern"
+    },
+    {
+      "key": "Masking",
+      "title": "Masking"
+    },
+    {
+      "key": "Context size",
+      "title": "Context size"
+    },
+    {
+      "key": "Values",
+      "title": "Values"
+    },
+    {
+      "key": "Counting parameters",
+      "title": "Counting parameters"
+    },
+    {
+      "key": "Cross-attention",
+      "title": "Cross-attention"
+    },
+    {
+      "key": "Multiple heads",
+      "title": "Multiple heads"
+    },
+    {
+      "key": "The output matrix",
+      "title": "The output matrix"
+    },
+    {
+      "key": "Going deeper",
+      "title": "Going deeper"
+    },
+    {
+      "key": "Ending",
+      "title": "Ending"
+    }
+  ],
+  "est_tokens": 6614
+}

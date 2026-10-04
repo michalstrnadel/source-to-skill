@@ -1,0 +1,56 @@
+{
+  "source": "https://arxiv.org/abs/1706.03762",
+  "origin": "https://arxiv.org/abs/1706.03762",
+  "source_type": "paper",
+  "title": "Attention Is All You Need",
+  "est_tokens": 8124,
+  "extracted_at": "2026-10-04T20:44:06Z",
+  "extractor_version": "0.5.0",
+  "options": {},
+  "segments": [
+    {
+      "key": "Abstract",
+      "title": "Abstract"
+    },
+    {
+      "key": "Introduction",
+      "title": "Introduction"
+    },
+    {
+      "key": "Background",
+      "title": "Background"
+    },
+    {
+      "key": "Model Architecture",
+      "title": "Model Architecture"
+    },
+    {
+      "key": "Why Self-Attention",
+      "title": "Why Self-Attention"
+    },
+    {
+      "key": "Training",
+      "title": "Training"
+    },
+    {
+      "key": "Results",
+      "title": "Results"
+    },
+    {
+      "key": "Conclusion",
+      "title": "Conclusion"
+    },
+    {
+      "key": "Acknowledgements",
+      "title": "Acknowledgements"
+    },
+    {
+      "key": "References",
+      "title": "References"
+    },
+    {
+      "key": "Appendix: Attention Visualizations",
+      "title": "Appendix: Attention Visualizations"
+    }
+  ]
+}

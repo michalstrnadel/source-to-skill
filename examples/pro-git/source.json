@@ -1,0 +1,96 @@
+{
+  "source": "progit.epub",
+  "origin": "https://github.com/progit/progit2/releases/download/2.1.450/progit.epub",
+  "source_type": "book",
+  "title": "Pro Git",
+  "est_tokens": 186517,
+  "extracted_at": "2026-10-04T20:44:08Z",
+  "extractor_version": "0.5.0",
+  "options": {},
+  "segments": [
+    {
+      "key": "Pro Git",
+      "title": "Pro Git"
+    },
+    {
+      "key": "Table of Contents",
+      "title": "Table of Contents"
+    },
+    {
+      "key": "License",
+      "title": "License"
+    },
+    {
+      "key": "Preface by Scott Chacon",
+      "title": "Preface by Scott Chacon"
+    },
+    {
+      "key": "Preface by Ben Straub",
+      "title": "Preface by Ben Straub"
+    },
+    {
+      "key": "Dedications",
+      "title": "Dedications"
+    },
+    {
+      "key": "Contributors",
+      "title": "Contributors"
+    },
+    {
+      "key": "Introduction",
+      "title": "Introduction"
+    },
+    {
+      "key": "Getting Started",
+      "title": "Getting Started"
+    },
+    {
+      "key": "Git Basics",
+      "title": "Git Basics"
+    },
+    {
+      "key": "Git Branching",
+      "title": "Git Branching"
+    },
+    {
+      "key": "Git on the Server",
+      "title": "Git on the Server"
+    },
+    {
+      "key": "Distributed Git",
+      "title": "Distributed Git"
+    },
+    {
+      "key": "GitHub",
+      "title": "GitHub"
+    },
+    {
+      "key": "Git Tools",
+      "title": "Git Tools"
+    },
+    {
+      "key": "Customizing Git",
+      "title": "Customizing Git"
+    },
+    {
+      "key": "Git and Other Systems",
+      "title": "Git and Other Systems"
+    },
+    {
+      "key": "Git Internals",
+      "title": "Git Internals"
+    },
+    {
+      "key": "Appendix A: Git in Other Environments",
+      "title": "Appendix A: Git in Other Environments"
+    },
+    {
+      "key": "Appendix B: Embedding Git in your Applications",
+      "title": "Appendix B: Embedding Git in your Applications"
+    },
+    {
+      "key": "Appendix C: Git Commands",
+      "title": "Appendix C: Git Commands"
+    }
+  ]
+}

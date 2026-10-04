@@ -1,0 +1,320 @@
+{
+  "source": "https://github.com/pallets/flask",
+  "origin": "https://github.com/pallets/flask",
+  "source_type": "repo",
+  "title": "pallets/flask",
+  "est_tokens": 78882,
+  "extracted_at": "2026-10-04T20:44:07Z",
+  "extractor_version": "0.5.0",
+  "options": {},
+  "segments": [
+    {
+      "key": "Flask",
+      "title": "Flask"
+    },
+    {
+      "key": "API",
+      "title": "API"
+    },
+    {
+      "key": "The App and Request Context",
+      "title": "The App and Request Context"
+    },
+    {
+      "key": "Using ``async`` and ``await``",
+      "title": "Using ``async`` and ``await``"
+    },
+    {
+      "key": "Modular Applications with Blueprints",
+      "title": "Modular Applications with Blueprints"
+    },
+    {
+      "key": "Changes",
+      "title": "Changes"
+    },
+    {
+      "key": "Command Line Interface",
+      "title": "Command Line Interface"
+    },
+    {
+      "key": "Configuration Handling",
+      "title": "Configuration Handling"
+    },
+    {
+      "key": "Contributing",
+      "title": "Contributing"
+    },
+    {
+      "key": "Debugging Application Errors",
+      "title": "Debugging Application Errors"
+    },
+    {
+      "key": "Apache httpd",
+      "title": "Apache httpd"
+    },
+    {
+      "key": "ASGI",
+      "title": "ASGI"
+    },
+    {
+      "key": "eventlet",
+      "title": "eventlet"
+    },
+    {
+      "key": "gevent",
+      "title": "gevent"
+    },
+    {
+      "key": "Gunicorn",
+      "title": "Gunicorn"
+    },
+    {
+      "key": "Deploying to Production",
+      "title": "Deploying to Production"
+    },
+    {
+      "key": "mod_wsgi",
+      "title": "mod_wsgi"
+    },
+    {
+      "key": "nginx",
+      "title": "nginx"
+    },
+    {
+      "key": "Tell Flask it is Behind a Proxy",
+      "title": "Tell Flask it is Behind a Proxy"
+    },
+    {
+      "key": "uWSGI",
+      "title": "uWSGI"
+    },
+    {
+      "key": "Waitress",
+      "title": "Waitress"
+    },
+    {
+      "key": "Design Decisions in Flask",
+      "title": "Design Decisions in Flask"
+    },
+    {
+      "key": "Handling Application Errors",
+      "title": "Handling Application Errors"
+    },
+    {
+      "key": "Flask Extension Development",
+      "title": "Flask Extension Development"
+    },
+    {
+      "key": "Extensions",
+      "title": "Extensions"
+    },
+    {
+      "key": "Async with Gevent",
+      "title": "Async with Gevent"
+    },
+    {
+      "key": "Welcome to Flask",
+      "title": "Welcome to Flask"
+    },
+    {
+      "key": "Installation",
+      "title": "Installation"
+    },
+    {
+      "key": "BSD-3-Clause License",
+      "title": "BSD-3-Clause License"
+    },
+    {
+      "key": "Application Structure and Lifecycle",
+      "title": "Application Structure and Lifecycle"
+    },
+    {
+      "key": "Logging",
+      "title": "Logging"
+    },
+    {
+      "key": "Application Dispatching",
+      "title": "Application Dispatching"
+    },
+    {
+      "key": "Application Factories",
+      "title": "Application Factories"
+    },
+    {
+      "key": "Caching",
+      "title": "Caching"
+    },
+    {
+      "key": "Background Tasks with Celery",
+      "title": "Background Tasks with Celery"
+    },
+    {
+      "key": "Deferred Request Callbacks",
+      "title": "Deferred Request Callbacks"
+    },
+    {
+      "key": "Adding a favicon",
+      "title": "Adding a favicon"
+    },
+    {
+      "key": "Uploading Files",
+      "title": "Uploading Files"
+    },
+    {
+      "key": "Message Flashing",
+      "title": "Message Flashing"
+    },
+    {
+      "key": "Patterns for Flask",
+      "title": "Patterns for Flask"
+    },
+    {
+      "key": "JavaScript, ``fetch``, and JSON",
+      "title": "JavaScript, ``fetch``, and JSON"
+    },
+    {
+      "key": "AJAX with jQuery",
+      "title": "AJAX with jQuery"
+    },
+    {
+      "key": "Lazily Loading Views",
+      "title": "Lazily Loading Views"
+    },
+    {
+      "key": "Adding HTTP Method Overrides",
+      "title": "Adding HTTP Method Overrides"
+    },
+    {
+      "key": "MongoDB with MongoEngine",
+      "title": "MongoDB with MongoEngine"
+    },
+    {
+      "key": "Large Applications as Packages",
+      "title": "Large Applications as Packages"
+    },
+    {
+      "key": "Request Content Checksums",
+      "title": "Request Content Checksums"
+    },
+    {
+      "key": "Single-Page Applications",
+      "title": "Single-Page Applications"
+    },
+    {
+      "key": "SQLAlchemy in Flask",
+      "title": "SQLAlchemy in Flask"
+    },
+    {
+      "key": "Using SQLite 3 with Flask",
+      "title": "Using SQLite 3 with Flask"
+    },
+    {
+      "key": "Streaming Contents",
+      "title": "Streaming Contents"
+    },
+    {
+      "key": "Subclassing Flask",
+      "title": "Subclassing Flask"
+    },
+    {
+      "key": "Template Inheritance",
+      "title": "Template Inheritance"
+    },
+    {
+      "key": "Using URL Processors",
+      "title": "Using URL Processors"
+    },
+    {
+      "key": "View Decorators",
+      "title": "View Decorators"
+    },
+    {
+      "key": "Form Validation with WTForms",
+      "title": "Form Validation with WTForms"
+    },
+    {
+      "key": "Quickstart",
+      "title": "Quickstart"
+    },
+    {
+      "key": "The Request Context",
+      "title": "The Request Context"
+    },
+    {
+      "key": "Development Server",
+      "title": "Development Server"
+    },
+    {
+      "key": "Working with the Shell",
+      "title": "Working with the Shell"
+    },
+    {
+      "key": "Signals",
+      "title": "Signals"
+    },
+    {
+      "key": "Templates",
+      "title": "Templates"
+    },
+    {
+      "key": "Testing Flask Applications",
+      "title": "Testing Flask Applications"
+    },
+    {
+      "key": "Blog Blueprint",
+      "title": "Blog Blueprint"
+    },
+    {
+      "key": "Define and Access the Database",
+      "title": "Define and Access the Database"
+    },
+    {
+      "key": "Deploy to Production",
+      "title": "Deploy to Production"
+    },
+    {
+      "key": "Application Setup",
+      "title": "Application Setup"
+    },
+    {
+      "key": "Tutorial",
+      "title": "Tutorial"
+    },
+    {
+      "key": "Make the Project Installable",
+      "title": "Make the Project Installable"
+    },
+    {
+      "key": "Project Layout",
+      "title": "Project Layout"
+    },
+    {
+      "key": "Keep Developing!",
+      "title": "Keep Developing!"
+    },
+    {
+      "key": "Static Files",
+      "title": "Static Files"
+    },
+    {
+      "key": "Templates",
+      "title": "Templates"
+    },
+    {
+      "key": "Test Coverage",
+      "title": "Test Coverage"
+    },
+    {
+      "key": "Blueprints and Views",
+      "title": "Blueprints and Views"
+    },
+    {
+      "key": "Class-based Views",
+      "title": "Class-based Views"
+    },
+    {
+      "key": "Security Considerations",
+      "title": "Security Considerations"
+    }
+  ]
+}

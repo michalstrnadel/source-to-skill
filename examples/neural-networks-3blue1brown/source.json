@@ -1,0 +1,52 @@
+{
+  "source": "https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi",
+  "origin": "https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi",
+  "source_type": "playlist",
+  "title": "Neural networks",
+  "extracted_at": "2026-10-04T20:31:26Z",
+  "extractor_version": "0.5.0",
+  "options": {},
+  "segments": [
+    {
+      "key": "https://www.youtube.com/watch?v=aircAruvnKk",
+      "title": "But what is a neural network? | Deep learning chapter 1"
+    },
+    {
+      "key": "https://www.youtube.com/watch?v=IHZwWFHWa-w",
+      "title": "Gradient descent, how neural networks learn | Deep Learning Chapter 2"
+    },
+    {
+      "key": "https://www.youtube.com/watch?v=Ilg3gGewQ5U",
+      "title": "Backpropagation, intuitively | Deep Learning Chapter 3"
+    },
+    {
+      "key": "https://www.youtube.com/watch?v=tIeHLnjs5U8",
+      "title": "Backpropagation calculus | Deep Learning Chapter 4"
+    },
+    {
+      "key": "https://www.youtube.com/watch?v=LPZh9BOjkQs",
+      "title": "Large Language Models explained briefly"
+    },
+    {
+      "key": "https://www.youtube.com/watch?v=wjZofJX0v4M",
+      "title": "Transformers, the tech behind LLMs | Deep Learning Chapter 5"
+    },
+    {
+      "key": "https://www.youtube.com/watch?v=eMlx5fFNoYc",
+      "title": "Attention in transformers, step-by-step | Deep Learning Chapter 6"
+    },
+    {
+      "key": "https://www.youtube.com/watch?v=9-Jl0dxWQs8",
+      "title": "How might LLMs store facts | Deep Learning Chapter 7"
+    },
+    {
+      "key": "https://www.youtube.com/watch?v=GlYgs6v2YfU",
+      "title": "But what is cross-entropy? | Compression is Intelligence Part 2"
+    },
+    {
+      "key": "https://www.youtube.com/watch?v=iv-5mZ_9CPY",
+      "title": "But how do AI images and videos actually work? | Guest video by Welch Labs"
+    }
+  ],
+  "est_tokens": 52628
+}

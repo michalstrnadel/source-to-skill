@@ -1,0 +1,88 @@
+{
+  "source": "https://www.anthropic.com/engineering/building-effective-agents",
+  "origin": "https://www.anthropic.com/engineering/building-effective-agents",
+  "source_type": "article",
+  "title": "Building Effective AI Agents",
+  "est_tokens": 3652,
+  "extracted_at": "2026-10-04T20:44:07Z",
+  "extractor_version": "0.5.0",
+  "options": {},
+  "segments": [
+    {
+      "key": "Introduction",
+      "title": "Introduction"
+    },
+    {
+      "key": "What are agents?",
+      "title": "What are agents?"
+    },
+    {
+      "key": "When (and when not) to use agents",
+      "title": "When (and when not) to use agents"
+    },
+    {
+      "key": "When and how to use frameworks",
+      "title": "When and how to use frameworks"
+    },
+    {
+      "key": "Building blocks, workflows, and agents",
+      "title": "Building blocks, workflows, and agents"
+    },
+    {
+      "key": "Building block: The augmented LLM",
+      "title": "Building block: The augmented LLM"
+    },
+    {
+      "key": "Workflow: Prompt chaining",
+      "title": "Workflow: Prompt chaining"
+    },
+    {
+      "key": "Workflow: Routing",
+      "title": "Workflow: Routing"
+    },
+    {
+      "key": "Workflow: Parallelization",
+      "title": "Workflow: Parallelization"
+    },
+    {
+      "key": "Workflow: Orchestrator-workers",
+      "title": "Workflow: Orchestrator-workers"
+    },
+    {
+      "key": "Workflow: Evaluator-optimizer",
+      "title": "Workflow: Evaluator-optimizer"
+    },
+    {
+      "key": "Agents",
+      "title": "Agents"
+    },
+    {
+      "key": "Combining and customizing these patterns",
+      "title": "Combining and customizing these patterns"
+    },
+    {
+      "key": "Summary",
+      "title": "Summary"
+    },
+    {
+      "key": "Acknowledgements",
+      "title": "Acknowledgements"
+    },
+    {
+      "key": "Appendix 1: Agents in practice",
+      "title": "Appendix 1: Agents in practice"
+    },
+    {
+      "key": "A. Customer support",
+      "title": "A. Customer support"
+    },
+    {
+      "key": "B. Coding agents",
+      "title": "B. Coding agents"
+    },
+    {
+      "key": "Appendix 2: Prompt engineering your tools",
+      "title": "Appendix 2: Prompt engineering your tools"
+    }
+  ]
+}
