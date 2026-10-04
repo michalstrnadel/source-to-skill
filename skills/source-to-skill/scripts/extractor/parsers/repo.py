@@ -22,7 +22,13 @@ REPO_URL_RE = re.compile(
 TARBALL_URL = "https://codeload.github.com/{owner}/{repo}/tar.gz/HEAD"
 
 README_SUFFIXES = (".md", ".rst", ".txt")
+# Docs-folder formats: Markdown, MDX (Docusaurus, Nextra) and
+# reStructuredText (Sphinx - most Python projects).
+DOC_SUFFIXES = (".md", ".mdx", ".rst")
+DOC_DIRS = ("docs", "doc")
 H1_RE = re.compile(r"^#[ \t]+(.+?)\s*$")
+# reST section underline/overline: one punctuation char repeated.
+RST_RULE_RE = re.compile(r"^([=\-~^\"'`#*+:.])\1{2,}\s*$")
 FENCE_PREFIXES = ("```", "~~~")
 
 
@@ -142,26 +148,45 @@ def _select_files(root: Path) -> list[Path]:
             readmes.append(path)
         elif path.suffix.lower() == ".md" and not name.startswith("license"):
             top_md.append(path)
-    docs_dir = root / "docs"
     docs_md = []
-    if docs_dir.is_dir():
-        docs_md = sorted(
-            (
+    for dir_name in DOC_DIRS:
+        docs_dir = root / dir_name
+        if docs_dir.is_dir():
+            docs_md.extend(
                 path
                 for path in docs_dir.rglob("*")
-                if path.is_file() and path.suffix.lower() == ".md"
-            ),
-            key=lambda p: p.relative_to(root).as_posix().lower(),
-        )
+                if path.is_file() and path.suffix.lower() in DOC_SUFFIXES
+            )
+    docs_md.sort(key=lambda p: p.relative_to(root).as_posix().lower())
     return readmes + top_md + docs_md
+
+
+def _rst_title(text: str):
+    """First reST section title (a text line with a rule under it), or None."""
+    lines = text.splitlines()
+    for index in range(len(lines) - 1):
+        title = lines[index].strip()
+        if (
+            title
+            and not RST_RULE_RE.match(title)
+            and not title.startswith("..")
+            and RST_RULE_RE.match(lines[index + 1].strip())
+            and len(lines[index + 1].strip()) >= len(title)
+        ):
+            return " ".join(title.split())
+    return None
 
 
 def _title(text: str, rel_path: str) -> str:
     """First markdown H1 outside fenced code blocks, else the file path.
 
+    reStructuredText files use their first section title instead.
+
     Shell comments inside ``` / ~~~ fences look exactly like H1 lines,
     so fenced regions are skipped instead of regex-searching the raw text.
     """
+    if rel_path.lower().endswith(".rst"):
+        return _rst_title(text) or rel_path
     fence = None
     for line in text.splitlines():
         stripped = line.lstrip()
@@ -198,7 +223,8 @@ def parse(source: str):
         raise ExtractError(
             f"{owner}/{repo_name} has no README or Markdown docs.\n"
             "The repo parser reads root README* files, top-level *.md and "
-            "docs/**/*.md - this repository has none to extract."
+            "docs/ or doc/ (*.md, *.mdx, *.rst) - this repository has none "
+            "to extract."
         )
     chunks = []
     segments = []
@@ -218,7 +244,10 @@ def parse(source: str):
         title = _title(text, rel_path)
         chunk = f"=== {title} ===\n{text.strip()}\n\n"
         segments.append(
-            {"title": title, "start_s": None, "pages": None, "offset": offset}
+            {
+                "title": title, "start_s": None, "pages": None,
+                "offset": offset, "path": rel_path,
+            }
         )
         chunks.append(chunk)
         offset += len(chunk)

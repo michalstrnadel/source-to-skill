@@ -23,6 +23,18 @@ BLOCK_TAGS = {
 }
 SKIP_TAGS = {"script", "style"}
 
+# Marks a line inside <pre> whose indentation must survive text().
+PRE_LINE = "\x01"
+
+# Segment titles that are front matter rather than content; flagged in
+# metadata so the generator can skip them (they are kept, not dropped -
+# a License page is still worth a line in the skill).
+FRONT_MATTER_RE = re.compile(
+    r"^(table of contents|contents|contributors|dedications?|copyright"
+    r"( page)?|title page|cover|index|list of (figures|tables))$",
+    re.IGNORECASE,
+)
+
 
 class _ChapterText(HTMLParser):
     """Collects visible text plus the first <h1> and the <title>."""
@@ -35,10 +47,17 @@ class _ChapterText(HTMLParser):
         self._captured = []
         self.h1 = None
         self.title = None
+        self._pre = 0
 
     def handle_starttag(self, tag, attrs):
         if tag in SKIP_TAGS:
             self._skip += 1
+        elif tag == "pre":
+            self._pre += 1
+            self._parts.append("\n" + PRE_LINE)
+        elif tag == "sup" and self._capture is None:
+            # 2<sup>80</sup> must not collapse into "280".
+            self._parts.append("^")
         elif tag == "br":
             self._parts.append("\n")
             if self._capture:
@@ -51,6 +70,8 @@ class _ChapterText(HTMLParser):
     def handle_endtag(self, tag):
         if tag in SKIP_TAGS and self._skip:
             self._skip -= 1
+        if tag == "pre" and self._pre:
+            self._pre -= 1
         if tag == self._capture:
             text = " ".join("".join(self._captured).split())
             if tag == "h1":
@@ -67,10 +88,20 @@ class _ChapterText(HTMLParser):
         if self._capture:
             self._captured.append(data)
         if self._capture != "title":
+            if self._pre:
+                # Code keeps its indentation: `git status -s` columns,
+                # YAML, Python all change meaning without it.
+                data = data.replace("\n", "\n" + PRE_LINE)
             self._parts.append(data)
 
     def text(self) -> str:
-        lines = [line.strip() for line in "".join(self._parts).splitlines()]
+        raw = "".join(self._parts).replace("\u200b", "")
+        lines = [
+            line.replace(PRE_LINE, "").rstrip()
+            if line.startswith(PRE_LINE)
+            else line.replace(PRE_LINE, "").strip()
+            for line in raw.splitlines()
+        ]
         return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
 
 
@@ -288,9 +319,13 @@ def _parse_epub(path: Path, source: str):
                 or f"Chapter {number}"
             )
             chunk = f"=== {title} ===\n{text}\n\n"
-            segments.append(
-                {"title": title, "start_s": None, "pages": None, "offset": offset}
-            )
+            segment = {
+                "title": title, "start_s": None, "pages": None,
+                "offset": offset,
+            }
+            if FRONT_MATTER_RE.match(title.strip()):
+                segment["front_matter"] = True
+            segments.append(segment)
             chunks.append(chunk)
             offset += len(chunk)
         if not chunks:

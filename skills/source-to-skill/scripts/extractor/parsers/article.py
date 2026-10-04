@@ -131,6 +131,7 @@ class _PageText(HTMLParser):
         self.author = None
         self.date = None
         self.language = None
+        self.time_date = None
         self._drop = 0
         self._article = 0
         self._main = 0
@@ -172,11 +173,24 @@ class _PageText(HTMLParser):
             # heading when the next block element starts; without this the
             # rest of the page would be swallowed into the heading buffer.
             self._flush_capture()
+        if (
+            tag in BLOCK_TAGS
+            and self._capture is None
+            and self.items
+            and self.items[-1][0] == "text"
+            and not self.items[-1][1].endswith("\n")
+        ):
+            # A block opening mid-line (<li><b>Label</b>:<ul>...) starts a
+            # new line; without this its text glues onto the label.
+            self._emit("text", "\n")
         attrs = dict(attrs)
         if tag == "meta":
             self._handle_meta(attrs)
         elif tag == "html":
             self.language = self.language or attrs.get("lang") or None
+        elif tag == "time" and attrs.get("datetime"):
+            # Fallback only: meta tags (handled above) win when present.
+            self.time_date = self.time_date or attrs["datetime"].strip()
         elif tag == "article":
             self._article += 1
         elif tag == "main":
@@ -301,7 +315,7 @@ def parse(source: str):
         "source_type": "article",
         "title": page.og_title or page.title or "Untitled article",
         "author": page.author,
-        "date": page.date,
+        "date": page.date or page.time_date,
         "origin": source,
         "language": page.language,
         "words": words,

@@ -404,3 +404,33 @@ def test_parse_pdf_book_without_outline_or_headings_single_segment(tmp_path):
     assert meta["segments"] == [
         {"title": "Full text", "start_s": None, "pages": 1, "offset": 0}
     ]
+
+
+def test_chapter_text_keeps_code_indentation_and_superscripts():
+    text, _, _ = book._chapter_text(
+        "<html><body><p>Run <code>git status -s</code>:</p>"
+        "<pre> M README\nMM Rakefile\n    nested: true</pre>"
+        "<p>   About 2<sup>80</sup> hashes​.</p></body></html>"
+    )
+    assert text.splitlines() == [
+        "Run git status -s:",
+        "",
+        " M README",
+        "MM Rakefile",
+        "    nested: true",
+        "About 2^80 hashes.",
+    ]
+
+
+@pytest.mark.parametrize(
+    "title,flagged",
+    [("Table of Contents", True), ("Contributors", True), ("Dedications", True),
+     ("Copyright Page", True), ("Getting Started", False), ("Index Funds", False)],
+)
+def test_front_matter_titles(title, flagged):
+    assert bool(book.FRONT_MATTER_RE.match(title)) is flagged
+
+
+def test_content_chapters_are_not_front_matter(tmp_path):
+    _, meta = book.parse(str(make_epub(tmp_path)))
+    assert not any(s.get("front_matter") for s in meta["segments"])

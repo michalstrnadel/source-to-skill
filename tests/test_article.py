@@ -301,3 +301,22 @@ def test_parse_turns_stalled_read_timeout_into_extract_error(monkeypatch):
     monkeypatch.setattr(article.urllib.request, "urlopen", fake_urlopen)
     with pytest.raises(ExtractError, match="Cannot fetch"):
         article.parse(URL)
+
+
+def test_nested_block_inside_inline_text_starts_a_new_line():
+    page = article._PageText()
+    page.feed(
+        "<article><ul><li><strong>Sectioning</strong>:<ul>"
+        "<li>Implementing guardrails</li></ul></li></ul></article>"
+    )
+    page.close()
+    text = "".join(item[1] for item in page.items)
+    assert "Sectioning:\nImplementing guardrails" in text
+
+
+def test_time_element_is_date_fallback():
+    page = article._PageText()
+    page.feed('<p>Written on <time datetime="2018-06-27">June 27</time></p>')
+    page.close()
+    assert page.date is None
+    assert page.time_date == "2018-06-27"

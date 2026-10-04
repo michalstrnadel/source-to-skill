@@ -99,15 +99,36 @@ def test_parse_accepts_any_case_readme_and_falls_back_to_path_title(
     tmp_path, monkeypatch
 ):
     files = {
-        "ReadMe.rst": "Demo\n====\n\nBody text of the readme.\n",
+        "ReadMe.txt": "Demo\n\nBody text of the readme.\n",
         "docs/guide.md": GUIDE,
     }
     tar_path = make_tarball(tmp_path, files)
     serve_tarball(monkeypatch, tmp_path, tar_path)
     full_text, meta = repo.parse("https://github.com/octocat/demo")
     titles = [s["title"] for s in meta["segments"]]
-    assert titles == ["ReadMe.rst", "User Guide"]
+    assert titles == ["ReadMe.txt", "User Guide"]
     assert "Body text of the readme." in full_text
+
+
+def test_parse_reads_rst_and_mdx_docs_with_rst_titles(tmp_path, monkeypatch):
+    # Sphinx (Flask, Django, ...) and Docusaurus docs are not Markdown.
+    files = {
+        "README.rst": "Demo\n====\n\nBody text of the readme.\n",
+        "docs/quickstart.rst": (
+            ".. _quickstart:\n\n==========\nQuickstart\n==========\n\n"
+            "Install it.\n"
+        ),
+        "docs/no-title.rst": "Just prose, no section title.\n",
+        "doc/intro.mdx": "# Intro\n\n<Callout>Hi</Callout>\n",
+        "docs/conf.py": "project = 'demo'\n",
+    }
+    tar_path = make_tarball(tmp_path, files)
+    serve_tarball(monkeypatch, tmp_path, tar_path)
+    full_text, meta = repo.parse("https://github.com/octocat/demo")
+    titles = [s["title"] for s in meta["segments"]]
+    assert titles == ["Demo", "Intro", "docs/no-title.rst", "Quickstart"]
+    assert "Install it." in full_text
+    assert "project = 'demo'" not in full_text
 
 
 def test_parse_normalizes_dot_git_and_trailing_slash(tmp_path, monkeypatch):
