@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions and ideas (Discussions)
+    url: https://github.com/michalstrnadel/source-to-skill/discussions
+    about: Usage questions, show-and-tell of generated skills, and open-ended ideas.
+  - name: Report a security vulnerability
+    url: https://github.com/michalstrnadel/source-to-skill/security/advisories/new
+    about: Please report vulnerabilities privately, not in a public issue.

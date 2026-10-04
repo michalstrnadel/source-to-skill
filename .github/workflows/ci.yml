@@ -1,0 +1,120 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        include:
+          - os: macos-latest
+            python-version: "3.13"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Test (offline suite)
+        run: pytest -q
+
+  package:
+    name: package (build, install wheel, smoke CLI)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Build sdist and wheel
+        run: |
+          python -m pip install --upgrade pip build twine
+          python -m build
+          ls -l dist
+
+      - name: twine check
+        run: python -m twine check --strict dist/*
+
+      - name: Install wheel into a fresh venv
+        run: |
+          python -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/python" -m pip install --upgrade pip
+          "$RUNNER_TEMP/venv/bin/python" -m pip install dist/*.whl
+          echo "$RUNNER_TEMP/venv/bin" >> "$GITHUB_PATH"
+
+      - name: Smoke the installed CLI
+        # Run from an empty directory so nothing resolves from the checkout.
+        working-directory: ${{ runner.temp }}
+        run: |
+          source-to-skill --version
+          source-to-skill install --dest "$RUNNER_TEMP/skills/source-to-skill"
+          test -f "$RUNNER_TEMP/skills/source-to-skill/SKILL.md"
+          python "$RUNNER_TEMP/skills/source-to-skill/scripts/extract.py" --check
+
+  skills:
+    name: validate example skills
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Validate examples/*/SKILL.md
+        run: |
+          if [ ! -d examples ]; then
+            echo "No examples/ directory; nothing to validate."
+            exit 0
+          fi
+          shopt -s nullglob
+          checked=0
+          failed=0
+          for dir in examples/*/; do
+            [ -f "${dir}SKILL.md" ] || continue
+            checked=$((checked + 1))
+            echo "::group::${dir}"
+            if ! python skills/source-to-skill/tools/validate_skill.py "$dir"; then
+              echo "::error file=${dir}SKILL.md::validate_skill.py failed for ${dir}"
+              failed=$((failed + 1))
+            fi
+            echo "::endgroup::"
+          done
+          echo "Validated ${checked} example skill(s), ${failed} failed."
+          [ "$failed" -eq 0 ]

@@ -1,0 +1,43 @@
+name: New source type
+description: Propose a new kind of source to turn into agent skills.
+title: "feat: support <source type>"
+labels: [enhancement, new-source]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        See "Proposing a new source type" in [CONTRIBUTING.md](https://github.com/michalstrnadel/source-to-skill/blob/main/CONTRIBUTING.md).
+        Extraction must stay deterministic: no LLM and no API keys in the
+        extractor. Distillation is always done by the user's own agent.
+  - type: textarea
+    id: what
+    attributes:
+      label: What the source is
+      description: The source type, a couple of real example URLs/files, and why an agent skill beats pasting it into context (token math helps).
+    validations:
+      required: true
+  - type: textarea
+    id: extraction
+    attributes:
+      label: Deterministic extraction path
+      description: Which library or tool produces text plus structure without an LLM and without API keys? Is it an optional dependency? Licensing and maintenance health?
+    validations:
+      required: true
+  - type: textarea
+    id: segments
+    attributes:
+      label: Segment mapping
+      description: How the source maps onto the shared `segments` contract (`title`, `start_s`, `pages`, `offset`), and what the generated skill's support files should be.
+    validations:
+      required: true
+  - type: textarea
+    id: detection
+    attributes:
+      label: Detection
+      description: URL patterns or file extensions that identify this source, and any overlap with existing types.
+  - type: checkboxes
+    id: contrib
+    attributes:
+      label: Contribution
+      options:
+        - label: I'm willing to open a PR with offline tests for this source type.

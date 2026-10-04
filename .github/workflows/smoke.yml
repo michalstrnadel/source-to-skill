@@ -1,0 +1,116 @@
+name: Live smoke
+
+# Real network extraction against live sources. Catches upstream breakage
+# (yt-dlp, arXiv, site HTML, GitHub tarballs) that the offline test suite
+# cannot see. Not run on PRs on purpose.
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Monday 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  EXTRACT: skills/source-to-skill/scripts/extract.py
+  # Verifies the extraction really landed instead of trusting the exit code:
+  # reads the JSON summary printed by extract.py, loads metadata.json and
+  # full_text.txt from its work_dir, and asserts words > 0 and segments
+  # non-empty.
+  VERIFY: |
+    import json, pathlib, sys
+    summary = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
+    work = pathlib.Path(summary["work_dir"])
+    meta = json.loads((work / "metadata.json").read_text(encoding="utf-8"))
+    text = (work / "full_text.txt").read_text(encoding="utf-8")
+    assert meta.get("words", 0) > 0, f"words is {meta.get('words')!r}"
+    assert meta.get("segments"), "segments is empty"
+    assert text.strip(), "full_text.txt is empty"
+    print(f"OK {meta['source_type']}: {meta['title']!r} "
+          f"words={meta['words']} segments={len(meta['segments'])}")
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install latest extractors
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade yt-dlp PyMuPDF
+          python "$EXTRACT" --check
+
+      - name: arXiv paper
+        run: |
+          python "$EXTRACT" "https://arxiv.org/abs/1706.03762" \
+            --work-dir "$RUNNER_TEMP/w-arxiv" | tee "$RUNNER_TEMP/arxiv.json"
+          python -c "$VERIFY" "$RUNNER_TEMP/arxiv.json"
+
+      - name: Web article
+        if: ${{ !cancelled() }}
+        run: |
+          python "$EXTRACT" "https://paulgraham.com/greatwork.html" \
+            --work-dir "$RUNNER_TEMP/w-article" | tee "$RUNNER_TEMP/article.json"
+          python -c "$VERIFY" "$RUNNER_TEMP/article.json"
+
+      - name: GitHub repo
+        if: ${{ !cancelled() }}
+        run: |
+          python "$EXTRACT" "https://github.com/pallets/flask" \
+            --work-dir "$RUNNER_TEMP/w-repo" | tee "$RUNNER_TEMP/repo.json"
+          python -c "$VERIFY" "$RUNNER_TEMP/repo.json"
+
+      - name: YouTube video
+        if: ${{ !cancelled() }}
+        # GitHub-hosted runner IPs are frequently bot-blocked by YouTube
+        # ("Sign in to confirm you're not a bot"), so a failure here is
+        # informational and does not fail the run or open an issue.
+        continue-on-error: true
+        run: |
+          python "$EXTRACT" "https://www.youtube.com/watch?v=zjkBMFhNj_g" \
+            --work-dir "$RUNNER_TEMP/w-youtube" | tee "$RUNNER_TEMP/youtube.json"
+          python -c "$VERIFY" "$RUNNER_TEMP/youtube.json"
+
+  report:
+    needs: smoke
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Open or update smoke-failure issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body="Live smoke run failed: $RUN_URL"
+          existing=$(gh issue list --label smoke-failure --state open \
+            --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create \
+              --title "Live smoke extraction failing" \
+              --label smoke-failure \
+              --body "$body
+
+          One or more non-YouTube live extractions failed or produced invalid output.
+          Check the run log, reproduce locally with \`extract.py <url>\`, and close
+          this issue once the weekly smoke run is green again."
+          fi

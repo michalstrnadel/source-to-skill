@@ -1,0 +1,82 @@
+name: Bug report
+description: Extraction failed, produced wrong output, or a generated skill is broken.
+title: "fix: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please paste full output, not screenshots, and
+        redact anything private (local paths, cookies, tokens).
+  - type: input
+    id: source
+    attributes:
+      label: Source URL or file
+      description: The YouTube / playlist / podcast / arXiv / article / GitHub URL, or the kind of local file (PDF, EPUB, audio) if you can't share it.
+      placeholder: https://arxiv.org/abs/1706.03762
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command
+      description: Exactly what you ran (slash command in your agent, or the `extract.py` / `source-to-skill` invocation).
+      render: shell
+      placeholder: python3 skills/source-to-skill/scripts/extract.py https://... --type paper
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What happened vs. what you expected
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Full error output
+      description: Complete stderr/stdout, including any traceback.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: check
+    attributes:
+      label: "`extract.py --check` output"
+      description: "Run `python3 skills/source-to-skill/scripts/extract.py --check` (or `source-to-skill check`) and paste the result."
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: macOS 15.5 / Ubuntu 24.04 / Windows 11
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.13.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: host
+    attributes:
+      label: Agent host
+      options:
+        - Claude Code (plugin)
+        - Claude Code (manual skills folder)
+        - GitHub Copilot CLI
+        - Amp
+        - Codex
+        - Other Agent Skills host
+        - None (ran extract.py directly)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: source-to-skill version
+      description: "`source-to-skill --version`, plugin version, or git commit."
