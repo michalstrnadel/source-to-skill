@@ -9,7 +9,7 @@ contract as YouTube videos, so every segment keeps its start second.
 import re
 from pathlib import Path
 
-from .. import dependencies, transcribe, utils
+from .. import dependencies, media, transcribe, utils
 from ..utils import ExtractError
 from .youtube import build_segments, segment_text
 
@@ -46,9 +46,7 @@ def _local(source: str):
 
 def _remote(source: str):
     ydl_mod = dependencies.require("yt_dlp")
-    from ..media import download_audio
-
-    info, path = download_audio(ydl_mod, source)
+    info, path = media.download_audio(ydl_mod, source)
     return info, path, True
 
 

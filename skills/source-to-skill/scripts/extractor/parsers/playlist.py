@@ -5,6 +5,7 @@ import re
 
 from .. import config, dependencies, transcribe as whisper, utils
 from ..utils import ExtractError
+from .audio import deep_link_template
 from .youtube import _pick_track, marked_lines, video_cues
 
 
@@ -50,11 +51,17 @@ def channel_videos_url(url: str) -> str:
 def parse(url: str, limit=None, transcribe: bool = False):
     ydl_mod = dependencies.require("yt_dlp")
     is_channel = utils.is_channel_url(url)
+    is_feed = utils.is_feed_url(url)
     listing_url = channel_videos_url(url) if is_channel else url
-    if limit is None and is_channel:
-        limit = config.CHANNEL_DEFAULT_LIMIT
+    if limit is None and (is_channel or is_feed):
+        limit = (
+            config.CHANNEL_DEFAULT_LIMIT if is_channel
+            else config.FEED_DEFAULT_LIMIT
+        )
+        what = "videos" if is_channel else "episodes"
         print(
-            f"NOTE: channel - extracting the latest {limit} videos "
+            f"NOTE: {'channel' if is_channel else 'podcast feed'} - "
+            f"extracting the latest {limit} {what} "
             "(pass --limit N for more or fewer).",
             file=sys.stderr,
         )
@@ -89,7 +96,7 @@ def parse(url: str, limit=None, transcribe: bool = False):
     for number, entry in enumerate(entries, start=1):
         video_title = entry.get("title") or f"Video {number}"
         video_url = entry.get("url")
-        if not video_url and entry.get("id"):
+        if not video_url and entry.get("id") and not is_feed:
             video_url = f"https://www.youtube.com/watch?v={entry['id']}"
         if not video_url:
             reason = "playlist entry has no url or id"
@@ -128,7 +135,10 @@ def parse(url: str, limit=None, transcribe: bool = False):
                 rate_limited_in_a_row = 0
             continue
         rate_limited_in_a_row = 0
-        video_title = video_info.get("title") or video_title
+        if not is_feed:
+            # Feed entries already carry the episode title; resolving the
+            # enclosure URL only yields a file name.
+            video_title = video_info.get("title") or video_title
         chunk = (
             f"=== [{number:02d}] {video_title} ===\n"
             f"{video_url}\n{transcript}\n\n"
@@ -141,6 +151,7 @@ def parse(url: str, limit=None, transcribe: bool = False):
                 "offset": offset,
                 "url": video_url,
                 "captions": captions,
+                "deep_link_template": deep_link_template(video_url),
             }
         )
         chunks.append(chunk)
@@ -160,7 +171,9 @@ def parse(url: str, limit=None, transcribe: bool = False):
     words = len(full_text.split())
     metadata = {
         "source_type": "playlist",
-        "kind": "channel" if is_channel else "playlist",
+        "kind": (
+            "channel" if is_channel else "feed" if is_feed else "playlist"
+        ),
         "title": re.sub(r"\s+-\s+Videos$", "", title),
         "origin": info.get("webpage_url") or url,
         "channel": info.get("channel") or info.get("uploader"),

@@ -417,3 +417,104 @@ def test_check_report_warns_on_stale_yt_dlp(monkeypatch):
         lambda name: SimpleNamespace(__version__="2020.01.01"),
     )
     assert "pip install -U yt-dlp" in dependencies.check_report()
+
+
+# --- podcast feeds -------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "source,expected",
+    [
+        ("https://feeds.megaphone.fm/hubermanlab", "playlist"),
+        ("https://feeds.simplecast.com/54nAGcIl", "playlist"),
+        ("https://anchor.fm/s/abc123/podcast/rss", "playlist"),
+        ("https://example.com/podcast.xml", "playlist"),
+        ("https://example.com/blog/feed/", "playlist"),
+        ("https://example.com/feedback-wanted", "article"),
+    ],
+)
+def test_detect_podcast_feeds(source, expected):
+    assert utils.detect_source(source) == expected
+
+
+def test_feed_defaults_to_latest_episodes_with_deep_links(
+    monkeypatch, capsys, whisper, tmp_path
+):
+    episodes = [
+        {"url": f"https://cdn.example.com/ep{i}.mp3", "title": f"Ep {i}"}
+        for i in range(8)
+    ]
+
+    class FeedYDL(FakeYDL):
+        def extract_info(self, url, download=False):
+            if url.endswith("/rss"):
+                return {"title": "The Show", "entries": episodes}
+            return {"title": url.rsplit("/", 1)[-1], "subtitles": {},
+                    "automatic_captions": {}}
+
+    monkeypatch.setattr(
+        playlist.dependencies, "require",
+        lambda module: SimpleNamespace(YoutubeDL=FeedYDL),
+    )
+    media = tmp_path / "ep.mp3"
+
+    def fake_download(ydl, url):
+        media.write_bytes(b"x")
+        return {}, media
+
+    monkeypatch.setattr("extractor.media.download_audio", fake_download)
+    _, meta = playlist.parse("https://anchor.fm/s/abc/podcast/rss")
+    assert meta["kind"] == "feed"
+    assert meta["segments"][0]["title"] == "Ep 0"  # not the file name
+    assert len(meta["segments"]) == config.FEED_DEFAULT_LIMIT
+    first = meta["segments"][0]
+    assert first["captions"] == "whisper"
+    assert first["deep_link_template"] == "https://cdn.example.com/ep0.mp3#t={s}"
+    assert "latest 5 episodes" in capsys.readouterr().err
+    assert len(whisper.paths) == config.FEED_DEFAULT_LIMIT
+
+
+def test_whisper_fallback_survives_yt_dlp_plugin_rebinding_extractor(
+    tmp_path, monkeypatch, whisper
+):
+    # yt-dlp's plugin loader can replace sys.modules["extractor"] with its
+    # own ytdlp_plugins.extractor package once a YoutubeDL starts.
+    import sys
+    import types
+
+    media_file = _captionless_video(monkeypatch, tmp_path)
+    monkeypatch.setitem(
+        sys.modules, "extractor", types.ModuleType("ytdlp_plugins.extractor")
+    )
+    # In a real run the submodule may not be cached yet when that happens.
+    monkeypatch.delitem(sys.modules, "extractor.media")
+    _, meta = youtube.parse("https://www.youtube.com/watch?v=abc")
+    assert meta["captions"] == "whisper"
+    assert whisper.paths == [media_file]
+
+
+def test_download_audio_is_quiet_and_has_no_progress_bar(tmp_path, monkeypatch):
+    from extractor import media
+
+    seen = {}
+    target = tmp_path / "work" / "media" / "x.mp3"
+
+    class DL:
+        def __init__(self, opts):
+            seen.update(opts)
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def extract_info(self, url, download):
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(b"x")
+            return {"filepath": str(target)}
+
+    monkeypatch.setattr(config, "work_dir", lambda: tmp_path / "work")
+    _, path = media.download_audio(SimpleNamespace(YoutubeDL=DL), "https://x/a.mp3")
+    assert path == target
+    assert seen["quiet"] and seen["noprogress"]

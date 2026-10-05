@@ -3,7 +3,7 @@ import importlib
 import shutil
 from datetime import date
 
-from . import config
+from . import config, transcribe
 from .utils import ExtractError
 
 
@@ -73,9 +73,6 @@ def _yt_dlp_freshness():
 
 
 def _transcription_lines():
-    # Imported lazily: transcribe imports utils, which needs no deps.
-    from . import transcribe
-
     backend = transcribe.available_backend()
     if backend is None:
         return [

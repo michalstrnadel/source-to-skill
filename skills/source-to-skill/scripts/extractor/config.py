@@ -41,6 +41,18 @@ CHANNEL_URL_PATTERN = (
 # Channels extract only their latest uploads unless --limit says otherwise.
 CHANNEL_DEFAULT_LIMIT = 20
 
+# Podcast RSS feeds: a whole show becomes a course of its latest episodes
+# (each transcribed with Whisper). Paths ending in .rss/.xml/feed/rss, or
+# feed hosts such as feeds.megaphone.fm.
+FEED_URL_PATTERN = (
+    r"(?i)^https?://(?:feeds?\.[^/?#]+/[^?#]*|[^?#]*(?:\.rss|\.xml|/feed|/rss))"
+    r"/?(?:[?#].*)?$"
+)
+
+# Feeds extract only their latest episodes unless --limit says otherwise:
+# every episode needs a local transcription.
+FEED_DEFAULT_LIMIT = 5
+
 # Podcast pages yt-dlp can download episodes from.
 PODCAST_URL_PATTERNS = (
     r"(?i)(?:https?://)?podcasts\.apple\.com/",
@@ -62,7 +74,8 @@ ARXIV_URL_PATTERN = (
 DEFAULT_SEGMENT_WINDOW_S = 600
 
 # Inside a segment, prefix a cue with [t=Ns] at most this often (seconds).
-INLINE_TIMESTAMP_EVERY_S = 60
+# 30 s keeps deep links close to the claim for ~3% more tokens.
+INLINE_TIMESTAMP_EVERY_S = 30
 
 # Rough words -> tokens factor for cost estimates.
 TOKENS_PER_WORD = 1.333

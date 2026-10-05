@@ -3,7 +3,7 @@ import html
 import re
 import urllib.request
 
-from .. import config, dependencies, transcribe, utils
+from .. import config, dependencies, media, transcribe, utils
 from ..utils import ExtractError
 
 TIMESTAMP_RE = re.compile(r"(?:(\d+):)?(\d{2}):(\d{2})[.,](\d{3})\s*-->")
@@ -155,9 +155,7 @@ def _pick_track(info: dict):
 
 def _whisper_cues(ydl_mod, url):
     """Transcribe a video's audio locally; return (cues, language, label)."""
-    from ..media import download_audio
-
-    _, path = download_audio(ydl_mod, url)
+    _, path = media.download_audio(ydl_mod, url)
     try:
         return transcribe.transcribe(path)
     finally:

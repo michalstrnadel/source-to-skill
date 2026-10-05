@@ -16,6 +16,7 @@ def download_audio(ydl_mod, url: str):
     opts = {
         "quiet": True,
         "no_warnings": True,
+        "noprogress": True,
         "noplaylist": True,
         "format": "bestaudio/best",
         "outtmpl": str(target_dir / "%(id)s.%(ext)s"),

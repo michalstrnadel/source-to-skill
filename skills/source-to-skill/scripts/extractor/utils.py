@@ -25,7 +25,8 @@ def _is_media_path(source: str) -> bool:
 def _possible_types(source: str) -> tuple:
     """Source types this source can plausibly be, best guess first.
 
-    Detection order: youtube video -> channel -> playlist -> podcast page
+    Detection order: youtube video -> channel -> playlist -> podcast RSS
+    feed (a playlist of episodes) -> podcast page
     or direct media URL -> arxiv -> github repo -> generic http(s)
     article -> .pdf -> .epub -> local audio/video file. Any http(s) URL
     can also be forced to article or audio (yt-dlp downloads from 1000+
@@ -53,6 +54,8 @@ def _possible_types(source: str) -> tuple:
         return with_others("playlist")
     if re.match(config.PLAYLIST_URL_PATTERN, source):
         return with_others("playlist")
+    if is_http and re.match(config.FEED_URL_PATTERN, source):
+        return with_others("playlist")
     if is_http and (
         any(re.match(p, source) for p in config.PODCAST_URL_PATTERNS)
         or _is_media_path(source)
@@ -72,6 +75,10 @@ def _possible_types(source: str) -> tuple:
     if _is_media_path(source):
         return ("audio",)
     return ()
+
+
+def is_feed_url(source: str) -> bool:
+    return re.match(config.FEED_URL_PATTERN, source) is not None
 
 
 def is_channel_url(source: str) -> bool:

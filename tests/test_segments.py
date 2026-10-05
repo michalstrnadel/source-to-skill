@@ -58,7 +58,8 @@ def test_segment_text_assigns_cues_and_records_offsets():
     }
 
 
-def test_segment_text_marks_timestamps_inside_long_segments():
+def test_segment_text_marks_timestamps_inside_long_segments(monkeypatch):
+    monkeypatch.setattr(youtube.config, "INLINE_TIMESTAMP_EVERY_S", 60)
     cues = [
         {"start_s": 0.0, "text": "a"},
         {"start_s": 30.0, "text": "b"},
