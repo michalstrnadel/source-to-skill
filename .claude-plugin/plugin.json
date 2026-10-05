@@ -1,7 +1,7 @@
 {
   "name": "source-to-skill",
   "description": "Turn YouTube videos, playlists & channels, podcasts, academic papers, books, web articles, and GitHub repos into agent skills",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "author": {
     "name": "Michal Strnadel",
     "url": "https://github.com/michalstrnadel"

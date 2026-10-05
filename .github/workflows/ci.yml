@@ -118,3 +118,19 @@ jobs:
           done
           echo "Validated ${checked} example skill(s), ${failed} failed."
           [ "$failed" -eq 0 ]
+
+  plugin:
+    name: plugin manifests (claude plugin validate --strict)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Validate marketplace and plugin manifests
+        run: |
+          npm install --global @anthropic-ai/claude-code
+          claude plugin validate --strict .
+          claude plugin validate --strict .claude-plugin/plugin.json

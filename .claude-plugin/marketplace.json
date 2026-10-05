@@ -4,6 +4,9 @@
     "name": "Michal Strnadel",
     "url": "https://github.com/michalstrnadel"
   },
+  "metadata": {
+    "description": "Single-plugin marketplace for source-to-skill: turn videos, podcasts, papers, books, articles and repos into agent skills"
+  },
   "plugins": [
     {
       "name": "source-to-skill",
