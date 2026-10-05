@@ -434,3 +434,37 @@ def test_front_matter_titles(title, flagged):
 def test_content_chapters_are_not_front_matter(tmp_path):
     _, meta = book.parse(str(make_epub(tmp_path)))
     assert not any(s.get("front_matter") for s in meta["segments"])
+
+
+def test_chapter_text_renders_tables_as_pipe_rows():
+    text, _, _ = book._chapter_text(
+        "<html><body><p>Intro</p><table>"
+        "<tr><th>Command</th><th>Effect</th></tr>"
+        "<tr><td><code>git add</code></td><td><p>Stages\nchanges</p></td></tr>"
+        "<tr><td>a|b</td><td><table><tr><td>in</td><td>ner</td></tr>"
+        "</table></td></tr></table><p>Outro</p></body></html>"
+    )
+    assert text.splitlines() == [
+        "Intro",
+        "| Command | Effect |",
+        "| --- | --- |",
+        "| git add | Stages changes |",
+        "| a\\|b | in ner |",
+        "Outro",
+    ]
+
+
+def test_chapter_text_images_figcaptions_and_labels():
+    text, _, _ = book._chapter_text(
+        "<html><body><figure><img src='f.png' alt='Three states'/>"
+        "<figcaption>Figure 1. Working tree</figcaption></figure>"
+        "<img src='spacer.gif' alt=''/>"
+        "<p><strong>Note:</strong>Read this. <b>Hel</b>lo</p>"
+        "</body></html>"
+    )
+    assert text.splitlines() == [
+        "[image: Three states]",
+        "[figure] Figure 1. Working tree",
+        "",  # </figcaption></figure>: book keeps one blank per nested block
+        "Note: Read this. Hello",
+    ]

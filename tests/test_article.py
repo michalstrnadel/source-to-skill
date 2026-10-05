@@ -320,3 +320,187 @@ def test_time_element_is_date_fallback():
     page.close()
     assert page.date is None
     assert page.time_date == "2018-06-27"
+
+
+def _page_text(html):
+    page = article._PageText()
+    page.feed(html)
+    page.close()
+    return article._clean(item[1] for item in page.items)
+
+
+def test_table_renders_as_pipe_rows_with_header_separator():
+    text = _page_text(
+        "<article><p>Before</p><table>"
+        "<thead><tr><th>Model</th><th>BLEU\n score</th></tr></thead>"
+        "<tbody><tr><td><p>Base</p><p>model</p></td><td>27.3</td></tr>"
+        "<tr><td>Big</td><td>28.4</td></tr></tbody>"
+        "</table><p>After</p></article>"
+    )
+    assert text.splitlines() == [
+        "Before",
+        "| Model | BLEU score |",
+        "| --- | --- |",
+        "| Base model | 27.3 |",
+        "| Big | 28.4 |",
+        "After",
+    ]
+
+
+def test_table_without_header_has_no_separator_and_escapes_pipes():
+    text = _page_text(
+        "<table><tr><td>a|b</td><td>c<br>d</td></tr>"
+        "<tr><td>e</td><td></td></tr></table>"
+    )
+    assert text.splitlines() == ["| a\\|b | c d |", "| e |  |"]
+
+
+def test_nested_table_is_flattened_into_its_cell():
+    text = _page_text(
+        "<table><tr><th>Outer</th><th>Detail</th></tr>"
+        "<tr><td>x</td><td><table><tr><td>in1</td><td>in2</td></tr>"
+        "<tr><td>in3</td></tr></table></td></tr></table>"
+    )
+    assert text.splitlines() == [
+        "| Outer | Detail |",
+        "| --- | --- |",
+        "| x | in1 in2 in3 |",
+    ]
+
+
+def test_single_column_layout_table_keeps_plain_lines():
+    text = _page_text(
+        "<table><tr><td><p>First paragraph.</p><p>Second one.</p></td></tr>"
+        "</table>"
+    )
+    assert text.splitlines() == ["First paragraph.", "Second one."]
+
+
+def test_layout_table_with_only_one_non_empty_cell_per_row_is_plain_text():
+    # Illustrated Transformer: a banner table with an alt-less image cell.
+    text = _page_text(
+        '<table><tr><td><a href="/b"><img src="b.png" width="200"></a></td>'
+        "<td><b>Update:</b> This post is now a book!</td></tr></table>"
+    )
+    assert text.splitlines() == ["Update: This post is now a book!"]
+
+
+def test_heading_inside_table_cell_is_cell_text_not_segment():
+    page = article._PageText()
+    page.feed("<table><tr><td><h2>Cell head</h2></td><td>v</td></tr></table>")
+    page.close()
+    assert all(kind == "text" for kind, *_ in page.items)
+    assert "| Cell head | v |" in "".join(i[1] for i in page.items)
+
+
+def test_unclosed_table_is_flushed_at_eof():
+    text = _page_text("<table><tr><td>a</td><td>b")
+    assert text == "| a | b |"
+
+
+def test_images_with_alt_become_markers_and_figcaptions_are_tagged():
+    text = _page_text(
+        "<article><p>Intro</p><figure>"
+        '<img src="x.png" alt="Encoder  stack diagram">'
+        "<figcaption> The <em>encoder</em> stack</figcaption></figure>"
+        '<img src="deco.png" alt="">'
+        '<img src="pixel.gif" alt="tracker" width="1" height="1">'
+        '<img src="noalt.png"></article>'
+    )
+    assert text.splitlines() == [
+        "Intro",
+        "[image: Encoder stack diagram]",
+        "[figure] The encoder stack",
+    ]
+
+
+def test_bold_label_without_space_gets_one():
+    text = _page_text(
+        "<p><strong>Label:</strong>Text here</p>"
+        "<p><b>Hel</b>lo world</p>"
+        "<p><b>Ratio:</b>3 and <b>Spaced:</b> fine</p>"
+    )
+    assert text.splitlines() == [
+        "Label: Text here", "Hello world", "Ratio:3 and Spaced: fine",
+    ]
+
+
+def _meta_for(monkeypatch, head="", body_extra=""):
+    page = _page(
+        head="<title>T</title>" + head,
+        body=f"{body_extra}<article>{LONG_PARAGRAPH}</article>",
+    )
+    _install_fetch(monkeypatch, page)
+    return article.parse(URL)[1]
+
+
+def test_author_and_date_from_json_ld(monkeypatch):
+    meta = _meta_for(
+        monkeypatch,
+        head='<script type="application/ld+json">'
+        '{"@context": "https://schema.org", "@graph": ['
+        '{"@type": "WebSite", "name": "Site"},'
+        '{"@type": "Article", "author": [{"@type": "Person", "name": "Ada"},'
+        ' {"@id": "#bob"}], "datePublished": "2024-12-19"},'
+        '{"@type": "Person", "@id": "#bob", "name": "Bob"}]}</script>',
+    )
+    assert meta["author"] == "Ada, Bob"
+    assert meta["date"] == "2024-12-19"
+
+
+def test_json_ld_string_author_and_list_root(monkeypatch):
+    meta = _meta_for(
+        monkeypatch,
+        head='<script type="application/ld+json">'
+        '[{"@type": "BlogPosting", "author": "Solo Writer"}]</script>',
+    )
+    assert meta["author"] == "Solo Writer"
+
+
+def test_broken_json_ld_never_raises(monkeypatch):
+    meta = _meta_for(
+        monkeypatch,
+        head='<script type="application/ld+json">{not json</script>'
+        '<script type="application/ld+json">{"author": 42}</script>'
+        '<script type="application/ld+json">"just a string"</script>',
+    )
+    assert meta["author"] is None
+    assert meta["date"] is None
+
+
+def test_regular_scripts_still_dropped(monkeypatch):
+    page = _page(
+        head="<title>T</title>",
+        body='<article><script>{"author": {"name": "Nope"}}</script>'
+        f"{LONG_PARAGRAPH}</article>",
+    )
+    _install_fetch(monkeypatch, page)
+    full_text, meta = article.parse(URL)
+    assert "Nope" not in full_text
+    assert meta["author"] is None
+
+
+def test_meta_author_beats_json_ld(monkeypatch):
+    meta = _meta_for(
+        monkeypatch,
+        head='<meta name="author" content="Meta Name">'
+        '<script type="application/ld+json">'
+        '{"author": {"name": "LD Name"}}</script>',
+    )
+    assert meta["author"] == "Meta Name"
+
+
+def test_author_from_twitter_creator(monkeypatch):
+    meta = _meta_for(
+        monkeypatch, head='<meta name="twitter:creator" content="@jay">'
+    )
+    assert meta["author"] == "@jay"
+
+
+def test_author_from_rel_author_link_even_in_header(monkeypatch):
+    meta = _meta_for(
+        monkeypatch,
+        body_extra='<header>By <a rel="author" href="/u/k">Kim  Lee</a>'
+        "</header>",
+    )
+    assert meta["author"] == "Kim Lee"

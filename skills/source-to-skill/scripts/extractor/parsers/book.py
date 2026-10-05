@@ -11,6 +11,7 @@ from xml.etree import ElementTree
 from .. import config, dependencies, utils
 from ..utils import ExtractError
 from . import paper
+from .article import TABLE_TAGS, InlineMarkers, TableRenderer, image_marker
 
 CONTAINER_PATH = "META-INF/container.xml"
 NCX_MEDIA_TYPE = "application/x-dtbncx+xml"
@@ -36,8 +37,13 @@ FRONT_MATTER_RE = re.compile(
 )
 
 
-class _ChapterText(HTMLParser):
-    """Collects visible text plus the first <h1> and the <title>."""
+class _ChapterText(InlineMarkers, HTMLParser):
+    """Collects visible text plus the first <h1> and the <title>.
+
+    Tables render as pipe rows, images with alt text as `[image: alt]`,
+    and figcaptions are prefixed `[figure] ` (helpers shared with the
+    article parser).
+    """
 
     def __init__(self):
         super().__init__()
@@ -48,18 +54,48 @@ class _ChapterText(HTMLParser):
         self.h1 = None
         self.title = None
         self._pre = 0
+        self._table = TableRenderer()
+        self._markers_reset()
+
+    def _out(self, text):
+        """Route body text into the open table, else the chapter text."""
+        if self._table.active:
+            self._table.data(text)
+        else:
+            self._parts.append(text)
+
+    def _line_start(self):
+        """Start a new line unless the text already sits at one."""
+        if self._parts and not self._parts[-1].endswith("\n"):
+            self._parts.append("\n")
 
     def handle_starttag(self, tag, attrs):
         if tag in SKIP_TAGS:
             self._skip += 1
+            return
+        if self._skip:
+            return
+        self._markers_start(tag)
+        if tag in TABLE_TAGS and (tag == "table" or self._table.active):
+            if tag == "table" and not self._table.active:
+                self._line_start()
+            self._table.start(tag)
         elif tag == "pre":
             self._pre += 1
-            self._parts.append("\n" + PRE_LINE)
+            self._out("\n" + PRE_LINE)
         elif tag == "sup" and self._capture is None:
             # 2<sup>80</sup> must not collapse into "280".
-            self._parts.append("^")
+            self._out("^")
+        elif tag == "img" and self._capture is None:
+            marker = image_marker(dict(attrs))
+            if marker:
+                if self._table.active:
+                    self._table.data(f"\n{marker}\n")
+                else:
+                    self._line_start()
+                    self._parts.append(f"{marker}\n")
         elif tag == "br":
-            self._parts.append("\n")
+            self._out("\n")
             if self._capture:
                 self._captured.append(" ")
         elif tag == "h1" and self.h1 is None and self._capture is None:
@@ -70,6 +106,10 @@ class _ChapterText(HTMLParser):
     def handle_endtag(self, tag):
         if tag in SKIP_TAGS and self._skip:
             self._skip -= 1
+            return
+        if self._skip:
+            return
+        self._markers_end(tag)
         if tag == "pre" and self._pre:
             self._pre -= 1
         if tag == self._capture:
@@ -79,12 +119,17 @@ class _ChapterText(HTMLParser):
             else:
                 self.title = text or None
             self._capture = None
-        if tag in BLOCK_TAGS:
-            self._parts.append("\n")
+        if self._table.active and tag in TABLE_TAGS:
+            rendered = self._table.end(tag)
+            if rendered:
+                self._parts.append(rendered)
+        elif tag in BLOCK_TAGS:
+            self._out("\n")
 
     def handle_data(self, data):
         if self._skip:
             return
+        data = self._markers_data(data)
         if self._capture:
             self._captured.append(data)
         if self._capture != "title":
@@ -92,7 +137,14 @@ class _ChapterText(HTMLParser):
                 # Code keeps its indentation: `git status -s` columns,
                 # YAML, Python all change meaning without it.
                 data = data.replace("\n", "\n" + PRE_LINE)
-            self._parts.append(data)
+            self._out(data)
+
+    def close(self):
+        super().close()
+        rendered = self._table.flush()
+        if rendered:
+            self._line_start()
+            self._parts.append(rendered)
 
     def text(self) -> str:
         raw = "".join(self._parts).replace("\u200b", "")
