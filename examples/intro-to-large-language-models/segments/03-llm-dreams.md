@@ -4,7 +4,7 @@ https://www.youtube.com/watch?v=zjkBMFhNj_g&t=538s
 
 - **Inference loop:** sample a word, feed it back in, get the next word,
   repeat. A network trained on web pages, let loose this way, "dreams"
-  internet documents.
+  internet documents. [17:52](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=1072s)
 - Examples shown: something like Java code, something like an Amazon product
   listing, something like a Wikipedia article.
 
@@ -12,10 +12,10 @@ https://www.youtube.com/watch?v=zjkBMFhNj_g&t=538s
 
 - In the product "dream", the title, author and ISBN are invented. The model
   knows an ISBN is a number of roughly a certain length after "ISBN:" and
-  fills in something plausible — the number almost certainly doesn't exist.
+  fills in something plausible — the number almost certainly doesn't exist. [9:58](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=598s)
 - In the Wikipedia-like article about a fish species, the text does not
   appear verbatim in training data, yet the facts are roughly correct: the
-  model has knowledge about the fish and pours it into the right form.
-- **You never know which parts are memorized and which are hallucinated.**
+  model has knowledge about the fish and pours it into the right form. [9:58](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=598s)
+- **You never know which parts are memorized and which are hallucinated.** [10:58](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=658s)
   The model is mimicking the training distribution, producing the correct
   *form* filled with partially reliable knowledge.

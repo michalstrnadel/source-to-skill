@@ -3,7 +3,8 @@
   "origin": "https://www.youtube.com/watch?v=zjkBMFhNj_g",
   "source_type": "youtube",
   "title": "[1hr Talk] Intro to Large Language Models",
-  "extracted_at": "2026-10-04T20:31:14Z",
+  "est_tokens": 16433,
+  "extracted_at": "2026-10-05T09:36:10Z",
   "extractor_version": "0.5.0",
   "options": {},
   "segments": [
@@ -91,6 +92,5 @@
       "key": "Outro",
       "title": "Outro"
     }
-  ],
-  "est_tokens": 16370
+  ]
 }

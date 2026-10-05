@@ -6,16 +6,16 @@ https://www.youtube.com/watch?v=zjkBMFhNj_g&t=2445s
   of tasks — so it may be better to have **many expert models** than one model
   for everything.
 - **Example:** the GPTs App Store, announced by Sam Altman a few weeks before
-  the talk — OpenAI's attempt at a customization layer.
+  the talk — OpenAI's attempt at a customization layer. [40:45](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=2445s)
 
 ## Customization levers available then
 
 1. **Custom instructions.**
 2. **Uploaded files + retrieval-augmented generation (RAG):** the model can
    reference chunks of your files when answering — like browsing, but over
-   your files instead of the internet.
+   your files instead of the internet. [40:45](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=2445s)
 
 ## Future levers
 
-- **Fine-tuning** on your own training data, and other kinds of
+- **Fine-tuning** on your own training data [41:46](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=2506s), and other kinds of
   customization.

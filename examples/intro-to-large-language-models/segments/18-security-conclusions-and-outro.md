@@ -6,15 +6,15 @@ https://www.youtube.com/watch?v=zjkBMFhNj_g&t=3517s
 
 - Covered: prompt injection, jailbreaks, data poisoning / backdoors.
 - **All have published defenses**, and many of the specific attacks shown may
-  no longer work — they get patched over time.
+  no longer work — they get patched over time. [58:37](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=3517s)
 - The point is the **cat-and-mouse dynamic** familiar from traditional
   security, now replaying in LLM security.
 - These three are only a sample: there is a **large diversity of attacks**; it
-  is a very active, new and rapidly evolving area of study.
+  is a very active, new and rapidly evolving area of study. [58:37](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=3517s)
 
 ## Outro (59:23)
 
-Final recap slide of the three acts:
+Final recap slide of the three acts: [59:23](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=3563s)
 
 1. **What LLMs are** — how they are obtained and trained.
 2. **Their promise** — where they are heading (tools, multimodality, System 2,

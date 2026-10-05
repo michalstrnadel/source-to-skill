@@ -3,7 +3,8 @@
   "origin": "https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi",
   "source_type": "playlist",
   "title": "Neural networks",
-  "extracted_at": "2026-10-04T20:31:26Z",
+  "est_tokens": 52888,
+  "extracted_at": "2026-10-05T09:37:12Z",
   "extractor_version": "0.5.0",
   "options": {},
   "segments": [
@@ -47,6 +48,5 @@
       "key": "https://www.youtube.com/watch?v=iv-5mZ_9CPY",
       "title": "But how do AI images and videos actually work? | Guest video by Welch Labs"
     }
-  ],
-  "est_tokens": 52628
+  ]
 }

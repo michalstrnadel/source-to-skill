@@ -8,8 +8,8 @@ Multimodality is a major axis along which LLMs are improving.
 - **Seeing images** — Greg Brockman (OpenAI co-founder) demo: a pencil sketch
   of a "my joke website" diagram → ChatGPT wrote working HTML and JavaScript;
   the site shows a joke and reveals the punchline on click. Images can be fed
-  in alongside text.
+  in alongside text. [33:32](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=2012s)
 - **Hearing and speaking** — the ChatGPT iOS app offered speech-to-speech
   conversation, a conversational interface "like the movie *Her*" with no
-  typing. Karpathy recommends trying it.
+  typing. Karpathy recommends trying it. [34:35](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=2075s)
 - Expectation: more language models will gain these capabilities over time.

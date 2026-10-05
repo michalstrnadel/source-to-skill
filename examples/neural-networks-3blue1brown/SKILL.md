@@ -8,8 +8,9 @@ description: Course skill distilled from 3Blue1Brown's "Neural networks" YouTube
 Source: https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi
 (channel: 3Blue1Brown, 10 videos). Lesson 10 is a guest video by Welch Labs;
 lesson 9 is "Part 2" of a separate *Compression is Intelligence* series (its
-Part 1 is not in this playlist). Transcripts carry no timestamps, so lesson
-files link to the whole video.
+Part 1 is not in this playlist). Lesson files open with the video URL and
+link key moments as `&t=<N>s` deep links (timestamps from ~1-minute caption
+markers, so each link lands at or shortly before the point described).
 
 ## What the course teaches, in order
 

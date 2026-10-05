@@ -28,7 +28,7 @@ cp -r examples/pro-git ~/.claude/skills/
 
 ## Things worth looking at
 
-- **Deep links.** Every segment of the video skill opens with a link to the exact second it starts; every lesson of the course opens with its video.
+- **Deep links.** Every segment of the video skill and every lesson of the course opens with its link, and key claims and numbers link to their own moment (`&t=`), never more than about a minute early.
 - **`disagreements.md`** in the topic skill: where the paper, the video, and the article contradict each other or use different notation, with both positions kept side by side.
 - **Honest scope.** The video skill dates its claims (November 2023), and the paper skill records the paper's own inconsistency (EN-FR BLEU 41.8 vs 41.0) instead of picking one.
 

@@ -10,22 +10,22 @@ injected text; the model can.
 
 1. **Hidden text in an image.** User asks "what does this say?"; the model
    replies "I don't know" and mentions a 10% off sale at Sephora. The image
-   contains very faint white text instructing exactly that.
+   contains very faint white text instructing exactly that. [51:30](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=3090s)
 2. **Poisoned web page via search (Bing).** User asks for the best movies of
    2022. The answer lists movies, then announces the user won a $200 Amazon
-   gift card and should log in via a link — a fraud link. One of the browsed
+   gift card and should log in via a link — a fraud link. [52:30](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=3150s) One of the browsed
    pages contained hidden (e.g. white-on-white) text telling the model to
-   forget previous instructions and publish the link.
+   forget previous instructions and publish the link. [53:31](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=3211s)
 3. **Data exfiltration via a shared Google Doc (Bard).** Someone shares a doc
-   containing an injection; you ask Bard to summarize it. The injected prompt
+   containing an injection; you ask Bard to summarize it. [53:31](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=3211s) The injected prompt
    makes Bard gather your personal data and encode it into the URL of a
    markdown image pointing at an attacker's server — rendering the image sends
-   the data in the GET request.
+   the data in the GET request. [54:33](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=3273s)
    - **Defense in place:** a Content Security Policy blocks images from
-     arbitrary domains (only trusted Google domains).
+     arbitrary domains (only trusted Google domains). [54:33](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=3273s)
    - **Bypass:** Google Apps Script (macro-like functionality) can export the
      data into a Google Doc — inside the Google domain, hence "safe" — that the
-     attacker has access to.
+     attacker has access to. [55:35](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=3335s)
 
 ## Takeaways
 

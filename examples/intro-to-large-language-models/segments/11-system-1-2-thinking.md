@@ -10,20 +10,20 @@ product announcements.)
 | | System 1 | System 2 |
 |---|---|---|
 | Character | Quick, instinctive, automatic | Rational, slower, effortful, conscious |
-| Arithmetic | 2 + 2 = 4 (cached) | 17 × 24 (must work it out) |
-| Chess | Speed chess: moves that "look right" | Competition: lay out and maintain a tree of possibilities |
+| Arithmetic | 2 + 2 = 4 (cached) | 17 × 24 (must work it out) [35:00](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=2100s) |
+| Chess | Speed chess: moves that "look right" | Competition: lay out and maintain a tree of possibilities [36:01](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=2161s) |
 
 ## Where LLMs stand (Nov 2023)
 
 - LLMs currently have **only System 1**: words go in, the network outputs the
-  next word, "chunk, chunk, chunk" — each chunk takes roughly the same time.
+  next word, "chunk, chunk, chunk" — each chunk takes roughly the same time. [36:01](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=2161s)
   They cannot reason through a tree of possibilities.
 
 ## The goal: convert time into accuracy
 
 - You should be able to say: "here's my question, take 30 minutes, I don't
-  need the answer right away."
+  need the answer right away." [37:04](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=2224s)
 - Plot time (x) against accuracy (y): we want a **monotonically increasing**
   curve. At the time no model had this.
 - Research direction: build a **tree of thoughts** — think, reflect,
-  rephrase, then return a more confident answer.
+  rephrase, then return a more confident answer. [37:04](https://www.youtube.com/watch?v=zjkBMFhNj_g&t=2224s)

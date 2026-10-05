@@ -7,7 +7,7 @@ playlist, but the needed results are restated. Thesis: cross-entropy arises
 naturally in compression, is also the LLM training loss, and that shared
 formula hints that training a language model is training a compressor.
 
-## Hook: *Language Trees and Zipping* (2002)
+## Hook: *Language Trees and Zipping* (2002) ([1:03](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=63s))
 
 - Cluster documents by language and even recover the tree of language lineage
   using only **gzip**, no linguistics.
@@ -16,37 +16,37 @@ formula hints that training a language model is training a compressor.
   this recovered the lineage tree; the same trick works for authorship.
 - It is only an empirical, rough estimate of cross-entropy (documents aren't
   distributions; gzip just replaces repeats with pointers and is far from the
-  Shannon limit) — but useful.
+  Shannon limit) — but useful. ([12:25](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=745s))
 
-## Information and entropy (recap)
+## Information and entropy (recap) ([3:08](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=188s))
 
 - Robot instructions up/down/left/right with probabilities 1/2, 1/4, 1/8, 1/8:
   optimal code uses 1, 2, 3, 3 bits.
 - General rule: an optimal code spends **−log₂ p** bits on a symbol (Shannon's
-  **information content**; "how many times do you halve to get there").
+  **information content**; "how many times do you halve to get there"). ([4:09](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=249s))
 - A message's information = sum over its symbols; optimal encoding length ≈
-  that total, so fractional bits are meaningful.
+  that total, so fractional bits are meaningful. ([5:11](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=311s))
 - **Entropy** H(Q) = Σ qᵢ · (−log₂ qᵢ): the average bits per symbol under the
   optimal code for Q. Visualize as bars with width qᵢ, height −log₂ qᵢ.
 
 ## Cross-entropy
 
 - New reality P: up 1/8, down 1/8, left 1/4, right 1/2, but the old code is
-  hard-wired. Average cost = **2.625 bits/symbol** — the cross-entropy.
+  hard-wired. Average cost = **2.625 bits/symbol** — the cross-entropy. ([5:11](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=311s))
 - Definition: **H(P, Q) = Σ pᵢ · (−log₂ qᵢ)** — average bits when reality is P
   but the code is optimized for Q. Bars: width pᵢ, height −log₂ qᵢ. Notation
-  conventions in the wild vary; think about the sum itself.
-- Order matters:
+  conventions in the wild vary; think about the sum itself. ([7:15](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=435s))
+- Order matters: ([9:20](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=560s))
   - Q = 50/50, P = 90/10 → H(Q) = 1 bit, cross-entropy = 1 bit (every symbol
     costs 1 bit, so weights don't matter).
   - Q = 90/10, P = 50/50 → H(Q) < 1 bit, but cross-entropy ≈ **1.74 bits**.
 - **Key property:** fix P, vary Q → cross-entropy is minimized exactly when
   **Q = P**, and that minimum equals **H(P)**. (Traced over all P, the minima
-  draw the entropy curve.)
+  draw the entropy curve.) ([10:22](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=622s))
 - General use: quantify how different the patterns of one setting are from
   another's.
 
-## Pre-training loss
+## Pre-training loss ([15:32](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=932s))
 
 - An LM maps any token sequence to a distribution over the next token. Train
   with a loss; once the loss is defined, gradient descent and backprop "take it
@@ -54,11 +54,11 @@ formula hints that training a language model is training a compressor.
 - Loss = **average information per token from the model's perspective**: for
   every prefix in the data, take −log(probability the model gave the true next
   token), average over all tokens in the training set. Models produce all these
-  probabilities in one pass.
+  probabilities in one pass. ([16:34](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=994s))
 - A smart model is rarely surprised (low loss); a confused one is surprised
   constantly; −log punishes very low probabilities steeply.
 - ML uses the **natural log**: differs from log₂ by a constant absorbed into
-  the learning rate, and derivatives are cleaner.
+  the learning rate, and derivatives are cleaner. ([18:38](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=1118s))
 - Minimizing it ideally approaches the **entropy of language**, leaving a
   powerful general predictor. Glossed over: batching, optimizers, engineering at
   scale.
@@ -67,19 +67,19 @@ formula hints that training a language model is training a compressor.
 
 - The common explanation — cross-entropy against a one-hot distribution on the
   true token, which collapses to −log q — is unsatisfying: it doesn't explain
-  *why*.
+  *why*. ([20:42](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=1242s))
 - Better: take a context like "My name is ___" that appears many times. Let Q
   be the model's distribution and P the frequency of each name in the data.
   The average loss over all instances = Σ pᵢ · F(qᵢ) for some decreasing loss
-  function F.
+  function F. ([21:44](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=1304s))
 - With F = −log, this **is** the cross-entropy of the model relative to the
   data, minimized exactly when model = data statistics.
 - Conversely, if you demand the average loss be minimized **only** when the
   model matches the data, a Lagrange-multiplier argument (minimize subject to
   Σqᵢ = 1) forces F′(q) ∝ 1/q — **only logarithms** qualify. "Your hand is
-  forced."
+  forced." ([24:52](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=1492s))
 
-## Distillation
+## Distillation ([25:53](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=1553s))
 
 - Train a small model to mimic a big one: at each token, loss = cross-entropy
   of the small model's full distribution relative to the big model's full
@@ -92,12 +92,12 @@ formula hints that training a language model is training a compressor.
 
 - **KL(P‖Q) = cross-entropy − entropy of P**: bits per symbol wasted by using a
   poorly optimized code. (Robot example, derived from the numbers above:
-  2.625 − 1.75 = 0.875 bits.)
+  2.625 − 1.75 = 0.875 bits.) ([31:02](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=1862s))
 - Acts as a distance between distributions: zero when equal, grows as they
   differ, but **asymmetric**.
 - Exercises posed: show the compact KL formula equals the difference form;
   interpret the KL bar diagram; what would happen if distillation used KL
-  divergence instead of cross-entropy?
+  divergence instead of cross-entropy? ([33:05](https://www.youtube.com/watch?v=GlYgs6v2YfU&t=1985s))
 
 ## Coming next (not in playlist)
 
