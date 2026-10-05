@@ -48,7 +48,8 @@ agent's skills directory. All paths below are relative to that folder.
 │         │                  chapter segmentation (10-min windows fallback)│
 │         │                  · Whisper fallback when captions are missing  │
 │         ├─ playlist.py     yt-dlp flat listing (channels → /videos tab,  │
-│         │                  latest 20 by default, --limit) · per-video    │
+│         │                  latest 20; RSS feeds → latest 5 episodes;     │
+│         │                  --limit) · per-video                          │
 │         │                  captions or Whisper · failures skipped with a │
 │         │                  warning (never fatal)                         │
 │         ├─ audio.py        podcasts, media URLs, local audio/video →     │
@@ -63,8 +64,10 @@ agent's skills directory. All paths below are relative to that folder.
 │         │                  article > main > body scoping · h1-h3         │
 │         │                  segment boundaries · og:title/author/date     │
 │         └─ repo.py         codeload tarball (no git clone) · README +    │
-│                            top-level *.md + docs/ (md, mdx, rst) · safe  │
-│                            tar extraction · ~2 MB text cap               │
+│                            top-level *.md + docs/ (md, mdx, rst) in      │
+│                            toctree / mkdocs nav order · include and      │
+│                            literalinclude resolved · reST roles reduced  │
+│                            to text · safe tar extraction · ~2 MB cap     │
 │                                                                          │
 │  output → <tempdir>/source_skill_work/ (or --work-dir)                   │
 │    full_text.txt    normalized text, segment-addressable by offset       │
@@ -155,6 +158,12 @@ Per segment:
 - `url` — playlist segments only: the video's URL, which generated lesson
   files open with, plus `captions` (`manual`, `auto`, or `whisper`). Other
   source types omit the keys.
+
+Book and article text renders HTML tables as `| a | b |` rows and images
+as `[image: alt]` / `[figure] caption` lines. Repo segments carry `path`
+and, when true, `orphan` (a Sphinx `:orphan:` page) or `stub` (under ~200
+characters); book segments can carry `front_matter`; playlist segments
+carry a per-video `deep_link_template`.
 
 Each parser also adds type-specific fields the templates use: video adds
 `channel`, `upload_date`, `duration_s`, `captions` (`manual`, `auto`, or

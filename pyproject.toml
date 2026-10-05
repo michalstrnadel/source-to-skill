@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "source-to-skill"
-version = "0.5.0"
+version = "0.6.0"
 description = "Turn YouTube videos, playlists & channels, podcasts, papers, books, articles and GitHub repos into AI agent skills — Claude Code plugin, local Whisper, no API keys"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = "MIT"

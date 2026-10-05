@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use source-to-skill in your work, please cite it as below."
 type: software
 title: source-to-skill
-version: 0.5.0
-date-released: "2026-10-04"
+version: 0.6.0
+date-released: 2026-10-05
 license: MIT
 authors:
   - family-names: Strnadel

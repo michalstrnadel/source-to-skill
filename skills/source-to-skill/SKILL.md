@@ -41,6 +41,10 @@ Run from this skill's directory (the folder containing this SKILL.md —
   playlist of the latest 20 uploads (`metadata.json` has
   `"kind": "channel"`); pass `--limit N` for more or fewer. `--limit` also
   caps a long playlist.
+- Podcast RSS feeds (`feeds.*` hosts, URLs ending in `.rss`, `.xml`,
+  `/feed`, `/rss`) extract as a playlist of the latest 5 episodes
+  (`"kind": "feed"`), each transcribed with Whisper — say how many
+  episodes and that each takes minutes; `--limit N` changes the count.
 - Videos without captions are transcribed locally with Whisper when a
   backend is installed (`--transcribe` forces it even with captions).
   Apple Podcasts links, direct `.mp3`/`.m4a`/... URLs, and local audio or
@@ -97,6 +101,11 @@ A support file must carry content SKILL.md does not; for a small source
 (under ~3k est_tokens) skip files that would only repeat it. Short quotes
 (two sentences at most) are fine in any skill; never long passages.
 
+In `full_text.txt`, `| a | b |` lines are tables (keep them as tables),
+`[image: ...]` and `[figure] ...` lines stand for images that were not
+extracted, and repo segments flagged `"orphan"` or `"stub"` rarely
+deserve their own file.
+
 When `metadata.json` says `"captions": "auto"`, the transcript is machine
 captions: fix names that are unambiguously misheard (a model, a person,
 a product the context makes certain) and leave anything uncertain
@@ -124,16 +133,18 @@ not null, otherwise with the `[hh:mm:ss]` timestamp and the `origin`.
 SKILL.md names the show or speaker (`channel`) and, for conversations,
 attributes claims to who made them when the transcript makes it clear.
 
-For `source_type: playlist` (a course; `"kind": "channel"` is a channel —
-describe what the channel teaches rather than a course order):
+For `source_type: playlist` (a course; `"kind": "channel"` is a channel
+and `"kind": "feed"` a podcast show — describe what it covers rather than
+a course order):
 
 - `SKILL.md` — frontmatter as above, course overview (what the course
   teaches and in what order), then a lesson index table: lesson, one-line
   takeaway, link `lessons/NN-<slug>.md`.
 - `lessons/NN-<slug>.md` — one per video, numbered in playlist order; the
   first line is the video URL (the segment's `url` field), then the
-  distilled content of that lesson, linking key moments as
-  `<url>&t=<N>s` from the transcript's inline `[t=Ns]` markers.
+  distilled content of that lesson, linking key moments with the
+  segment's `deep_link_template` (`{s}` → seconds from the transcript's
+  inline `[t=Ns]` markers; no template → cite `[mm:ss]`).
 - If the playlist is not one coherent course (unrelated videos, a part 2
   without its part 1), say so in the overview instead of inventing an
   order.

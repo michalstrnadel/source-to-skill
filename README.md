@@ -80,7 +80,8 @@ pip install faster-whisper        #   ... or this one anywhere else
 | **YouTube video** | `/source-to-skill https://youtube.com/watch?v=...` | chapter-segmented skill; every answer deep-links the exact `&t=` second |
 | **YouTube playlist** | `/source-to-skill https://youtube.com/playlist?list=...` | course skill: lesson index, one linked lesson per video, course cheatsheet |
 | **YouTube channel** | `/source-to-skill https://youtube.com/@3blue1brown` | the channel's latest 20 videos (`--limit N`) as one skill |
-| **Podcast / audio** | `/source-to-skill https://podcasts.apple.com/...?i=...` | local Whisper transcript, chapters or 10-min segments, `[hh:mm:ss]` citations |
+| **Podcast episode** | `/source-to-skill https://podcasts.apple.com/...?i=...` | local Whisper transcript, chapters or 10-min segments, `[hh:mm:ss]` citations |
+| **Podcast show (RSS)** | `/source-to-skill https://feeds.megaphone.fm/...` | the latest 5 episodes (`--limit N`) as one skill, one transcribed lesson per episode |
 | **Any video site** | `/source-to-skill https://vimeo.com/... --type audio` | anything [yt-dlp](https://github.com/yt-dlp/yt-dlp) can download (1,000+ sites), transcribed locally |
 | **Local recording** | `/source-to-skill ~/Downloads/all-hands.mp4` | meetings, lectures, voice memos: `.mp3 .m4a .wav .mp4 .mov .webm ...` |
 | **Academic paper** | `/source-to-skill https://arxiv.org/abs/1706.03762` | TL;DR, key claims with evidence, methods, findings, limitations, glossary, citations |
@@ -212,7 +213,7 @@ Install the plugin, then run `/source-to-skill <youtube-url>` in Claude Code. Th
 <details>
 <summary><b>Can Claude Code learn from a podcast?</b></summary>
 
-Yes. Pass an Apple Podcasts episode link, a direct `.mp3` URL, or a downloaded file. With `mlx-whisper` or `faster-whisper` installed, the episode is transcribed on your machine and becomes a skill with `[hh:mm:ss]` citations. Spotify episodes are DRM-protected and not supported.
+Yes. Pass an Apple Podcasts episode link, a direct `.mp3` URL, a downloaded file, or a show's RSS feed (its latest episodes become one skill). With `mlx-whisper` or `faster-whisper` installed, the episode is transcribed on your machine and becomes a skill with `[hh:mm:ss]` citations. Spotify episodes are DRM-protected and not supported.
 </details>
 
 <details>
@@ -264,7 +265,6 @@ A folder with a `SKILL.md` (a name, a description, and instructions) plus option
 
 - OCR for scanned PDFs
 - Speaker labels (diarization) for multi-speaker podcasts
-- Podcast RSS feeds (whole shows as course skills)
 - Skill quality evals: answer accuracy with and without the skill
 
 Ideas and new source types are welcome: [open an issue](https://github.com/michalstrnadel/source-to-skill/issues/new/choose).

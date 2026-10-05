@@ -5,6 +5,50 @@ All notable changes to **source-to-skill** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-10-05
+
+Whole podcast shows, real tables, and repo docs in reading order.
+
+### Added
+
+- **Podcast shows from RSS** — a feed URL (`feeds.*` hosts, `.rss`,
+  `.xml`, `/feed`, `/rss`) becomes a course skill of the latest 5
+  episodes (`--limit N`), each transcribed locally with Whisper and
+  titled from the feed (`"kind": "feed"`).
+- **Per-lesson deep links** — playlist segments carry a
+  `deep_link_template` (`&t=` for YouTube, `#t=` for media files), so
+  lessons from any source link moments, not just videos.
+- **Tables and images in books and articles** — HTML tables become
+  `| a | b |` rows with a header separator (layout-only tables stay plain
+  text); images with alt text become `[image: ...]` and captions
+  `[figure] ...` instead of stray lines.
+- **Article bylines** — author and date fall back to JSON-LD,
+  `twitter:creator`, and `rel="author"` links.
+- **Repo docs in reading order** — Sphinx `toctree` (from
+  `docs/index.rst`) or MkDocs `nav:` sets the segment order; `include` /
+  `literalinclude` (and MyST `{include}`) are resolved inside the repo, so
+  Flask's changelog and license are no longer empty stubs; reST roles
+  reduce to readable text, version and admonition directives to short
+  lines, autodoc to an "API reference:" line; segments flag `orphan` and
+  `stub`.
+- **Plugin validation in CI** — `claude plugin validate --strict` for the
+  marketplace and plugin manifests (the marketplace gained a
+  description).
+
+### Changed
+
+- Inline `[t=Ns]` markers every 30 s instead of 60 s: deep links land
+  within half a minute of a claim for about 3% more tokens.
+
+### Fixed
+
+- **Whisper fallback broke with yt-dlp plugins installed** — yt-dlp's
+  plugin loader can rebind `sys.modules["extractor"]` to its own package;
+  deferred imports then failed with "No module named
+  'extractor.media'". All extractor imports are now module-level.
+- **Podcast downloads printed a progress bar** into the extractor output;
+  downloads are now silent.
+
 ## [0.5.0] - 2026-10-04
 
 Listen, not just watch and read: podcasts and audio become skills through
