@@ -3,28 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>YouTube, Podcasts &amp; Papers to Claude Skills — source-to-skill</title>
-<meta name="description" content="Open-source tool that turns YouTube videos, playlists, podcasts, papers and books into Agent Skills for Claude Code, Copilot CLI and Amp. Local, no API keys.">
+<title>YouTube &amp; Podcasts to Claude, Codex &amp; Cursor Skills — source-to-skill</title>
+<meta name="description" content="Open-source tool that turns YouTube videos, podcasts, papers, books, docs sites, notes and meetings into Agent Skills for Claude Code, Codex, Cursor, Gemini CLI and Copilot. Exact-second links, local Whisper, no API keys.">
 <link rel="canonical" href="https://michalstrnadel.github.io/source-to-skill/">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Michal Strnadel">
-<meta name="keywords" content="YouTube to Claude skill, podcast to agent skill, Claude Code skills, agent skills, SKILL.md, NotebookLM alternative, PDF to Claude skill, Copilot CLI skills, Amp skills, Whisper transcription">
+<meta name="keywords" content="YouTube to Claude skill, podcast to agent skill, Claude Code skills, Codex skills, Cursor skills, Gemini CLI skills, agent skills, SKILL.md, NotebookLM alternative, PDF to Claude skill, llms.txt to skill, Obsidian to skill, meeting transcript to skill, docx to skill, Hacker News thread summary skill, Copilot CLI skills, Amp skills, Whisper transcription">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="source-to-skill">
-<meta property="og:title" content="source-to-skill — turn videos, podcasts, papers and books into Claude skills">
-<meta property="og:description" content="One command turns the things you watch, listen to and read into Agent Skills your coding agent loads on demand. Timestamp deep links, local Whisper, no API keys.">
+<meta property="og:title" content="source-to-skill — turn videos, podcasts, docs and books into agent skills">
+<meta property="og:description" content="One command turns the things you watch, listen to and read into Agent Skills for Claude Code, Codex, Cursor and more. Exact-second deep links, local Whisper, no API keys, and an eval with every skill.">
 <meta property="og:url" content="https://michalstrnadel.github.io/source-to-skill/">
 <meta property="og:image" content="https://michalstrnadel.github.io/source-to-skill/assets/social-preview.png">
 <meta property="og:image:width" content="1280">
 <meta property="og:image:height" content="640">
-<meta property="og:image:alt" content="source-to-skill v0.5.0: turn videos, podcasts, papers and books into skills your coding agent loads on demand">
+<meta property="og:image:alt" content="source-to-skill v0.7.0: turn videos, podcasts, papers, books, docs and meetings into skills your coding agent loads on demand">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="source-to-skill — turn videos, podcasts, papers and books into Claude skills">
-<meta name="twitter:description" content="One command turns YouTube, podcasts, arXiv papers, books, articles and GitHub repos into Agent Skills for Claude Code, Copilot CLI and Amp.">
+<meta name="twitter:title" content="source-to-skill — turn videos, podcasts, docs and books into agent skills">
+<meta name="twitter:description" content="One command turns YouTube, podcasts, papers, books, llms.txt docs, Obsidian notes, Word and PowerPoint files, HN and Reddit threads and meeting transcripts into Agent Skills for Claude Code, Codex, Cursor and Gemini CLI.">
 <meta name="twitter:image" content="https://michalstrnadel.github.io/source-to-skill/assets/social-preview.png">
-<meta name="twitter:image:alt" content="source-to-skill v0.5.0 social preview">
+<meta name="twitter:image:alt" content="source-to-skill v0.7.0 social preview">
 
 <meta name="theme-color" content="#f5f1e8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#120d1a" media="(prefers-color-scheme: dark)">
@@ -45,14 +45,15 @@
       "@type": "SoftwareApplication",
       "@id": "https://michalstrnadel.github.io/source-to-skill/#app",
       "name": "source-to-skill",
-      "description": "Turns YouTube videos, playlists and channels, podcasts and audio, arXiv papers, PDF and EPUB books, web articles and GitHub repositories into Agent Skills (SKILL.md folders) that Claude Code, GitHub Copilot CLI, Amp and any Agent Skills host load on demand.",
+      "description": "Turns YouTube videos, playlists and channels, podcasts and audio, arXiv papers, PDF and EPUB books, web articles, GitHub repositories, documentation sites (llms.txt), Obsidian and Markdown notes, Word and PowerPoint files, Hacker News and Reddit threads and meeting transcripts into Agent Skills (SKILL.md folders) that Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, Amp and any Agent Skills host load on demand.",
       "url": "https://michalstrnadel.github.io/source-to-skill/",
       "image": "https://michalstrnadel.github.io/source-to-skill/assets/social-preview.png",
       "applicationCategory": "DeveloperApplication",
       "applicationSubCategory": "AI agent skill generator",
       "operatingSystem": "macOS, Linux, Windows",
-      "softwareVersion": "0.6.0",
+      "softwareVersion": "0.7.0",
       "datePublished": "2026-10-04",
+      "dateModified": "2026-10-26",
       "license": "https://opensource.org/licenses/MIT",
       "isAccessibleForFree": true,
       "downloadUrl": "https://github.com/michalstrnadel/source-to-skill/releases",
@@ -60,14 +61,22 @@
       "sameAs": ["https://github.com/michalstrnadel/source-to-skill"],
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
       "featureList": [
-        "YouTube video to agent skill with &t= timestamp deep links",
+        "YouTube video to agent skill with &t= timestamp deep links to the exact second",
         "YouTube playlist and channel to course skill, one lesson per video",
         "Podcast shows (RSS feeds), episodes and audio transcribed with local Whisper (mlx-whisper or faster-whisper)",
+        "Meeting transcripts (.srt, .vtt): decisions, action items and who said what, with timestamps",
         "arXiv and PDF papers: methods, findings, limitations, glossary, citations",
         "EPUB and PDF books with on-demand chapter files",
+        "Documentation sites via llms.txt and llms-full.txt: one guide per docs area plus a cheatsheet",
+        "Word, PowerPoint and OpenDocument files (.docx, .pptx, .odt, .odp) with speaker notes kept",
+        "Local notes folders (Obsidian vaults, Markdown, Logseq) to a skill of your own frameworks and decisions",
+        "Hacker News and Reddit threads: consensus and dissent kept apart, every point linked to its comment",
         "Web articles: thesis, key claims, highlights",
         "GitHub repositories to library skills without cloning",
         "Multi-source topic skills that record where sources disagree",
+        "Every skill ships evals/evals.json (skill-creator format) with grounded questions drafted from the source",
+        "Companion skills: skill-study (spaced-repetition quizzes, Anki export), skill-eval (blind scoring against the source), skill-library (find, flag stale, refresh)",
+        "Installs into Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, OpenCode, Kiro, Windsurf, Factory and any ~/.agents/skills host",
         "Skill refresh: update adds only new lessons"
       ],
       "author": { "@type": "Person", "name": "Michal Strnadel", "url": "https://github.com/michalstrnadel" }
@@ -77,21 +86,31 @@
       "@id": "https://michalstrnadel.github.io/source-to-skill/#faq",
       "mainEntity": [
         { "@type": "Question", "name": "How do I turn a YouTube video into a Claude skill?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Install source-to-skill in Claude Code with /plugin marketplace add michalstrnadel/source-to-skill and /plugin install source-to-skill@source-to-skill (or install from git with uvx), then run /source-to-skill followed by the video URL. The extractor pulls the captions, splits them by the video's own chapters and shows a token estimate; your agent then writes a SKILL.md plus one segment file per chapter. Every answer links back to the exact second with &t=. Videos without captions fall back to local Whisper transcription." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "Install source-to-skill in Claude Code with /plugin marketplace add michalstrnadel/source-to-skill and /plugin install source-to-skill@source-to-skill (or with npx skills add michalstrnadel/source-to-skill), then run /source-to-skill followed by the video URL. The extractor pulls the captions, splits them by the video's own chapters and shows a token estimate; your agent then writes a SKILL.md plus one segment file per chapter. Every answer links back to the exact second with &t=. Videos without captions fall back to local Whisper transcription." } },
         { "@type": "Question", "name": "Can Claude Code learn from a podcast?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Pass an Apple Podcasts link, a direct mp3 URL, a local audio or video file, or any page yt-dlp supports (Vimeo, SoundCloud, TED and 1000+ more) with --type audio. source-to-skill transcribes it locally with Whisper (mlx-whisper on Apple Silicon or faster-whisper elsewhere), so no API key is needed, and turns the transcript into a timestamped skill Claude Code loads on demand." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Pass an Apple Podcasts link, a podcast RSS feed, a direct mp3 URL, a local audio or video file, or any page yt-dlp supports (Vimeo, SoundCloud, TED and 1000+ more) with --type audio. source-to-skill transcribes it locally with Whisper (mlx-whisper on Apple Silicon or faster-whisper elsewhere), so no API key is needed, and turns the transcript into a timestamped skill your agent loads on demand." } },
+        { "@type": "Question", "name": "Does source-to-skill work in Codex, Cursor or Gemini CLI?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Run npx skills add michalstrnadel/source-to-skill (the Vercel skills CLI, which installs into most agents), or use the bundled installer: uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install --agent codex. The --agent flag also takes cursor, gemini, copilot, opencode, kiro, windsurf, factory, claude and agents, and --project installs into the current project instead of your home folder. Codex, Amp and Goose read ~/.agents/skills; Cursor reads ~/.cursor/skills and Gemini CLI ~/.gemini/skills. Then ask your agent to turn a URL or file into a skill." } },
         { "@type": "Question", "name": "Is there a NotebookLM alternative for Claude Code?",
-          "acceptedAnswer": { "@type": "Answer", "text": "source-to-skill fills that role inside your coding agent. Instead of uploading sources to a separate cloud notebook, it turns them into Agent Skills that live in your skills folder, so Claude Code, Copilot CLI or Amp can consult a lecture, paper or book while it works on your code. It is open source, runs locally and needs no extra account." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "source-to-skill fills that role inside your coding agent. Instead of uploading sources to a separate cloud notebook, it turns them into Agent Skills that live in your skills folder, so Claude Code, Codex, Cursor or any other skills host can consult a lecture, paper or book while it works on your code. It is open source, runs locally and needs no extra account." } },
         { "@type": "Question", "name": "How do I make an agent skill from a PDF or book?",
           "acceptedAnswer": { "@type": "Answer", "text": "Run /source-to-skill with an arXiv URL, a PDF path or an EPUB file. Papers become a skill with a TL;DR plus methods, findings, limitations, glossary and citations files. Books (EPUB, or PDF with --type book) become a chapter index with one chapter file loaded only when a question needs it, plus a glossary and cheatsheet." } },
+        { "@type": "Question", "name": "How do I turn a documentation site into a skill with llms.txt?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Pass a URL ending in /llms.txt or /llms-full.txt, or any docs URL with --type docs. The extractor looks for the site's llms-full.txt, then llms.txt, and fetches the pages they link. Your agent writes a SKILL.md with what the product is, how to start and its core concepts, one guide per docs area loaded on demand, and a cheatsheet of commands and config keys, each citing the live page URL. Re-running update refreshes the skill when the docs change." } },
+        { "@type": "Question", "name": "Can I turn my Obsidian vault or Markdown notes into a skill?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Point it at a local folder: an Obsidian vault, a folder of Markdown notes or Logseq's pages folder. Hidden folders such as .obsidian are skipped. The skill front-loads your own frameworks and recurring ideas, indexes your hub notes as topic files and lists the decisions and open questions you recorded, each with its note path. It runs locally, asks what the skill is for before generating, and leaves out credentials and private entries." } },
+        { "@type": "Question", "name": "Can it handle meeting transcripts, Word and PowerPoint files, or Hacker News and Reddit threads?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. A Zoom, Teams or Meet export (.srt or .vtt) becomes a skill with the decisions, action items with owners, open questions and each participant's positions, all timestamped. Word, PowerPoint and OpenDocument files (.docx, .pptx, .odt, .odp) become a section index with one file per section, and slide speaker notes are kept. A Hacker News or Reddit thread URL becomes the consensus, the strongest arguments on each side and a separate dissent file, each point linked to its comment." } },
+        { "@type": "Question", "name": "How do I know a generated skill is good?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Every generated skill ships evals/evals.json in the skill-creator format: questions drafted from the original source while it is still in context. The skill-eval companion answers them blind, using only the skill, scores each expectation, lists the facts the skill is missing and offers fixes. Across the 9 skills in the examples gallery, an agent holding only the skill met 127 of 128 expectations (99%) on questions drafted from the original sources." } },
         { "@type": "Question", "name": "Can I turn a whole YouTube playlist or channel into a course skill?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes. A playlist or channel URL becomes a course skill: a lesson index, one lesson file per video that opens with a link to that video, and one cheatsheet across the course. When the channel publishes more videos, the update command re-extracts it and adds only the new lessons." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. A playlist or channel URL becomes a course skill: a lesson index, one lesson file per video that opens with a link to that video, and one cheatsheet across the course. When the channel publishes more videos, the update command re-extracts it and adds only the new lessons. The skill-study companion then quizzes you on it with spaced repetition and can export Anki cards that link back to the video." } },
         { "@type": "Question", "name": "Does source-to-skill need an API key or send my data to the cloud?",
           "acceptedAnswer": { "@type": "Answer", "text": "No. Extraction is deterministic Python that runs on your machine, and transcription uses local Whisper. The distillation is done by the coding agent you already use, so there is no extra API key, embedding service or vector database." } },
         { "@type": "Question", "name": "Which coding agents can use the generated skills?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Any host that supports the open Agent Skills format: Claude Code, GitHub Copilot CLI, Amp and others. Skills install into ~/.claude/skills, ~/.copilot/skills, ~/.agents/skills or a project-local skills folder." } },
-        { "@type": "Question", "name": "How is this different from RAG or documentation scrapers?",
-          "acceptedAnswer": { "@type": "Answer", "text": "RAG needs embeddings and retrieval infrastructure; documentation scrapers focus on API docs sites. source-to-skill targets learning content you would watch, listen to or read, and produces a compact SKILL.md of about 4k tokens with support files that load only when needed, so each question costs a fraction of pasting the whole transcript." } }
+          "acceptedAnswer": { "@type": "Answer", "text": "Any host that supports the open Agent Skills format: Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, Amp, OpenCode, Kiro, Windsurf, Factory, Goose and others. Most of them read ~/.agents/skills; Claude Code reads ~/.claude/skills, and the installer knows each agent's own folder and its project-local equivalent." } },
+        { "@type": "Question", "name": "How is this different from RAG, documentation scrapers or book-to-skill?",
+          "acceptedAnswer": { "@type": "Answer", "text": "RAG needs embeddings and retrieval infrastructure. Skill_Seekers focuses on API documentation and book-to-skill on books. source-to-skill also handles docs and books, but its edge is what you watch and listen to: videos, courses and podcasts, transcribed locally with Whisper and cited to the exact second, with no API keys. Each skill is a compact SKILL.md of about 4k tokens with support files that load only when needed, so a question costs a fraction of pasting the whole source." } }
       ]
     }
   ]
@@ -251,6 +270,8 @@ h1 em { display: inline; }
 .works-in { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 18px; font-size: 14px; color: var(--muted); }
 .works-in span { display: inline-flex; align-items: center; gap: 8px; }
 .works-in span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--lilac); }
+.works-in .lbl { width: 100%; font: 600 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.works-in .lbl::before { display: none; }
 
 /* terminal demo */
 .demo-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(28px, 5vw, 64px); align-items: start; margin-top: 8px; }
@@ -323,6 +344,19 @@ h1 em { display: inline; }
 .pillars h3 { font-size: 20px; font-weight: 700; }
 .pillars p { color: var(--muted); margin: 8px 0 0; font-size: 16px; }
 
+/* companions + measured quality */
+.quality { margin-top: 44px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(20px, 4vw, 48px); align-items: center; background: var(--card); border: 1px solid var(--line-soft); border-radius: calc(var(--radius) + 6px); padding: clamp(22px, 4vw, 40px); }
+@media (max-width: 640px) { .quality { grid-template-columns: minmax(0, 1fr); } }
+.quality .score { font: 800 clamp(64px, 10vw, 112px)/.9 var(--display); letter-spacing: -.04em; color: var(--violet-ink); }
+.quality .score small { display: block; margin-top: 10px; font: 600 13px var(--mono); letter-spacing: .02em; color: var(--muted); }
+.quality h3 { font-size: clamp(22px, 2.4vw, 28px); font-weight: 700; }
+.quality p { margin: 10px 0 0; color: var(--ink-2); max-width: 64ch; }
+.quality p + p { color: var(--muted); font-size: 15px; }
+.companions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+@media (max-width: 900px) { .companions { grid-template-columns: minmax(0, 1fr); } }
+.companions .src code { font-size: .82em; }
+.companions .cmdname { font: 600 14px var(--mono); color: var(--violet-ink); }
+
 /* compare */
 .table-wrap { margin-top: 44px; overflow-x: auto; border: 1px solid var(--line-soft); border-radius: var(--radius); background: var(--card); -webkit-overflow-scrolling: touch; }
 table { width: 100%; border-collapse: collapse; min-width: 720px; font-size: 15px; }
@@ -359,6 +393,7 @@ tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 .faq details[open] summary::after { transform: rotate(45deg); }
 .faq .ans { padding: 0 0 24px 70px; color: var(--ink-2); max-width: 78ch; }
 .faq .ans p { margin: 0 0 10px; }
+.faq .ans code { overflow-wrap: anywhere; }
 @media (max-width: 560px) { .faq .ans { padding-left: 0; } .faq summary .ts { width: auto; } }
 
 /* closing */
@@ -402,6 +437,7 @@ footer a:hover { color: var(--ink); }
       <a href="#demo">Demo</a>
       <a href="#sources">Sources</a>
       <a href="#how">How it works</a>
+      <a href="#companions">Study &amp; eval</a>
       <a href="#compare">Compare</a>
       <a href="#faq">FAQ</a>
     </nav>
@@ -417,11 +453,11 @@ footer a:hover { color: var(--ink); }
   <!-- HERO -->
   <section class="hero" aria-labelledby="hero-title">
     <div class="wrap">
-        <a class="eyebrow rise" href="https://github.com/michalstrnadel/source-to-skill/releases"><b>v0.6.0</b> Podcast shows, tables, local Whisper</a>
-        <h1 id="hero-title" class="rise d1">Turn YouTube videos, podcasts, papers and books into <em>Claude skills.</em></h1>
+        <a class="eyebrow rise" href="https://github.com/michalstrnadel/source-to-skill/releases"><b>v0.7.0</b> Docs, notes, meetings, threads &amp; 11 agents</a>
+        <h1 id="hero-title" class="rise d1">Turn YouTube videos, podcasts, papers and docs into <em>agent skills.</em></h1>
       <div class="hero-grid">
       <div>
-        <p class="lede rise d2">One command distills the things you <strong>watch, listen to and read</strong> into an Agent Skill your coding agent loads on demand. Every video answer links the exact second. No API keys, no cloud, no vector database.</p>
+        <p class="lede rise d2">One command distills the things you <strong>watch, listen to and read</strong> into an Agent Skill that Claude Code, Codex, Cursor or Gemini CLI loads on demand. Every video and podcast answer links the exact second. No API keys, no cloud, no vector database, and every skill ships with an eval.</p>
         <div class="ctas rise d3">
           <a class="btn btn-primary" href="https://github.com/michalstrnadel/source-to-skill">
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
@@ -435,27 +471,26 @@ footer a:hover { color: var(--ink); }
         <div class="install" id="install">
           <div class="install-tabs" role="tablist" aria-label="Install method">
             <button role="tab" id="tab-plugin" aria-selected="true" aria-controls="panel-plugin">Claude Code plugin</button>
+            <button role="tab" id="tab-npx" aria-selected="false" aria-controls="panel-npx" tabindex="-1">npx skills</button>
             <button role="tab" id="tab-uvx" aria-selected="false" aria-controls="panel-uvx" tabindex="-1">uvx</button>
-            <button role="tab" id="tab-git" aria-selected="false" aria-controls="panel-git" tabindex="-1">Any agent</button>
           </div>
           <div class="install-panel" id="panel-plugin" role="tabpanel" aria-labelledby="tab-plugin">
             <div class="cmd"><code class="slash">/plugin marketplace add michalstrnadel/source-to-skill</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy marketplace command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
-            <div class="cmd"><code class="slash">/plugin install source-to-skill@source-to-skill</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy install command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
-            <p class="install-note">Then: <code>/source-to-skill &lt;url-or-file&gt;</code></p>
+            <div class="cmd"><code class="slash">/plugin install source-to-skill@source-to-skill</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy plugin install command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
+            <p class="install-note">Includes the skill-study, skill-eval and skill-library companions. Then: <code>/source-to-skill &lt;url-or-file&gt;</code></p>
+          </div>
+          <div class="install-panel" id="panel-npx" role="tabpanel" aria-labelledby="tab-npx" hidden>
+            <div class="cmd"><code>npx skills add michalstrnadel/source-to-skill</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy npx skills command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
+            <p class="install-note">The Vercel skills CLI installs into whichever agents you pick: Codex, Cursor, Gemini CLI, Copilot, Claude Code and more.</p>
           </div>
           <div class="install-panel" id="panel-uvx" role="tabpanel" aria-labelledby="tab-uvx" hidden>
-            <div class="cmd"><code>uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy uvx command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
-            <p class="install-note">Installs the skill into the skills folder your agent reads. Then: <code>/source-to-skill &lt;url-or-file&gt;</code></p>
-          </div>
-          <div class="install-panel" id="panel-git" role="tabpanel" aria-labelledby="tab-git" hidden>
-            <div class="cmd"><code>git clone https://github.com/michalstrnadel/source-to-skill</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy clone command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
-            <div class="cmd"><code>ln -s "$PWD/source-to-skill/skills/source-to-skill" ~/.agents/skills/</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy symlink command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
-            <p class="install-note">Use <code>~/.claude/skills</code>, <code>~/.copilot/skills</code> or <code>~/.agents/skills</code>.</p>
+            <div class="cmd"><code>uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install --agent codex</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy uvx install command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
+            <p class="install-note"><code>--agent</code> takes <code>claude</code>, <code>agents</code>, <code>codex</code>, <code>copilot</code>, <code>gemini</code>, <code>cursor</code>, <code>opencode</code>, <code>kiro</code>, <code>windsurf</code> or <code>factory</code>; add <code>--project</code> for a project-local folder.</p>
           </div>
           <p class="sr" aria-live="polite" id="copy-status"></p>
         </div>
-        <div class="works-in" aria-label="Works in">
-          <span>Claude Code</span><span>GitHub Copilot CLI</span><span>Amp</span><span>any Agent Skills host</span>
+        <div class="works-in">
+          <span class="lbl">Works in</span><span>Claude Code</span><span>Codex</span><span>Cursor</span><span>Gemini CLI</span><span>GitHub Copilot</span><span>Amp</span><span>OpenCode</span><span>Kiro</span><span>Windsurf</span><span>Factory</span><span>Goose</span>
         </div>
       </div>
       </div>
@@ -518,7 +553,7 @@ footer a:hover { color: var(--ink); }
     <div class="wrap">
       <p class="chapter"><a href="#sources">05:40</a> Supported sources</p>
       <h2 id="sources-title">Things you watch, hear <em>and read.</em></h2>
-      <p class="lede">Documentation scrapers cover API docs. source-to-skill covers learning content: lectures, talks, interviews, papers and books, each with the structure that fits it.</p>
+      <p class="lede">Built for lectures, talks, courses, podcasts and meetings, with answers that link the exact second. Papers, books, docs, notes and the threads where people argue about them come along too, each with the structure that fits it.</p>
 
       <div class="sources">
         <article class="src">
@@ -528,18 +563,23 @@ footer a:hover { color: var(--ink); }
           <div class="out">segments/ · every answer links &amp;t=</div>
         </article>
         <article class="src">
-          <span class="new">NEW</span>
           <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="10" y="11" width="14" height="3" rx="1.5" fill="#fff"/><rect x="10" y="18" width="14" height="3" rx="1.5" fill="#fff"/><rect x="10" y="25" width="9" height="3" rx="1.5" fill="#fff"/><path d="M24 21 L24 31 L32 26 Z" fill="#fff"/></svg></div>
           <h3>Playlists &amp; channels</h3>
           <p>A whole course or channel, one lesson per video. <code>update</code> adds only new lessons.</p>
           <div class="out">lessons/ · course cheatsheet</div>
         </article>
         <article class="src">
-          <span class="new">NEW</span>
           <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="16" y="9" width="8" height="15" rx="4" fill="#fff"/><path d="M12 20 a8 8 0 0 0 16 0" stroke="#fff" stroke-width="2.2" fill="none"/><rect x="19" y="28" width="2.2" height="4" fill="#fff"/></svg></div>
           <h3>Podcasts &amp; audio</h3>
-          <p>Whole shows from their RSS feed, Apple Podcasts episodes, mp3 URLs, local files, and 1000+ sites via <code>--type audio</code>.</p>
+          <p>Whole shows from their RSS feed, Apple Podcasts episodes, mp3 URLs, local files, and 1000+ sites via <code>--type audio</code>. Example: <a href="https://github.com/michalstrnadel/source-to-skill/tree/main/examples/karpathy-agi-decade-away">Dwarkesh Patel with Andrej Karpathy</a>, 42.1k tokens to a 1.5k SKILL.md.</p>
           <div class="out">local Whisper · timestamped segments</div>
+        </article>
+        <article class="src">
+          <span class="new">NEW</span>
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M9 12 h22 a2 2 0 0 1 2 2 v11 a2 2 0 0 1 -2 2 h-12 l-6 5 v-5 h-4 a2 2 0 0 1 -2 -2 v-11 a2 2 0 0 1 2 -2 Z" fill="#fff"/><rect x="13" y="16" width="14" height="2.4" rx="1.2" fill="#7c3aed"/><rect x="13" y="21" width="9" height="2.4" rx="1.2" fill="#7c3aed"/></svg></div>
+          <h3>Meeting transcripts</h3>
+          <p>Zoom, Teams or Meet exports as <code>.srt</code> or <code>.vtt</code>. Decisions, action items with owners, who said what.</p>
+          <div class="out">decisions · action items · speakers.md</div>
         </article>
         <article class="src">
           <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M13 9 L24 9 L29 14 L29 31 L13 31 Z" fill="#fff"/><path d="M24 9 L29 14 L24 14 Z" fill="#a78bfa"/></svg></div>
@@ -554,6 +594,20 @@ footer a:hover { color: var(--ink); }
           <div class="out">chapters/ on demand · glossary · cheatsheet</div>
         </article>
         <article class="src">
+          <span class="new">NEW</span>
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="10" y="10" width="20" height="21" rx="3" fill="#fff"/><path d="M15 16 L13 20.5 L15 25" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M25 16 L27 20.5 L25 25" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.5 15 L18.5 26" stroke="#7c3aed" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+          <h3>Docs sites</h3>
+          <p>Any site with <code>llms.txt</code> or <code>llms-full.txt</code>, or a docs URL with <code>--type docs</code>. Example: <a href="https://github.com/michalstrnadel/source-to-skill/tree/main/examples/uv">uv</a>, 56 pages to a 1.7k SKILL.md.</p>
+          <div class="out">guides/ per docs area · cheatsheet</div>
+        </article>
+        <article class="src">
+          <span class="new">NEW</span>
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="9" y="11" width="22" height="15" rx="2.5" fill="#fff"/><rect x="12.5" y="14.5" width="9" height="2.4" rx="1.2" fill="#7c3aed"/><rect x="12.5" y="19" width="14" height="2.4" rx="1.2" fill="#7c3aed"/><path d="M20 26 L20 30 M15 31 L25 31" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+          <h3>Word &amp; PowerPoint</h3>
+          <p><code>.docx</code> <code>.pptx</code> <code>.odt</code> <code>.odp</code>, in document order. Speaker notes are kept, not dropped.</p>
+          <div class="out">sections/ · key points · decisions</div>
+        </article>
+        <article class="src">
           <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="11" y="10" width="18" height="21" rx="3" fill="#fff"/><rect x="14" y="14" width="12" height="2.6" rx="1.3" fill="#7c3aed"/><rect x="14" y="19" width="12" height="2.6" rx="1.3" fill="#7c3aed"/><rect x="14" y="24" width="8" height="2.6" rx="1.3" fill="#7c3aed"/></svg></div>
           <h3>Web articles</h3>
           <p>Readable-article extraction drops navigation and footer chrome.</p>
@@ -565,12 +619,25 @@ footer a:hover { color: var(--ink); }
           <p>README and <code>docs/</code> from one tarball download. No clone.</p>
           <div class="out">install · usage · per-area guides</div>
         </article>
-        <article class="src">
+        <article class="src wide">
           <span class="new">NEW</span>
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="9" y="10" width="15" height="9" rx="3" fill="#fff"/><rect x="16" y="21.5" width="15" height="9" rx="3" fill="#fff"/><path d="M12.5 19 L12.5 26 L15 26" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Hacker News &amp; Reddit threads</h3>
+          <p>A thread URL becomes the consensus and the strongest arguments on each side, every point linked to its comment. Dissent stays separate, never averaged in.</p>
+          <div class="out">consensus · tips.md · dissent.md</div>
+        </article>
+        <article class="src wide">
+          <span class="new">NEW</span>
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 8 L30 14 L28 28 L20 33 L12 28 L10 14 Z" fill="#fff"/><path d="M20 8 L17 21 L20 33 M17 21 L10 14 M17 21 L28 28" stroke="#7c3aed" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></div>
+          <h3>Notes folders</h3>
+          <p>An Obsidian vault, Markdown folder or Logseq <code>pages/</code>: your own frameworks, hub notes and recorded decisions. Stays on your machine.</p>
+          <div class="out">topics/ per hub note · decisions.md</div>
+        </article>
+        <article class="src wide">
           <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><circle cx="14" cy="16" r="4.5" fill="#fff"/><circle cx="26" cy="16" r="4.5" fill="#fff"/><circle cx="20" cy="26" r="4.5" fill="#fff"/></svg></div>
           <h3>Topic skills</h3>
-          <p>Several sources become one skill that also records where they disagree.</p>
-          <div class="out">one skill · where sources disagree</div>
+          <p>Several sources, say a paper, a talk and an article, become one skill that also records where they disagree.</p>
+          <div class="out">one skill · disagreements.md</div>
         </article>
       </div>
     </div>
@@ -584,7 +651,7 @@ footer a:hover { color: var(--ink); }
       <p class="lede">Python does the parts that should never vary. The model you already pay for does the distilling, following one instruction file per source type.</p>
 
       <figure class="diagram" aria-labelledby="dg-cap">
-        <figcaption id="dg-cap" class="sr">Pipeline: a source goes to the extractor, which writes full_text.txt and metadata.json; your agent reads them and generates SKILL.md plus on-demand files.</figcaption>
+        <figcaption id="dg-cap" class="sr">Pipeline: a source goes to the extractor, which writes full_text.txt and metadata.json; your agent (Claude Code, Codex, Cursor, Gemini CLI or another skills host) reads them and generates SKILL.md plus on-demand files and an evals file.</figcaption>
         <svg class="d-h" viewBox="0 0 1060 250" aria-hidden="true">
           <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="dg-arrow" d="M0 0 L10 5 L0 10 Z"/></marker></defs>
           <text class="dg-k" x="0" y="14">SOURCE</text>
@@ -597,11 +664,11 @@ footer a:hover { color: var(--ink); }
           <g transform="translate(18,48)"><rect class="dg-hot" width="30" height="30" rx="8"/><path d="M12 9 L12 21 L22 15 Z" fill="#fff"/></g>
           <text class="dg-s" x="58" y="68">video · playlist</text>
           <g transform="translate(18,86)"><rect class="dg-hot" width="30" height="30" rx="8"/><rect x="11.5" y="6" width="7" height="12" rx="3.5" fill="#fff"/><path d="M8 15 a7 7 0 0 0 14 0" stroke="#fff" stroke-width="2" fill="none"/></g>
-          <text class="dg-s" x="58" y="106">podcast · audio</text>
+          <text class="dg-s" x="58" y="106">podcast · meeting</text>
           <g transform="translate(18,124)"><rect class="dg-hot" width="30" height="30" rx="8"/><path d="M9 6 L18 6 L22 10 L22 24 L9 24 Z" fill="#fff"/></g>
           <text class="dg-s" x="58" y="144">paper · book</text>
           <g transform="translate(18,162)"><rect class="dg-hot" width="30" height="30" rx="8"/><rect x="8" y="9" width="14" height="2.6" rx="1.3" fill="#fff"/><rect x="8" y="14" width="14" height="2.6" rx="1.3" fill="#fff"/><rect x="8" y="19" width="9" height="2.6" rx="1.3" fill="#fff"/></g>
-          <text class="dg-s" x="58" y="182">article · repo</text>
+          <text class="dg-s" x="58" y="182">docs · notes</text>
           <text class="dg-s" x="18" y="222">URL or local file</text>
 
           <rect class="dg-box" x="218" y="30" width="176" height="210" rx="16"/>
@@ -610,7 +677,7 @@ footer a:hover { color: var(--ink); }
           <text class="dg-s" x="236" y="122">yt-dlp captions</text>
           <text class="dg-s" x="236" y="142">local Whisper</text>
           <text class="dg-s" x="236" y="162">PyMuPDF · EPUB</text>
-          <text class="dg-s" x="236" y="182">HTML · tarball</text>
+          <text class="dg-s" x="236" y="182">llms.txt · docx</text>
           <text class="dg-s" x="236" y="222">no LLM, no keys</text>
 
           <rect class="dg-box" x="436" y="30" width="176" height="210" rx="16"/>
@@ -624,7 +691,7 @@ footer a:hover { color: var(--ink); }
 
           <rect class="dg-box" x="654" y="30" width="176" height="210" rx="16"/>
           <text class="dg-h" x="672" y="64">Claude Code</text>
-          <text class="dg-s" x="672" y="88">or Copilot CLI, Amp</text>
+          <text class="dg-s" x="672" y="88">or Codex, Cursor</text>
           <text class="dg-s" x="672" y="122">confirms token cost</text>
           <text class="dg-s" x="672" y="142">distills by template</text>
           <text class="dg-s" x="672" y="162">validates output</text>
@@ -638,6 +705,7 @@ footer a:hover { color: var(--ink); }
           <text class="dg-ws" x="890" y="152">segments/ lessons/</text>
           <text class="dg-ws" x="890" y="174">chapters/ findings.md</text>
           <text class="dg-ws" x="890" y="196">cheatsheet.md</text>
+          <text class="dg-ws" x="890" y="218">evals/evals.json</text>
 
           <line class="dg-flow" x1="180" y1="135" x2="212" y2="135" marker-end="url(#ah)"/>
           <line class="dg-flow" x1="398" y1="135" x2="430" y2="135" marker-end="url(#ah)"/>
@@ -649,8 +717,8 @@ footer a:hover { color: var(--ink); }
           <defs><marker id="ahv" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="dg-arrow" d="M0 0 L10 5 L0 10 Z"/></marker></defs>
           <rect class="dg-box" x="0" y="0" width="320" height="92" rx="14"/>
           <text class="dg-k" x="18" y="26">SOURCE</text>
-          <text class="dg-h" x="18" y="52">Video, podcast, paper,</text>
-          <text class="dg-h" x="18" y="74">book, article, repo</text>
+          <text class="dg-h" x="18" y="52">Video, podcast, meeting,</text>
+          <text class="dg-h" x="18" y="74">paper, book, docs, notes</text>
 
           <line class="dg-flow" x1="160" y1="96" x2="160" y2="124" marker-end="url(#ahv)"/>
           <rect class="dg-box" x="0" y="130" width="320" height="92" rx="14"/>
@@ -669,7 +737,7 @@ footer a:hover { color: var(--ink); }
           <line class="dg-flow" x1="160" y1="356" x2="160" y2="384" marker-end="url(#ahv)"/>
           <rect class="dg-box" x="0" y="390" width="320" height="92" rx="14"/>
           <text class="dg-k" x="18" y="416">YOUR AGENT</text>
-          <text class="dg-h" x="18" y="442">Claude Code, Copilot CLI, Amp</text>
+          <text class="dg-h" x="18" y="442">Claude Code, Codex, Cursor</text>
           <text class="dg-s" x="18" y="464">confirms cost, distills, validates</text>
 
           <line class="dg-flow" x1="160" y1="486" x2="160" y2="514" marker-end="url(#ahv)"/>
@@ -677,7 +745,7 @@ footer a:hover { color: var(--ink); }
           <text class="dg-w" x="18" y="552">SKILL.md</text>
           <text class="dg-ws" x="18" y="574">~4k tokens, always loaded</text>
           <text class="dg-ws" x="18" y="602">+ segments/ lessons/ chapters/</text>
-          <text class="dg-ws" x="18" y="622">  cheatsheet.md, on demand</text>
+          <text class="dg-ws" x="18" y="622">  cheatsheet.md, evals/, on demand</text>
         </svg>
       </figure>
 
@@ -698,16 +766,55 @@ footer a:hover { color: var(--ink); }
     </div>
   </section>
 
+  <!-- COMPANIONS -->
+  <section id="companions" aria-labelledby="companions-title">
+    <div class="wrap">
+      <p class="chapter"><a href="#companions">11:20</a> Study, eval, library</p>
+      <h2 id="companions-title">Measured, not assumed. <em>Then studied and kept fresh.</em></h2>
+      <p class="lede">Every generated skill ships <code>evals/evals.json</code> in the skill-creator format: grounded questions your agent drafts from the original source while it still has it in context. Three companion skills come with the plugin and the installers.</p>
+
+      <div class="quality">
+        <div class="score">99%<small>127 of 128 expectations</small></div>
+        <div>
+          <h3>The gallery skills, scored blind.</h3>
+          <p>For each of the 9 skills in the <a href="https://github.com/michalstrnadel/source-to-skill/tree/main/examples">examples gallery</a>, questions were drafted from the original video, course, podcast, paper, book, article, repo, docs or topic sources. An agent holding only the skill answered them and met 127 of 128 expectations.</p>
+          <p>The plugin also carries a <code>claude plugin eval</code> suite that checks each skill triggers on real requests and stays quiet on unrelated ones.</p>
+        </div>
+      </div>
+
+      <div class="companions">
+        <article class="src">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="9" y="12" width="16" height="12" rx="2.5" fill="#fff"/><rect x="15" y="17" width="16" height="12" rx="2.5" fill="#fff" stroke="#7c3aed" stroke-width="1.6"/><path d="M20 23 L22.5 25.5 L27 20.5" stroke="#7c3aed" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>skill-study</h3>
+          <p>Quizzes you one question at a time with Leitner spaced repetition, asks you to explain ideas back, builds a study plan over the lessons and exports Anki cards with deep links.</p>
+          <div class="out"><span class="cmdname">/skill-study</span> · quiz · plan · Anki TSV</div>
+        </article>
+        <article class="src">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="10.5" stroke="#fff" stroke-width="2.4" fill="none"/><circle cx="20" cy="20" r="5.5" stroke="#fff" stroke-width="2.4" fill="none"/><circle cx="20" cy="20" r="1.8" fill="#fff"/></svg></div>
+          <h3>skill-eval</h3>
+          <p>Drafts grounded questions from the original source, answers them blind with only the skill, scores each expectation, lists the facts the skill is missing and offers fixes.</p>
+          <div class="out"><span class="cmdname">/skill-eval</span> · score · missing facts · fixes</div>
+        </article>
+        <article class="src">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="10" y="10" width="5" height="20" rx="1.5" fill="#fff"/><rect x="17" y="13" width="5" height="17" rx="1.5" fill="#fff"/><path d="M24.5 14.5 L29 13.3 L32.6 28.7 L28.1 29.9 Z" fill="#fff"/></svg></div>
+          <h3>skill-library</h3>
+          <p>Lists every skill you have made, finds which one covers a question, flags playlists, channels, feeds and docs that have moved on, and refreshes them.</p>
+          <div class="out"><span class="cmdname">/skill-library</span> · find · flag stale · refresh</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <!-- COMPARE -->
   <section id="compare" aria-labelledby="compare-title">
     <div class="wrap">
-      <p class="chapter"><a href="#compare">12:30</a> Compare</p>
+      <p class="chapter"><a href="#compare">13:10</a> Compare</p>
       <h2 id="compare-title">Why not just <em>paste the transcript?</em></h2>
       <p class="lede">Because you'd pay for the whole thing on every question, and lose it at the end of the session. Here is how the common options stack up.</p>
 
       <div class="table-wrap" role="region" aria-labelledby="compare-title" tabindex="0">
         <table>
-          <caption>Comparison as of October 2026. "Agent" means your coding agent, such as Claude Code.</caption>
+          <caption>Comparison as of October 2026. "Agent" means your coding agent, such as Claude Code, Codex or Cursor.</caption>
           <thead>
             <tr>
               <th scope="col"><span class="sr">Capability</span></th>
@@ -761,6 +868,13 @@ footer a:hover { color: var(--ink); }
               <td><span class="n">Gone with the context</span></td>
             </tr>
             <tr>
+              <th scope="row">Checked against the source</th>
+              <td><span class="y">Ships grounded evals; gallery scored 99% blind</span></td>
+              <td><span class="n">No</span></td>
+              <td><span class="m">If you build evals</span></td>
+              <td><span class="n">No</span></td>
+            </tr>
+            <tr>
               <th scope="row">Open source</th>
               <td><span class="y">MIT</span></td>
               <td><span class="n">No</span></td>
@@ -777,40 +891,60 @@ footer a:hover { color: var(--ink); }
   <!-- FAQ -->
   <section id="faq" aria-labelledby="faq-title">
     <div class="wrap">
-      <p class="chapter"><a href="#faq">15:48</a> FAQ</p>
+      <p class="chapter"><a href="#faq">16:30</a> FAQ</p>
       <h2 id="faq-title">Questions people <em>actually search.</em></h2>
       <div class="faq">
         <details open>
-          <summary><span class="ts">15:48</span><span>How do I turn a YouTube video into a Claude skill?</span></summary>
-          <div class="ans"><p>Install the plugin in Claude Code (<code>/plugin marketplace add michalstrnadel/source-to-skill</code>, then <code>/plugin install source-to-skill@source-to-skill</code>) or run <code>uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install</code>. Then run <code>/source-to-skill</code> with the video URL. The extractor pulls the captions, splits them by the video's own chapters and shows a token estimate; your agent writes a SKILL.md plus one segment file per chapter. Every answer links back to the exact second with <code>&amp;t=</code>. Videos without captions fall back to local Whisper transcription.</p></div>
+          <summary><span class="ts">16:30</span><span>How do I turn a YouTube video into a Claude skill?</span></summary>
+          <div class="ans"><p>Install source-to-skill in Claude Code with <code>/plugin marketplace add michalstrnadel/source-to-skill</code> and <code>/plugin install source-to-skill@source-to-skill</code> (or with <code>npx skills add michalstrnadel/source-to-skill</code>), then run <code>/source-to-skill</code> followed by the video URL. The extractor pulls the captions, splits them by the video's own chapters and shows a token estimate; your agent then writes a SKILL.md plus one segment file per chapter. Every answer links back to the exact second with <code>&amp;t=</code>. Videos without captions fall back to local Whisper transcription.</p></div>
         </details>
         <details>
-          <summary><span class="ts">16:20</span><span>Can Claude Code learn from a podcast?</span></summary>
-          <div class="ans"><p>Yes. Pass an Apple Podcasts link, a direct mp3 URL, a local audio or video file, or any page yt-dlp supports (Vimeo, SoundCloud, TED and 1000+ more) with <code>--type audio</code>. It is transcribed locally with Whisper (mlx-whisper on Apple Silicon, faster-whisper elsewhere), so no API key is needed, and the transcript becomes a timestamped skill Claude Code loads on demand.</p></div>
+          <summary><span class="ts">17:02</span><span>Can Claude Code learn from a podcast?</span></summary>
+          <div class="ans"><p>Yes. Pass an Apple Podcasts link, a podcast RSS feed, a direct mp3 URL, a local audio or video file, or any page yt-dlp supports (Vimeo, SoundCloud, TED and 1000+ more) with <code>--type audio</code>. source-to-skill transcribes it locally with Whisper (mlx-whisper on Apple Silicon or faster-whisper elsewhere), so no API key is needed, and turns the transcript into a timestamped skill your agent loads on demand.</p></div>
         </details>
         <details>
-          <summary><span class="ts">17:02</span><span>Is there a NotebookLM alternative for Claude Code?</span></summary>
-          <div class="ans"><p>source-to-skill fills that role inside your coding agent. Instead of uploading sources to a separate cloud notebook, it turns them into Agent Skills in your skills folder, so Claude Code, Copilot CLI or Amp can consult a lecture, paper or book while it works on your code. It is open source, runs locally and needs no extra account.</p></div>
+          <summary><span class="ts">17:44</span><span>Does source-to-skill work in Codex, Cursor or Gemini CLI?</span></summary>
+          <div class="ans"><p>Yes. Run <code>npx skills add michalstrnadel/source-to-skill</code> (the Vercel skills CLI, which installs into most agents), or use the bundled installer: <code>uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install --agent codex</code>. The <code>--agent</code> flag also takes cursor, gemini, copilot, opencode, kiro, windsurf, factory, claude and agents, and <code>--project</code> installs into the current project instead of your home folder. Codex, Amp and Goose read <code>~/.agents/skills</code>; Cursor reads <code>~/.cursor/skills</code> and Gemini CLI <code>~/.gemini/skills</code>. Then ask your agent to turn a URL or file into a skill.</p></div>
         </details>
         <details>
-          <summary><span class="ts">17:45</span><span>How do I make an agent skill from a PDF or book?</span></summary>
-          <div class="ans"><p>Run <code>/source-to-skill</code> with an arXiv URL, a PDF path or an EPUB file. Papers become a skill with a TL;DR plus <code>methods.md</code>, <code>findings.md</code>, <code>limitations.md</code>, <code>glossary.md</code> and <code>citations.md</code>. Books (EPUB, or PDF with <code>--type book</code>) become a chapter index with one chapter file loaded only when a question needs it, plus a glossary and cheatsheet.</p></div>
+          <summary><span class="ts">18:27</span><span>Is there a NotebookLM alternative for Claude Code?</span></summary>
+          <div class="ans"><p>source-to-skill fills that role inside your coding agent. Instead of uploading sources to a separate cloud notebook, it turns them into Agent Skills that live in your skills folder, so Claude Code, Codex, Cursor or any other skills host can consult a lecture, paper or book while it works on your code. It is open source, runs locally and needs no extra account.</p></div>
         </details>
         <details>
-          <summary><span class="ts">18:31</span><span>Can I turn a whole YouTube playlist or channel into a course skill?</span></summary>
-          <div class="ans"><p>Yes. A playlist or channel URL becomes a course skill: a lesson index, one lesson file per video that opens with a link to that video, and one cheatsheet across the course. When the channel publishes more, <code>update</code> re-extracts it and adds only the new lessons.</p></div>
+          <summary><span class="ts">19:13</span><span>How do I make an agent skill from a PDF or book?</span></summary>
+          <div class="ans"><p>Run <code>/source-to-skill</code> with an arXiv URL, a PDF path or an EPUB file. Papers become a skill with a TL;DR plus methods, findings, limitations, glossary and citations files. Books (EPUB, or PDF with <code>--type book</code>) become a chapter index with one chapter file loaded only when a question needs it, plus a glossary and cheatsheet.</p></div>
         </details>
         <details>
-          <summary><span class="ts">19:10</span><span>Does it need an API key or send my data to the cloud?</span></summary>
+          <summary><span class="ts">19:52</span><span>How do I turn a documentation site into a skill with llms.txt?</span></summary>
+          <div class="ans"><p>Pass a URL ending in <code>/llms.txt</code> or <code>/llms-full.txt</code>, or any docs URL with <code>--type docs</code>. The extractor looks for the site's <code>llms-full.txt</code>, then <code>llms.txt</code>, and fetches the pages they link. Your agent writes a SKILL.md with what the product is, how to start and its core concepts, one guide per docs area loaded on demand, and a cheatsheet of commands and config keys, each citing the live page URL. Re-running update refreshes the skill when the docs change.</p></div>
+        </details>
+        <details>
+          <summary><span class="ts">20:34</span><span>Can I turn my Obsidian vault or Markdown notes into a skill?</span></summary>
+          <div class="ans"><p>Yes. Point it at a local folder: an Obsidian vault, a folder of Markdown notes or Logseq's pages folder. Hidden folders such as <code>.obsidian</code> are skipped. The skill front-loads your own frameworks and recurring ideas, indexes your hub notes as topic files and lists the decisions and open questions you recorded, each with its note path. It runs locally, asks what the skill is for before generating, and leaves out credentials and private entries.</p></div>
+        </details>
+        <details>
+          <summary><span class="ts">21:19</span><span>Can it handle meeting transcripts, Word and PowerPoint files, or Hacker News and Reddit threads?</span></summary>
+          <div class="ans"><p>Yes. A Zoom, Teams or Meet export (<code>.srt</code> or <code>.vtt</code>) becomes a skill with the decisions, action items with owners, open questions and each participant's positions, all timestamped. Word, PowerPoint and OpenDocument files (<code>.docx</code>, <code>.pptx</code>, <code>.odt</code>, <code>.odp</code>) become a section index with one file per section, and slide speaker notes are kept. A Hacker News or Reddit thread URL becomes the consensus, the strongest arguments on each side and a separate dissent file, each point linked to its comment.</p></div>
+        </details>
+        <details>
+          <summary><span class="ts">22:05</span><span>How do I know a generated skill is good?</span></summary>
+          <div class="ans"><p>Every generated skill ships <code>evals/evals.json</code> in the skill-creator format: questions drafted from the original source while it is still in context. The skill-eval companion answers them blind, using only the skill, scores each expectation, lists the facts the skill is missing and offers fixes. Across the 9 skills in the examples gallery, an agent holding only the skill met 127 of 128 expectations (99%) on questions drafted from the original sources.</p></div>
+        </details>
+        <details>
+          <summary><span class="ts">22:48</span><span>Can I turn a whole YouTube playlist or channel into a course skill?</span></summary>
+          <div class="ans"><p>Yes. A playlist or channel URL becomes a course skill: a lesson index, one lesson file per video that opens with a link to that video, and one cheatsheet across the course. When the channel publishes more videos, the <code>update</code> command re-extracts it and adds only the new lessons. The skill-study companion then quizzes you on it with spaced repetition and can export Anki cards that link back to the video.</p></div>
+        </details>
+        <details>
+          <summary><span class="ts">23:31</span><span>Does source-to-skill need an API key or send my data to the cloud?</span></summary>
           <div class="ans"><p>No. Extraction is deterministic Python that runs on your machine, and transcription uses local Whisper. The distillation is done by the coding agent you already use, so there is no extra API key, embedding service or vector database.</p></div>
         </details>
         <details>
-          <summary><span class="ts">19:52</span><span>Which coding agents can use the generated skills?</span></summary>
-          <div class="ans"><p>Any host that supports the open <a href="https://github.com/agentskills/agentskills">Agent Skills</a> format: Claude Code, GitHub Copilot CLI, Amp and others. Skills install into <code>~/.claude/skills</code>, <code>~/.copilot/skills</code>, <code>~/.agents/skills</code> or a project-local skills folder.</p></div>
+          <summary><span class="ts">24:16</span><span>Which coding agents can use the generated skills?</span></summary>
+          <div class="ans"><p>Any host that supports the open <a href="https://github.com/agentskills/agentskills">Agent Skills</a> format: Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, Amp, OpenCode, Kiro, Windsurf, Factory, Goose and others. Most of them read <code>~/.agents/skills</code>; Claude Code reads <code>~/.claude/skills</code>, and the installer knows each agent's own folder and its project-local equivalent.</p></div>
         </details>
         <details>
-          <summary><span class="ts">20:37</span><span>How is this different from RAG or documentation scrapers?</span></summary>
-          <div class="ans"><p>RAG needs embeddings and retrieval infrastructure; documentation scrapers focus on API docs sites. source-to-skill targets learning content you would watch, listen to or read, and produces a compact SKILL.md of about 4k tokens with support files that load only when needed, so each question costs a fraction of pasting the whole transcript.</p></div>
+          <summary><span class="ts">24:58</span><span>How is this different from RAG, documentation scrapers or book-to-skill?</span></summary>
+          <div class="ans"><p>RAG needs embeddings and retrieval infrastructure. Skill_Seekers focuses on API documentation and book-to-skill on books. source-to-skill also handles docs and books, but its edge is what you watch and listen to: videos, courses and podcasts, transcribed locally with Whisper and cited to the exact second, with no API keys. Each skill is a compact SKILL.md of about 4k tokens with support files that load only when needed, so a question costs a fraction of pasting the whole source.</p></div>
         </details>
       </div>
     </div>
@@ -822,14 +956,14 @@ footer a:hover { color: var(--ink); }
       <div class="closing-card">
         <div>
           <h2 id="closing-title">Your next lecture, <em>on call.</em></h2>
-          <p>Install once, then point it at anything worth remembering. Open source under MIT.</p>
+          <p>Install once in Claude Code, Codex, Cursor or any skills host, then point it at anything worth remembering. Open source under MIT.</p>
           <div class="ctas">
             <a class="btn btn-primary" href="https://github.com/michalstrnadel/source-to-skill">Star on GitHub</a>
             <a class="btn btn-ghost" href="https://github.com/michalstrnadel/source-to-skill/blob/main/docs/ARCHITECTURE.md">Read the architecture</a>
           </div>
         </div>
         <div>
-          <div class="cmd"><code>uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy uvx command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
+          <div class="cmd"><code>npx skills add michalstrnadel/source-to-skill</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy npx skills command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
           <div class="cmd"><code class="slash">/source-to-skill &lt;url-or-file&gt;</code><button class="copy" type="button" title="Copy to clipboard" aria-label="Copy usage command"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Copy</span></button></div>
         </div>
       </div>
@@ -840,7 +974,7 @@ footer a:hover { color: var(--ink); }
 <footer>
   <div class="wrap">
     <a class="brand" href="./"><img src="assets/logo.svg" alt="" width="22" height="22">source-to-skill</a>
-    <span>MIT License · v0.5.0 · by <a href="https://github.com/michalstrnadel">Michal Strnadel</a></span>
+    <span>MIT License · v0.7.0 · by <a href="https://github.com/michalstrnadel">Michal Strnadel</a></span>
     <nav aria-label="Footer">
       <a href="https://github.com/michalstrnadel/source-to-skill">GitHub</a>
       <a href="https://github.com/michalstrnadel/source-to-skill/releases">Releases</a>
