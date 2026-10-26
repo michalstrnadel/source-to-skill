@@ -20,9 +20,9 @@ jobs:
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
 
@@ -38,7 +38,7 @@ jobs:
             --runs "${{ inputs.runs }}" --threshold 0.8 \
             --no-publish --max-cost-usd 10 --json results.json
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always() && env.ANTHROPIC_API_KEY != ''
         with:
           name: plugin-eval-results
