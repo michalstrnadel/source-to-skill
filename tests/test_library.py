@@ -4,6 +4,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPT = ROOT / "skills" / "skill-library" / "scripts" / "library.py"
 
@@ -87,3 +89,30 @@ def test_missing_roots_and_cli(tmp_path, capsys):
     out = json.loads(capsys.readouterr().out)
     assert [s["name"] for s in out["skills"]] == ["made"]
     assert library.main(["--stale-days", "x"]) == 2
+
+
+def _skill_md(tmp_path, text: bytes) -> Path:
+    skill = tmp_path / "s"
+    skill.mkdir()
+    (skill / "SKILL.md").write_bytes(text)
+    return skill / "SKILL.md"
+
+
+def test_frontmatter_with_crlf_line_endings(tmp_path):
+    path = _skill_md(
+        tmp_path, b"---\r\nname: s\r\ndescription: Windows file\r\n---\r\n# s\r\n"
+    )
+    assert library._frontmatter(path) == {
+        "name": "s", "description": "Windows file",
+    }
+
+
+@pytest.mark.parametrize("marker", [">", "|", ">-", "|+"])
+def test_frontmatter_folded_and_literal_descriptions(tmp_path, marker):
+    path = _skill_md(tmp_path, (
+        f"---\nname: s\ndescription: {marker}\n  Use when the user\n"
+        "  asks about X.\n\nlicense: MIT\n---\n# s\n"
+    ).encode())
+    fields = library._frontmatter(path)
+    assert fields["description"] == "Use when the user asks about X."
+    assert fields["license"] == "MIT"

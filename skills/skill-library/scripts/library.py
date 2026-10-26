@@ -39,9 +39,21 @@ def _frontmatter(skill_md: Path) -> dict:
         return {}
     match = FRONTMATTER_RE.match(text)
     fields = {}
+    block = None  # key of a `>` / `|` block scalar being collected
     for line in (match.group(1) if match else "").splitlines():
+        if block and (line.startswith((" ", "\t")) or not line.strip()):
+            # Folded and literal blocks are joined into one line.
+            if line.strip():
+                fields[block] = f"{fields[block]} {line.strip()}".strip()
+            continue
+        block = None
         key, _, value = line.partition(":")
-        if key.strip() and value.strip() and not line.startswith(" "):
+        if not key.strip() or line.startswith(" "):
+            continue
+        if re.fullmatch(r"[>|][+-]?", value.strip()):
+            block = key.strip()
+            fields[block] = ""
+        elif value.strip():
             fields[key.strip()] = value.strip()
     return fields
 

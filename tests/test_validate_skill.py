@@ -94,3 +94,9 @@ def test_unparseable_evals_fail(tmp_path):
     skill_dir = make_skill(tmp_path, "name: my-skill\ndescription: Does things")
     _write_evals(skill_dir, "{nope")
     assert any("evals.json" in e for e in validate_skill.validate(skill_dir))
+
+
+def test_empty_evals_list_fails(tmp_path):
+    skill_dir = make_skill(tmp_path, "name: my-skill\ndescription: Does things")
+    _write_evals(skill_dir, {"skill_name": "my-skill", "evals": []})
+    assert validate_skill.validate(skill_dir) == ["evals/evals.json: no evals"]

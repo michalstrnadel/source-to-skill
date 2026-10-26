@@ -71,6 +71,8 @@ def _validate_evals(skill_dir: Path) -> list[str]:
         return [f"evals/evals.json: not valid JSON ({err})"]
     if not isinstance(data, dict) or not isinstance(data.get("evals"), list):
         return ["evals/evals.json: needs an \"evals\" list"]
+    if not data["evals"]:
+        return ["evals/evals.json: no evals"]
     errors = []
     if data.get("skill_name") != skill_dir.name:
         errors.append(
