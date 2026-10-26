@@ -1,7 +1,7 @@
 {
   "name": "source-to-skill",
-  "description": "Turn YouTube videos, playlists & channels, podcasts, academic papers, books, web articles, and GitHub repos into agent skills",
-  "version": "0.6.0",
+  "description": "Turn YouTube videos, playlists & channels, podcasts, meetings, papers, books, articles, GitHub repos, docs sites (llms.txt), notes, Office files and HN/Reddit threads into agent skills - with study, eval and library companion skills",
+  "version": "0.7.0",
   "author": {
     "name": "Michal Strnadel",
     "url": "https://github.com/michalstrnadel"
@@ -23,6 +23,21 @@
     "whisper",
     "youtube-channel",
     "transcript",
-    "knowledge-base"
-  ]
+    "knowledge-base",
+    "codex",
+    "cursor",
+    "gemini-cli",
+    "llms-txt",
+    "obsidian",
+    "notes",
+    "docx",
+    "pptx",
+    "meeting-transcript",
+    "hacker-news",
+    "reddit",
+    "evals",
+    "spaced-repetition",
+    "anki"
+  ],
+  "icon": "./docs/assets/logo.png"
 }

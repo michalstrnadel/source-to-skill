@@ -150,8 +150,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="source-to-skill",
         description=(
-            "Turn YouTube videos, playlists & channels, podcasts, papers, "
-            "books, articles and GitHub repos into AI agent skills."
+            "Turn YouTube videos, playlists & channels, podcasts, meetings, "
+            "papers, books, articles, GitHub repos, docs sites, notes, Office "
+            "files and HN/Reddit threads into AI agent skills."
         ),
     )
     parser.add_argument(

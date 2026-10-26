@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "source-to-skill"
-version = "0.6.0"
-description = "Turn YouTube videos, playlists & channels, podcasts, papers, books, articles and GitHub repos into AI agent skills — Claude Code plugin, local Whisper, no API keys"
+version = "0.7.0"
+description = "Turn YouTube videos, podcasts, meetings, papers, books, articles, repos, docs sites (llms.txt), notes, Office files and HN/Reddit threads into AI agent skills for Claude Code, Codex, Cursor, Gemini CLI and Copilot. Local Whisper, no API keys"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = "MIT"
 license-files = ["LICENSE"]
@@ -38,6 +38,17 @@ keywords = [
     "llm",
     "yt-dlp",
     "pymupdf",
+    "codex",
+    "cursor",
+    "gemini-cli",
+    "llms-txt",
+    "obsidian",
+    "docx",
+    "pptx",
+    "meeting-transcript",
+    "hacker-news",
+    "evals",
+    "anki",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",

@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use source-to-skill in your work, please cite it as below."
 type: software
 title: source-to-skill
-version: 0.6.0
-date-released: 2026-10-05
+version: 0.7.0
+date-released: 2026-10-26
 license: MIT
 authors:
   - family-names: Strnadel
@@ -13,7 +13,9 @@ url: "https://github.com/michalstrnadel/source-to-skill"
 abstract: >-
   source-to-skill turns YouTube videos, playlists and channels, podcasts and
   audio (transcribed locally with Whisper), arXiv and PDF papers, EPUB and PDF
-  books, web articles, and GitHub repositories into agent skills. A
+  books, web articles, GitHub repositories, documentation sites (llms.txt),
+  notes folders, Word and PowerPoint files, Hacker News and Reddit threads,
+  and meeting transcripts into agent skills. A
   deterministic, dependency-light extractor produces text plus structural
   segments without LLMs or API keys; the user's own coding agent then distills
   them into an installable skill following the Agent Skills standard, shipped

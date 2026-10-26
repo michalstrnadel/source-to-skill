@@ -5,6 +5,60 @@ All notable changes to **source-to-skill** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-10-26
+
+Five new kinds of source, three companion skills, measured quality, and
+every major coding agent.
+
+### Added
+
+- **Documentation sites via llms.txt** — a `/llms.txt` or `/llms-full.txt`
+  URL, or any docs URL with `--type docs`, becomes a docs skill: the full
+  file split on its headings, or each linked page fetched in order
+  (Markdown preferred, HTML through the article extractor), with guides
+  that cite the live page.
+- **Notes folders** — a local directory (Obsidian vault, Markdown or
+  Logseq folder) becomes a skill of your own frameworks, hub notes and
+  recorded decisions: frontmatter tags kept, `[[wikilinks]]` and embeds
+  resolved, hubs ranked by inbound links, hidden folders skipped, and a
+  privacy rule in the template.
+- **Word, PowerPoint and OpenDocument** — `.docx .pptx .odt .odp` through
+  the standard library: heading or slide segments, tables, and speaker
+  notes kept with their slide. `.doc`, `.ppt` and `.rtf` get a re-save
+  hint.
+- **Hacker News and Reddit threads** — the post plus one segment per
+  top-level comment subtree in the site's own ranking; the template keeps
+  consensus, attributed tips and dissent apart.
+- **Meeting transcripts** — `.srt` and `.vtt` exports from Zoom, Teams or
+  Meet, with speaker labels; the template records decisions, action items
+  with owners (never invented), and who said what.
+- **Companion skills** in the plugin and the installer:
+  `skill-study` (one-question quizzes with Leitner spaced repetition,
+  explain-it-back checks, study plans, Anki export with deep links),
+  `skill-eval` (blind, source-grounded scoring of a generated skill) and
+  `skill-library` (inventory, search and refresh of every skill made).
+- **Grounded evals in every skill** — generation writes
+  `evals/evals.json` (skill-creator format) from the source while it is in
+  context; `validate_skill.py` checks it. All seven gallery skills now
+  carry one plus a blind run: 97 of 98 expectations pass.
+- **Plugin eval suite** — `evals/` holds 12 `claude plugin eval` cases
+  that check the right skill loads for real requests (and stays out of
+  unrelated ones); a manual `Plugin evals` workflow runs them in CI.
+- **More agents** — `source-to-skill install --agent` now takes `codex`,
+  `gemini`, `cursor`, `opencode`, `kiro`, `windsurf` and `factory`, and
+  installs the companion skills next to `source-to-skill` (`--only` skips
+  them). The README documents `npx skills add`.
+- `docs/llms.txt` for the project site.
+
+### Fixed
+
+- Articles behind an HTTP 308 redirect failed on Python 3.10, whose
+  urllib does not follow 308 (Anthropic's engineering posts moved that
+  way).
+- `--check` reported a Whisper backend that is installed but fails to
+  import (a native wheel built for another OS release) as missing, and
+  suggested installing it again; it now says `BROKEN` with the error.
+
 ## [0.6.0] - 2026-10-05
 
 Whole podcast shows, real tables, and repo docs in reading order.

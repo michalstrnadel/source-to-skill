@@ -5,13 +5,13 @@
     "url": "https://github.com/michalstrnadel"
   },
   "metadata": {
-    "description": "Single-plugin marketplace for source-to-skill: turn videos, podcasts, papers, books, articles and repos into agent skills"
+    "description": "Single-plugin marketplace for source-to-skill: turn videos, podcasts, meetings, papers, books, docs, notes and threads into agent skills"
   },
   "plugins": [
     {
       "name": "source-to-skill",
       "source": "./",
-      "description": "Turn YouTube videos, playlists & channels, podcasts, academic papers, books, web articles, and GitHub repos into agent skills",
+      "description": "Turn YouTube videos, playlists & channels, podcasts, meetings, papers, books, articles, GitHub repos, docs sites (llms.txt), notes, Office files and HN/Reddit threads into agent skills",
       "category": "productivity"
     }
   ]

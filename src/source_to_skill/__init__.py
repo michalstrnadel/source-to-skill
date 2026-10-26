@@ -1,3 +1,3 @@
-"""source-to-skill: turn videos, podcasts, papers, books, articles and repos into agent skills."""
+"""source-to-skill: turn videos, podcasts, papers, books, docs, notes and threads into agent skills."""
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
