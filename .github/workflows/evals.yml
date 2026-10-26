@@ -1,0 +1,47 @@
+name: Plugin evals
+
+# Runs the claude plugin eval suite in evals/ (does the right skill load
+# for a request). Manual only: every case is a real model run billed to
+# the ANTHROPIC_API_KEY repository secret.
+on:
+  workflow_dispatch:
+    inputs:
+      runs:
+        description: Runs per case
+        default: "2"
+
+permissions:
+  contents: read
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Skip without an API key
+        if: env.ANTHROPIC_API_KEY == ''
+        run: echo "::notice::Set the ANTHROPIC_API_KEY secret to run plugin evals."
+
+      - name: Run evals
+        if: env.ANTHROPIC_API_KEY != ''
+        run: |
+          npm install --global @anthropic-ai/claude-code
+          claude plugin eval . --trust-plugin --ablation none \
+            --runs "${{ inputs.runs }}" --threshold 0.8 \
+            --no-publish --max-cost-usd 10 --json results.json
+
+      - uses: actions/upload-artifact@v4
+        if: always() && env.ANTHROPIC_API_KEY != ''
+        with:
+          name: plugin-eval-results
+          path: |
+            results.json
+            evals/results/
