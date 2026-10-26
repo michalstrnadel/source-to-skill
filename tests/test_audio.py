@@ -187,6 +187,29 @@ def test_remote_audio_downloads_transcribes_and_cleans_up(
     assert meta["deep_link_template"] == "https://cdn.example.com/ep42.mp3#t={s}"
 
 
+def test_direct_media_url_keeps_the_given_url_not_the_signed_redirect(
+    tmp_path, monkeypatch, whisper
+):
+    """Podcast hosts redirect enclosures to signed CDN URLs that expire;
+    the skill must link the stable URL the user gave."""
+    downloaded = tmp_path / "ep.mp3"
+    downloaded.write_bytes(b"x")
+    given = "https://api.substack.com/feed/podcast/1/abc.mp3"
+    info = {
+        "title": "transcoded",
+        "webpage_url": "https://cdn.example.com/transcoded.mp3?Expires=1&Signature=x",
+        "duration": 900,
+    }
+    monkeypatch.setattr(audio.dependencies, "require", lambda m: object())
+    monkeypatch.setattr(
+        "extractor.media.download_audio", lambda ydl, url: (info, downloaded)
+    )
+    _, meta = audio.parse(given)
+    assert meta["origin"] == given
+    assert meta["deep_link_template"] == given + "#t={s}"
+    assert "Signature" not in str(meta)
+
+
 @pytest.mark.parametrize(
     "origin,template",
     [

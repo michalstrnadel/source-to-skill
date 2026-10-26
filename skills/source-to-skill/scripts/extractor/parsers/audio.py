@@ -63,6 +63,10 @@ def parse(source: str):
     full_text, out_segments = segment_text(cues, segments)
     words = len(full_text.split())
     origin = info.get("webpage_url") or source
+    if is_url and utils._is_media_path(source):
+        # A direct media link the user gave is stable; what yt-dlp reports
+        # can be the signed CDN URL it was redirected to, which expires.
+        origin = source
     metadata = {
         "source_type": "audio",
         "title": info.get("title") or "Untitled audio",
