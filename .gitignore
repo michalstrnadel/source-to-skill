@@ -6,3 +6,7 @@ __pycache__/
 dist/
 .DS_Store
 docs/superpowers/
+evals/results/
+build/
+.claude/docket.json
+.claude/worktrees/
