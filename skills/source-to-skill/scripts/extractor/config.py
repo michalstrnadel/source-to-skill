@@ -80,6 +80,9 @@ ARXIV_URL_PATTERN = (
 # Local office documents: Word / PowerPoint and their OpenDocument twins,
 # read with the standard library (they are zip archives of XML).
 DOCUMENT_EXTENSIONS = (".docx", ".pptx", ".odt", ".odp")
+# Old binary formats: detected as documents so the parser can tell the
+# user to re-save them in a supported format.
+LEGACY_DOCUMENT_EXTENSIONS = (".doc", ".ppt", ".rtf")
 
 # Local subtitle / meeting transcript files (Zoom, Teams, Meet exports,
 # downloaded captions).

@@ -492,3 +492,12 @@ def test_cli_writes_outputs(tmp_path, capsys):
     assert (work / "full_text.txt").read_text().startswith("=== Introduction ===")
     summary = json.loads(capsys.readouterr().out)
     assert summary["source_type"] == "document"
+
+
+@pytest.mark.parametrize("name", ["old.doc", "deck.PPT", "memo.rtf"])
+def test_legacy_formats_reach_the_conversion_hint_from_the_cli(tmp_path, name):
+    """Detection must route legacy files to the document parser, or its
+    "save it as .docx" hint is never shown."""
+    from extractor import utils
+
+    assert utils.detect_source(str(tmp_path / name)) == "document"

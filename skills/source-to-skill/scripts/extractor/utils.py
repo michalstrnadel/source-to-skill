@@ -104,7 +104,9 @@ def _possible_types(source: str) -> tuple:
         return ("book",)
     if _is_media_path(source):
         return ("audio",)
-    if lowered.endswith(config.DOCUMENT_EXTENSIONS):
+    if lowered.endswith(
+        config.DOCUMENT_EXTENSIONS + config.LEGACY_DOCUMENT_EXTENSIONS
+    ):
         return ("document",)
     if lowered.endswith(config.TRANSCRIPT_EXTENSIONS):
         return ("transcript",)
