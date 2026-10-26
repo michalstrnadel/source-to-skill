@@ -1,6 +1,8 @@
 """Shared helpers: source detection, slugs, token estimates, output writing."""
 import json
 import re
+import sys
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -9,6 +11,25 @@ from . import __version__, config
 
 class ExtractError(Exception):
     """User-facing extraction failure: says what failed and the next step."""
+
+
+class _PermanentRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Follow 308 like 307 (urllib learned 308 only in Python 3.11)."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return super().redirect_request(
+            req, fp, 307 if code == 308 else code, msg, headers, newurl
+        )
+
+    http_error_308 = urllib.request.HTTPRedirectHandler.http_error_302
+
+
+def follow_permanent_redirects() -> None:
+    """Make urlopen() follow HTTP 308 on Python 3.10, as 3.11+ does."""
+    if sys.version_info < (3, 11):
+        urllib.request.install_opener(
+            urllib.request.build_opener(_PermanentRedirectHandler)
+        )
 
 
 def slugify(title: str) -> str:

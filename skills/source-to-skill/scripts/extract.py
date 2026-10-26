@@ -142,6 +142,7 @@ def main(argv) -> int:
         else:
             work = config.work_dir()
         config.set_work_dir(work)
+        utils.follow_permanent_redirects()
         # stdout carries only the JSON summary; anything a library prints
         # while parsing (deprecation notices, progress) goes to stderr.
         with contextlib.redirect_stdout(sys.stderr):
