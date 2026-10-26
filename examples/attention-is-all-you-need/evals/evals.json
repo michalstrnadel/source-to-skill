@@ -1,0 +1,68 @@
+{
+  "skill_name": "attention-is-all-you-need",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "What optimizer settings and learning-rate schedule did the Transformer paper use?",
+      "expected_output": "Adam with beta1=0.9, beta2=0.98, epsilon=1e-9; learning rate rises linearly for warmup_steps=4000 steps, then decays proportionally to the inverse square root of the step number (scaled by d_model^-0.5).",
+      "files": [],
+      "expectations": [
+        "States warmup_steps = 4000 (segment Training, 5.3 Optimizer)",
+        "States Adam with beta2 = 0.98 and epsilon = 1e-9 (segment Training, 5.3)",
+        "Says the rate then decays proportionally to the inverse square root of the step number (segment Training, 5.3)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "How long did it take to train the base and the big Transformer models, and on what hardware?",
+      "expected_output": "One machine with 8 NVIDIA P100 GPUs; base: ~0.4 s/step, 100,000 steps, 12 hours; big: ~1.0 s/step, 300,000 steps, 3.5 days.",
+      "files": [],
+      "expectations": [
+        "States 8 NVIDIA P100 GPUs on one machine (segment Training, 5.2 Hardware and Schedule)",
+        "States base model 100,000 steps / 12 hours (segment Training, 5.2)",
+        "States big model 300,000 steps / 3.5 days (segment Training, 5.2)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "When is a self-attention layer computationally cheaper than a recurrent layer, and what does the paper propose for very long sequences?",
+      "expected_output": "Self-attention (O(n^2 d)) is faster than recurrence (O(n d^2)) when sequence length n is smaller than representation dimension d, which is usual for word-piece/byte-pair sentences; for very long sequences restrict attention to a neighbourhood of size r, raising max path length to O(n/r).",
+      "files": [],
+      "expectations": [
+        "Says self-attention is cheaper when sequence length n < representation dimension d (segment Why Self-Attention)",
+        "Mentions restricting self-attention to a neighbourhood of size r for very long sequences, with path length O(n/r) (segment Why Self-Attention / Table 1)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Why does the paper scale dot products by 1/sqrt(d_k), and when does skipping the scaling hurt?",
+      "expected_output": "For large d_k the dot products grow large (variance d_k if q,k components have mean 0 variance 1), pushing softmax into regions with extremely small gradients; additive attention outperforms unscaled dot-product attention for larger d_k, while for small d_k they perform similarly.",
+      "files": [],
+      "expectations": [
+        "Says large d_k makes dot products large, pushing softmax into regions with extremely small gradients (segment Model Architecture, 3.2.1)",
+        "Says unscaled dot-product attention is outperformed by additive attention for larger d_k / similar for small d_k (segment Model Architecture, 3.2.1)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Why did the authors choose sinusoidal positional encodings over learned ones, and what did the experiment comparing them show?",
+      "expected_output": "They hypothesized sinusoids let the model attend by relative position (PE_pos+k is a linear function of PE_pos) and may extrapolate to longer sequences than seen in training; learned positional embeddings gave nearly identical results (Table 3 row E: BLEU 25.7 vs 25.8 base).",
+      "files": [],
+      "expectations": [
+        "Gives extrapolation to longer sequence lengths than seen in training as the reason (segment Model Architecture, 3.5)",
+        "Says learned embeddings gave nearly identical results, Table 3 row (E) (segment Results, 6.2)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "How many attention heads does the base model use, with what per-head dimensions, and what happened with a single head?",
+      "expected_output": "h = 8 heads with d_k = d_v = d_model/h = 64; single-head attention is 0.9 BLEU worse than the best setting, and quality also drops with too many heads.",
+      "files": [],
+      "expectations": [
+        "States h = 8 and d_k = d_v = 64 (segment Model Architecture, 3.2.2)",
+        "States single-head attention is 0.9 BLEU worse than the best setting (segment Results, 6.2 Table 3 rows A)",
+        "Says quality also drops off with too many heads (segment Results, 6.2)"
+      ]
+    }
+  ]
+}

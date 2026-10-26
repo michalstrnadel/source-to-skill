@@ -1,0 +1,79 @@
+{
+  "date": "2026-10-26",
+  "score": 1.0,
+  "passed": 14,
+  "total": 14,
+  "grader": "blind: one subagent answered from the skill directory only; graded against evals.json drafted from re-extracted full_text.txt",
+  "results": [
+    {
+      "id": 1,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"roughly 7,000 or more loose objects, or more than 50 packfiles\" (chapters/10-git-internals.md Maintenance)",
+        "\"gc.auto (the loose-object count) and gc.autopacklimit (the packfile count)\""
+      ]
+    },
+    {
+      "id": 2,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"git:// uses port 9418\" (chapters/04-git-on-the-server.md)",
+        "\"It has no authentication and no encryption\"",
+        "\"Each repo must opt in with a git-daemon-export-ok file\""
+      ]
+    },
+    {
+      "id": 3,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"do not rebase commits that exist outside your repository and that people may have based work on\" (chapters/03 The perils of rebasing)",
+        "\"Rebase throws away the existing commits and creates new, similar ones ... collaborators have to re-merge\""
+      ]
+    },
+    {
+      "id": 4,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"--soft: stops after step 1 ... --mixed ... makes the index match ... --hard: also ... working directory\" (chapters/07 Reset Demystified)",
+        "\"--hard is the dangerous one. It is the only form that can destroy data\""
+      ]
+    },
+    {
+      "id": 5,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"git verify-pack -v ... | sort -k 3 -n | tail -3\" and \"git rev-list --objects --all | grep <sha>\" (chapters/10 Removing a large file)",
+        "\"git filter-branch --index-filter 'git rm --ignore-unmatch --cached <file>' -- <first-commit>^..\"",
+        "\"Everyone who has the old history must rebase their work onto the new commits\"; remove .git/refs/original and .git/logs before gc"
+      ]
+    },
+    {
+      "id": 6,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"(double dot) lists commits reachable from experiment but not from master\" (chapters/07 Commit ranges)",
+        "\"(triple dot) lists commits reachable from either branch but not both ... --left-right\""
+      ]
+    }
+  ]
+}

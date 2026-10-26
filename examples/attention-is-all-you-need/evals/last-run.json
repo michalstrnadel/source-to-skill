@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-26",
+  "score": 1.0,
+  "passed": 15,
+  "total": 15,
+  "grader": "blind: one subagent answered from the skill directory only; graded against evals.json drafted from re-extracted full_text.txt",
+  "results": [
+    {
+      "id": 1,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"with warmup_steps = 4000\" (methods.md Optimizer §5.3)",
+        "\"Adam with β1 = 0.9, β2 = 0.98, ε = 1e-9\"",
+        "\"then decays with the inverse square root of the step number\""
+      ]
+    },
+    {
+      "id": 2,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"one machine with 8 NVIDIA P100 GPUs\" (methods.md §5.2)",
+        "\"Base: about 0.4 s per step, 100,000 steps, 12 hours\"",
+        "\"Big: 1.0 s per step, 300,000 steps, 3.5 days\""
+      ]
+    },
+    {
+      "id": 3,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"self-attention is cheaper when sequence length n is smaller than representation size d\" (methods.md §4)",
+        "\"restricting self-attention to a neighborhood of size r ... raises the max path length to O(n/r)\""
+      ]
+    },
+    {
+      "id": 4,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"With large d_k the dot products get large and push the softmax into regions with tiny gradients\" (methods.md §3.2.1)",
+        "\"For large d_k, additive attention beats unscaled dot-product attention\"; similar for small d_k"
+      ]
+    },
+    {
+      "id": 5,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"may let the model extrapolate to sequences longer than those seen in training\" (methods.md §3.5)",
+        "\"learned positional embeddings scored 25.7 BLEU ... against 25.8 ... nearly identical\" (findings.md Table 3 row E)"
+      ]
+    },
+    {
+      "id": 6,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"h = 8 heads with d_k = d_v = d_model / h = 64\" (methods.md §3.2.2)",
+        "\"0.9 BLEU below the best setting\" (findings.md Table 3 rows A)",
+        "\"32 heads (d_k = 16) fell to 25.4 BLEU\" / more heads not always better"
+      ]
+    }
+  ]
+}

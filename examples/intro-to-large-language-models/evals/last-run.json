@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-26",
+  "score": 1.0,
+  "passed": 13,
+  "total": 13,
+  "grader": "blind: one subagent answered from the skill directory only; graded against evals.json drafted from re-extracted full_text.txt",
+  "results": [
+    {
+      "id": 1,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"each stored as 2 bytes (float16), so 70B x 2 = 140 GB\" (segments/01, &t=80s; source ~113s, within 60 s)",
+        "\"about 500 lines of C with no dependencies\" (&t=141s)"
+      ]
+    },
+    {
+      "id": 2,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"about 10 TB of web-crawled text\" (segments/02, &t=257s)",
+        "\"about 6,000 GPUs running for about 12 days\"",
+        "\"at a cost of about $2M\" (&t=318s)"
+      ]
+    },
+    {
+      "id": 3,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"writing a haiku about paperclips is hard, but picking the best of several haikus ... is easy\" (segments/07, &t=1265s)",
+        "\"Stage 3 fine-tunes on these comparisons. OpenAI calls it RLHF.\" (&t=1325s)"
+      ]
+    },
+    {
+      "id": 4,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"Have a person overwrite each bad response with the correct one. Add those as training examples\" (segments/06, &t=1194s)",
+        "\"fine-tuning ... about 1 day, so they can repeat it weekly or daily. Pretraining ... maybe once a year\""
+      ]
+    },
+    {
+      "id": 5,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"ChatGPT turned a pencil sketch of a 'my joke website' into working HTML and JavaScript\" (segments/10, &t=2012s)",
+        "\"a panda with optimized structured noise ... jailbreaks the model\" (segments/15, &t=3018s); image prompt injection (segments/16, &t=3090s)"
+      ]
+    },
+    {
+      "id": 6,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"The reversal curse example itself is at 12:22 (742s)\" - 32 s from 774 s, within 60 s",
+        "\"GPT-4 correctly answers Mary Lee Pfeiffer ... 'Who is Mary Lee Pfeiffer's son?' it says it doesn't know\""
+      ]
+    }
+  ]
+}

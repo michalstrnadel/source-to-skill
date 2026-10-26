@@ -1,0 +1,67 @@
+{
+  "skill_name": "building-effective-agents",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "What tool change did Anthropic make while building its SWE-bench agent, and where did they spend more time than on the prompt?",
+      "expected_output": "They spent more time optimizing tools than the overall prompt; the model made mistakes with relative filepaths after leaving the root directory, so they changed the tool to always require absolute filepaths, which the model then used flawlessly.",
+      "files": [],
+      "expectations": [
+        "Says they changed the tool to require absolute filepaths (segment Appendix 2: Prompt engineering your tools)",
+        "Says they spent more time optimizing tools than the overall prompt (segment Appendix 2)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What are the two variations of the parallelization workflow, and what is one example of each?",
+      "expected_output": "Sectioning (independent subtasks in parallel, e.g. one model screens for inappropriate content while another answers, or automated evals of different aspects) and voting (same task multiple times, e.g. several prompts reviewing code for vulnerabilities).",
+      "files": [],
+      "expectations": [
+        "Names sectioning and voting (segment Workflow: Parallelization)",
+        "Gives a valid example, e.g. guardrails screened by a separate instance or multiple prompts reviewing code for vulnerabilities (segment Workflow: Parallelization)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "When is the evaluator-optimizer workflow a good fit?",
+      "expected_output": "When there are clear evaluation criteria and iterative refinement provides measurable value; two signs: LLM responses demonstrably improve when a human articulates feedback, and the LLM can provide such feedback itself (e.g. literary translation, complex multi-round search).",
+      "files": [],
+      "expectations": [
+        "Mentions clear evaluation criteria and measurable value from iterative refinement (segment Workflow: Evaluator-optimizer)",
+        "Gives the two signs: responses improve with human-articulated feedback, and the LLM can provide that feedback (segment Workflow: Evaluator-optimizer)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "My task needs several LLM subtasks but I can't know in advance which ones. Should I use parallelization or orchestrator-workers?",
+      "expected_output": "Orchestrator-workers: it suits complex tasks where you can't predict the subtasks (e.g. which files a coding change touches); unlike parallelization, subtasks aren't pre-defined but determined by the orchestrator based on the input.",
+      "files": [],
+      "expectations": [
+        "Recommends orchestrator-workers (segment Workflow: Orchestrator-workers)",
+        "Says the key difference is that subtasks are not pre-defined but decided by the orchestrator from the input (segment Workflow: Orchestrator-workers)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "How does the article distinguish workflows from agents, and when should you choose an agent over a workflow?",
+      "expected_output": "Workflows orchestrate LLMs and tools through predefined code paths; agents let the LLM dynamically direct its own process and tool use. Choose agents for open-ended problems where the number of steps can't be predicted and a fixed path can't be hardcoded, in trusted environments, accepting higher cost and compounding errors, with sandboxed testing and guardrails.",
+      "files": [],
+      "expectations": [
+        "Defines workflows as predefined code paths vs agents dynamically directing their own processes and tool use (segment What are agents?)",
+        "Says agents fit open-ended problems where steps can't be predicted or hardcoded (segment Agents)",
+        "Mentions higher costs / compounding errors and recommends sandboxed testing with guardrails (segment Agents)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "What three core principles does the article recommend when implementing agents?",
+      "expected_output": "Maintain simplicity in the agent's design; prioritize transparency by explicitly showing the agent's planning steps; carefully craft the agent-computer interface (ACI) through thorough tool documentation and testing.",
+      "files": [],
+      "expectations": [
+        "Lists simplicity (segment Summary)",
+        "Lists transparency by showing planning steps (segment Summary)",
+        "Lists carefully crafting the agent-computer interface (ACI) via tool documentation and testing (segment Summary)"
+      ]
+    }
+  ]
+}

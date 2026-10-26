@@ -1,0 +1,66 @@
+{
+  "skill_name": "intro-to-large-language-models",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Why is the Llama 2 70B parameters file 140 GB, and how much code does it take to run it?",
+      "expected_output": "70B parameters x 2 bytes each (float16) = 140 GB; the run file can be about 500 lines of C with no dependencies.",
+      "files": [],
+      "expectations": [
+        "Says each parameter is stored as 2 bytes / float16 (LLM Inference ~113s)",
+        "Says about 500 lines of C (LLM Inference ~143s)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What did it take to pretrain Llama 2 70B?",
+      "expected_output": "About 10 TB of internet text, ~6,000 GPUs for ~12 days, about $2M, compressing to 140 GB of parameters (~100x, lossy).",
+      "files": [],
+      "expectations": [
+        "States ~10 TB of text (LLM Training ~287s)",
+        "States ~6,000 GPUs for ~12 days (LLM Training ~287-318s)",
+        "States ~$2M cost (LLM Training ~318s)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "When is it worth using comparison labels (stage 3 / RLHF) rather than having labelers write ideal answers?",
+      "expected_output": "When comparing candidate answers is much easier than writing one, e.g. picking the best of several haikus about paper clips; this optional stage 3 is called RLHF at OpenAI.",
+      "files": [],
+      "expectations": [
+        "Says comparing candidates is easier than generating an answer, with the haiku example (Appendix: Comparisons... ~1265-1296s)",
+        "Identifies this as RLHF / optional stage 3 (Appendix ~1327s)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "My deployed assistant misbehaves on some queries. According to Karpathy, how do you fix it, and why do companies iterate on this stage rather than pretraining?",
+      "expected_output": "Take the conversation where the assistant erred, have a person write the correct response, insert it into the fine-tuning data and fine-tune again; fine-tuning is far cheaper (about a day vs months) so it can be repeated weekly or daily, while pretraining happens maybe once a year.",
+      "files": [],
+      "expectations": [
+        "Says a person overwrites the incorrect response and it is added to the fine-tuning data (Summary so far ~1164-1196s)",
+        "Says fine-tuning is much cheaper (~1 day) so companies iterate on it often, unlike pretraining (Summary so far ~1102-1196s)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "How did adding vision make LLMs both more capable and more attackable?",
+      "expected_output": "Capability: ChatGPT read Greg Brockman's pencil sketch of a joke website and wrote working HTML/JS. Attack surface: an image of a panda with optimized noise jailbreaks the model, and faint white text in an image can carry a prompt injection.",
+      "files": [],
+      "expectations": [
+        "Mentions the sketch-to-website demo (Multimodality ~2012s)",
+        "Mentions the adversarial panda-noise image jailbreak or image-borne prompt injection (Jailbreaks ~3050s / Prompt Injection ~3090s)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Where in the talk does Karpathy discuss the 'reversal curse' (Tom Cruise's mother)?",
+      "expected_output": "Around 12:54 (774 s), in How do they work?",
+      "files": [],
+      "expectations": [
+        "Gives a timestamp within 60 s of 774 s (How do they work?)",
+        "Describes it: GPT-4 knows Tom Cruise's mother is Mary Lee Pfeiffer but not who her son is (How do they work?)"
+      ]
+    }
+  ]
+}

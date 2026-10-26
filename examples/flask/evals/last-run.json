@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-26",
+  "score": 1.0,
+  "passed": 15,
+  "total": 15,
+  "grader": "blind: one subagent answered from the skill directory only; graded against evals.json drafted from re-extracted full_text.txt",
+  "results": [
+    {
+      "id": 1,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"Set MAX_CONTENT_LENGTH ... app.config['MAX_CONTENT_LENGTH']\" (guides/security.md, guides/patterns.md)",
+        "\"app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000, which is 16 MB\"",
+        "\"A larger body gets a 413 RequestEntityTooLarge\""
+      ]
+    },
+    {
+      "id": 2,
+      "passed": [
+        true
+      ],
+      "evidence": [
+        "\"python -c 'import secrets; print(secrets.token_hex())'\" (guides/security.md, guides/deployment.md)"
+      ]
+    },
+    {
+      "id": 3,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"No. Each request still ... occupies one worker, so throughput stays the same\" (guides/deployment.md async/await)",
+        "\"Async views need pip install flask[async]\"",
+        "\"Use Quart (an ASGI reimplementation of Flask) when the codebase is mainly async\""
+      ]
+    },
+    {
+      "id": 4,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"Use it only when the app really runs behind a reverse proxy\" (guides/deployment.md)",
+        "\"ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) ... Set each count to the number of proxies\"",
+        "\"applying ProxyFix with no proxy, or with the wrong hop counts, makes the app trust forged headers. That is a security problem\""
+      ]
+    },
+    {
+      "id": 5,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"after_this_request callbacks, then after_request\" (guides/app-structure.md Request lifecycle)",
+        "\"After the response is sent ... teardown_request → request_tearing_down → teardown_appcontext\"",
+        "\"The tutorial's init_app(app) calls app.teardown_appcontext(close_db), and close_db() pops the connection from g and closes it\" (guides/tutorial-flaskr.md)"
+      ]
+    },
+    {
+      "id": 6,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"The event loop stops when the view finishes, so asyncio.create_task work gets cancelled\" (guides/deployment.md)",
+        "\"Use a task queue such as Celery instead, or run under an ASGI server with WsgiToAsgi\""
+      ]
+    }
+  ]
+}

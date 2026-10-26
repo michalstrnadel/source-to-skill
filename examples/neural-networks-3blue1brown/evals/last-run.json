@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-26",
+  "score": 1.0,
+  "passed": 13,
+  "total": 13,
+  "grader": "blind: one subagent answered from the skill directory only; graded against evals.json drafted from re-extracted full_text.txt",
+  "results": [
+    {
+      "id": 1,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"784-16-16-10: 784 input neurons (28x28 pixels), two hidden layers of 16 neurons\" (lessons/01)",
+        "\"about 13,000 weights and biases in total\" (lessons/01 &t=743s)",
+        "\"about 96% right, and about 98% after a few tweaks\" (lessons/02 &t=750s, &t=816s)"
+      ]
+    },
+    {
+      "id": 2,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"A human reading GPT-3's training text non-stop would need over 2,600 years\" (lessons/05)",
+        "\"would take well over 100 million years\" (lessons/05 &t=187s)"
+      ]
+    },
+    {
+      "id": 3,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"Summing every training example for every step is very slow ... gives a big computational speedup\" (lessons/03 &t=554s)",
+        "\"each step only approximates the true gradient\" / \"stochastic gradient descent\" (&t=617s)"
+      ]
+    },
+    {
+      "id": 4,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"Higher T flattens the distribution ... At T = 0 the model always picks the top token\" (lessons/06 &t=1417s)",
+        "\"the API limits T to 2. This is an arbitrary product constraint\" (&t=1483s)"
+      ]
+    },
+    {
+      "id": 5,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"96 layers give just under 58B, about 1/3 of the total\" (lessons/07 &t=1430s)",
+        "\"96 blocks give ~116B, about 2/3 of the total\" (lessons/08 &t=984s)"
+      ]
+    },
+    {
+      "id": 6,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"introduced in Lesson 8 ... at 17:27 (1047s)\" - 10 s from 1057 s",
+        "\"If 'nearly perpendicular' (89°–91°) is allowed, high dimensions hold far more\" / grows exponentially with dimension"
+      ]
+    }
+  ]
+}

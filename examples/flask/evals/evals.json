@@ -1,0 +1,68 @@
+{
+  "skill_name": "flask",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "How do I cap upload size in Flask, what does the docs example set it to, and what happens when it is exceeded?",
+      "expected_output": "Set app.config['MAX_CONTENT_LENGTH']; the example uses 16 * 1000 * 1000 (16 megabytes); larger payloads make Flask raise RequestEntityTooLarge. By default uploads are unlimited.",
+      "files": [],
+      "expectations": [
+        "Names the MAX_CONTENT_LENGTH config key (guide Uploading Files)",
+        "States the example value 16 * 1000 * 1000 / 16 MB (guide Uploading Files)",
+        "Says Flask raises RequestEntityTooLarge (413) when exceeded (guide Uploading Files)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What command do the Flask docs give for generating a good SECRET_KEY?",
+      "expected_output": "python -c 'import secrets; print(secrets.token_hex())'",
+      "files": [],
+      "expectations": [
+        "Gives python -c 'import secrets; print(secrets.token_hex())' (guide Configuration Handling or tutorial Deploy to Production)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Will making my Flask views async let my app handle more concurrent requests? When should I use Quart instead?",
+      "expected_output": "No: each request still ties up one worker even for async views, so concurrent request capacity stays the same; async helps concurrent IO inside a view and is not inherently faster. It needs the async extra (pip install flask[async]). For a mainly async codebase consider Quart, an ASGI reimplementation of Flask.",
+      "files": [],
+      "expectations": [
+        "Says each request still ties up one worker, so request capacity does not increase (guide Using async and await, Performance)",
+        "Mentions the async extra: pip install flask[async] (guide Using async and await)",
+        "Recommends Quart for a mainly async codebase (guide Using async and await, When to use Quart instead)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "When should I wrap my app in Werkzeug's ProxyFix, and how should it be configured?",
+      "expected_output": "Only when the app is actually behind a reverse proxy/hosting platform that sets X-Forwarded- headers; configure it with the number of proxies setting each header (e.g. x_for=1, x_proto=1, x_host=1, x_prefix=1), because headers can be faked and a wrong config is a security issue.",
+      "files": [],
+      "expectations": [
+        "Says apply it only if actually behind a proxy (guide Tell Flask it is Behind a Proxy)",
+        "Says configure the number of proxies per header, e.g. x_for=1, x_proto=1 (guide Tell Flask it is Behind a Proxy)",
+        "Warns that wrong configuration is a security issue because headers can be faked (guide Tell Flask it is Behind a Proxy)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "In what order do after_this_request, after_request, teardown_request and teardown_appcontext run, and why does the tutorial close its database in teardown_appcontext?",
+      "expected_output": "after_this_request functions run first (then cleared), then after_request, then the session is saved; after the response is returned to the WSGI server, teardown_request runs, then teardown_appcontext. The tutorial registers close_db with app.teardown_appcontext so the db connection stored in g is closed when the app context is popped after each request.",
+      "files": [],
+      "expectations": [
+        "Orders after_this_request before after_request (guide Application Structure and Lifecycle)",
+        "Orders teardown_request before teardown_appcontext, both after the response is returned (guide Application Structure and Lifecycle)",
+        "Says the tutorial registers close_db via app.teardown_appcontext to close the db after the request (tutorial Define and Access the Database)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Can I start a background task with asyncio.create_task from an async Flask view?",
+      "expected_output": "No: the event loop stops when the async view completes, so spawned tasks not finished are cancelled. Use a task queue (e.g. Celery) instead, or serve via an ASGI server with asgiref WsgiToAsgi, whose loop runs continually.",
+      "files": [],
+      "expectations": [
+        "Says spawned tasks are cancelled when the view's event loop stops (guide Using async and await, Background tasks)",
+        "Recommends a task queue such as Celery (or ASGI + WsgiToAsgi) instead (guide Using async and await / Background Tasks with Celery)"
+      ]
+    }
+  ]
+}

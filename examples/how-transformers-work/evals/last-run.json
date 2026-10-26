@@ -1,0 +1,79 @@
+{
+  "date": "2026-10-26",
+  "score": 1.0,
+  "passed": 14,
+  "total": 14,
+  "grader": "blind: one subagent answered from the skill directory only; graded against evals.json drafted from re-extracted full_text.txt",
+  "results": [
+    {
+      "id": 1,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"4 x 12,288 x 128 ≈ 6.3M per head\" (sources/02, Counting parameters &t=944s, segment-start link)",
+        "\"96 heads per block gives about 600M per attention block\" (Multiple heads &t=1159s)",
+        "\"Attention accounts for just under 58B of GPT-3's 175B parameters, about one third\" (Going deeper &t=1399s)"
+      ]
+    },
+    {
+      "id": 2,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"d_model = 512, h = 8 heads and d_k = d_v = 64\" (sources/01 §3.2.2)",
+        "\"divided by sqrt(d_k) = sqrt(64) = 8\" (sources/03 step 3, disagreements.md #10)"
+      ]
+    },
+    {
+      "id": 3,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"set the illegal scores ... to −∞ before the softmax\" (sources/02 Masking &t=668s)",
+        "\"If you set the scores themselves to 0, normalization breaks\"",
+        "\"Cross-attention typically uses no mask\" (sources/02 Cross-attention &t=1101s)"
+      ]
+    },
+    {
+      "id": 4,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"Pick the paper's fixed sinusoidal encodings ... 'may extrapolate to longer sequences'\" (sources/01 §3.5, sources/03)",
+        "\"learned positional embeddings scored 25.7 BLEU against 25.8 for sinusoids (Table 3 row E)\""
+      ]
+    },
+    {
+      "id": 5,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"3Blue1Brown draws queries as columns and keys as rows, so the softmax runs down each column\" (sources/02 &t=269s, segment-start link)",
+        "\"No, they do not disagree. The two are the same computation, transposed.\" (disagreements.md #5)"
+      ]
+    },
+    {
+      "id": 6,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"In the 'Context size' segment, starting at 762 s (12:42)\" - exact",
+        "\"The attention pattern's size is the square of the context size\""
+      ]
+    }
+  ]
+}

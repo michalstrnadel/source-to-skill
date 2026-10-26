@@ -1,0 +1,79 @@
+{
+  "date": "2026-10-26",
+  "score": 0.93,
+  "passed": 13,
+  "total": 14,
+  "grader": "blind: one subagent answered from the skill directory only; graded against evals.json drafted from re-extracted full_text.txt",
+  "results": [
+    {
+      "id": 1,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"They changed the tool to require absolute paths, and after that the model used it flawlessly.\" (SKILL.md Key claims 6, highlights.md Appendix 2)",
+        "\"They spent more time optimizing the tools than the overall prompt.\""
+      ]
+    },
+    {
+      "id": 2,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "Names \"Sectioning\" and \"Voting\" (SKILL.md section 3 table)",
+        "\"one call answers the user while another screens for inappropriate content\"; \"several prompts review code for vulnerabilities\""
+      ]
+    },
+    {
+      "id": 3,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"when there are clear evaluation criteria and iterating adds measurable value\"",
+        "\"human feedback demonstrably improves the output, and an LLM can produce that kind of feedback\""
+      ]
+    },
+    {
+      "id": 4,
+      "passed": [
+        true,
+        true
+      ],
+      "evidence": [
+        "\"Use orchestrator-workers.\"",
+        "\"in orchestrator-workers the orchestrator decides the subtasks, while in parallelization they are fixed in advance\""
+      ]
+    },
+    {
+      "id": 5,
+      "passed": [
+        true,
+        true,
+        false
+      ],
+      "evidence": [
+        "\"In a workflow, LLMs and tools are orchestrated through predefined code paths ... In an agent, the LLM directs its own process and tool use\"",
+        "\"open-ended problems where the number of steps can't be predicted and no fixed path can be hardcoded\"",
+        "Answer mentions latency/cost and trusted environments but not compounding errors or sandboxed testing with guardrails; SKILL.md lines 94-95 carry it, the answerer did not surface it"
+      ]
+    },
+    {
+      "id": 6,
+      "passed": [
+        true,
+        true,
+        true
+      ],
+      "evidence": [
+        "\"Keep the agent's design simple.\"",
+        "\"showing the agent's planning steps explicitly\"",
+        "\"Craft the agent-computer interface (ACI) carefully, through thorough tool documentation and testing\""
+      ]
+    }
+  ]
+}

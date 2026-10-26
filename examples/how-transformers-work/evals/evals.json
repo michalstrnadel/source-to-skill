@@ -1,0 +1,67 @@
+{
+  "skill_name": "how-transformers-work",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "How many parameters does attention account for in GPT-3, and how is that number built up?",
+      "expected_output": "Key and query matrices are 128 x 12,288 (~1.5M each); value down/up make four equal matrices, ~6.3M per head; 96 heads give ~600M per block; 96 layers give just under 58B, about a third of the 175B total.",
+      "files": [],
+      "expectations": [
+        "States ~6.3M parameters per head (02 3Blue1Brown, Counting parameters ~1101s)",
+        "States ~600M per multi-head block with 96 heads (02 3Blue1Brown, Multiple heads ~1316s)",
+        "States just under 58B in total, about a third of 175B (02 3Blue1Brown, Going deeper ~1461s)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "In the original Transformer, what are d_model, the number of heads and d_k, and what number do the scores get divided by?",
+      "expected_output": "d_model = 512, h = 8, d_k = d_v = 64; scores are divided by sqrt(d_k) = 8.",
+      "files": [],
+      "expectations": [
+        "States d_model = 512, h = 8, d_k = 64 (01 paper, 3.2.2 / 03 Illustrated, Self-Attention in Detail)",
+        "States scores are divided by 8 = sqrt(64) (03 Illustrated, Self-Attention in Detail or 01 paper 3.2.1)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "How do you mask future tokens in attention, and why not just set those scores to zero? Is masking used in cross-attention?",
+      "expected_output": "Set the masked entries to negative infinity before the softmax so they become 0 afterwards while columns stay normalized; setting them to zero directly would break normalization. Cross-attention typically has no masking since there is no notion of later tokens affecting earlier ones.",
+      "files": [],
+      "expectations": [
+        "Says set entries to -infinity before softmax (02 3Blue1Brown Masking ~731s, or 01 paper 3.2.3 / 03 Illustrated Decoder Side)",
+        "Explains that zeroing directly would break normalization (02 3Blue1Brown, Masking ~731s)",
+        "Says cross-attention typically uses no masking (02 3Blue1Brown, Cross-attention ~1132s)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I need my model to handle sentences longer than any seen in training. Which positional encoding should I pick, and how much does the choice cost in quality?",
+      "expected_output": "Sinusoidal: the paper chose it because it may extrapolate to longer sequences, and the Illustrated Transformer also notes it scales to unseen lengths; learned positional embeddings gave nearly identical results (Table 3 row E). (The Illustrated Transformer's figure concatenates sine/cosine halves from Tensor2Tensor; the paper interleaves them.)",
+      "files": [],
+      "expectations": [
+        "Recommends sinusoidal encodings for extrapolation to unseen lengths (01 paper 3.5 or 03 Illustrated, Positional Encoding)",
+        "Says learned embeddings gave nearly identical results (01 paper, Table 3 row E)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "3Blue1Brown applies softmax down columns of the attention pattern; the paper writes softmax(QK^T/sqrt(d_k))V. Do they disagree?",
+      "expected_output": "No, it is a layout difference: 3Blue1Brown puts keys on rows and queries on columns and normalizes each column; in the paper Q has one query per row, so softmax runs along each row of QK^T. Same operation, transposed grid.",
+      "files": [],
+      "expectations": [
+        "Says 3Blue1Brown normalizes each column so it sums to 1 (02 3Blue1Brown, The attention pattern ~589s)",
+        "Says the difference is notation/layout (transposed grid, queries as rows in the paper), not a different computation (01 paper eq. 1 vs 02 video)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Where in the 3Blue1Brown attention video does he explain why context size is a bottleneck?",
+      "expected_output": "Around 12:42 (762 s), segment Context size: the attention pattern's size is the square of the context size.",
+      "files": [],
+      "expectations": [
+        "Gives a timestamp within 60 s of 762 s (02 3Blue1Brown, Context size)",
+        "Says the attention pattern grows with the square of the context size (02 3Blue1Brown, Context size)"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "skill_name": "pro-git",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "When does git's auto gc actually run a full gc, and which settings control it?",
+      "expected_output": "With around 7,000 loose objects or more than 50 packfiles; controlled by gc.auto and gc.autopacklimit.",
+      "files": [],
+      "expectations": [
+        "States ~7,000 loose objects or more than 50 packfiles (chapter Git Internals, Maintenance)",
+        "Names gc.auto and gc.autopacklimit (chapter Git Internals)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What port does the Git protocol (git://) use, and what are its security properties?",
+      "expected_output": "Port 9418; no authentication or cryptography; a repo is served only if it has a git-daemon-export-ok file; cloning over git:// can allow code tampering by a man in the middle.",
+      "files": [],
+      "expectations": [
+        "States port 9418 (chapter Git on the Server, The Git Protocol)",
+        "Says it has no authentication/encryption (chapter Git on the Server)",
+        "Mentions the git-daemon-export-ok file (chapter Git on the Server)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "When must I not rebase?",
+      "expected_output": "Do not rebase commits that exist outside your repository and that people may have based work on; rebasing abandons commits and creates new ones, forcing collaborators to re-merge.",
+      "files": [],
+      "expectations": [
+        "Gives the rule: don't rebase commits that exist outside your repo that others may have based work on (chapter Git Branching, The Perils of Rebasing)",
+        "Explains rebase abandons existing commits and creates new ones so collaborators must re-merge (chapter Git Branching)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "What exactly do reset --soft, --mixed and --hard do, and which is dangerous?",
+      "expected_output": "--soft moves the branch HEAD points to and stops; --mixed (default) also makes the index match HEAD; --hard also overwrites the working directory. Only --hard is dangerous: it can destroy data and can't be undone, unlike checkout which is working-directory safe.",
+      "files": [],
+      "expectations": [
+        "Describes soft = move HEAD's branch, mixed = also reset index, hard = also working directory (chapter Git Tools, Reset Demystified)",
+        "Says --hard is the only dangerous form that can destroy data (chapter Git Tools, Reset Demystified)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Someone committed a huge file and deleted it in the next commit. How do I find it and purge it from history, and what must I tell collaborators?",
+      "expected_output": "git gc, then git count-objects -v; find big blobs with git verify-pack -v .git/objects/pack/pack-*.idx | sort -k 3 -n | tail; map blob to path with git rev-list --objects --all | grep; rewrite with git filter-branch --index-filter 'git rm --ignore-unmatch --cached FILE' -- <first-commit>^..; remove .git/refs/original and .git/logs, then gc. It rewrites history, so contributors must rebase onto the new commits.",
+      "files": [],
+      "expectations": [
+        "Uses verify-pack (sorted by size) and/or rev-list --objects to find the blob (chapter Git Internals, Removing Objects)",
+        "Uses filter-branch --index-filter with git rm --cached --ignore-unmatch (chapter Git Internals, Removing Objects)",
+        "Says history is rewritten so collaborators must rebase / clear refs/original and reflog before gc (chapter Git Internals)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "What is the difference between git log master..experiment and git log master...experiment?",
+      "expected_output": "Double dot: commits reachable from experiment but not from master. Triple dot: commits reachable from either but not both; add --left-right to see which side each is on.",
+      "files": [],
+      "expectations": [
+        "Explains double dot as reachable from the second ref but not the first (chapter Git Tools, Revision Selection)",
+        "Explains triple dot as reachable from either but not both, optionally with --left-right (chapter Git Tools, Revision Selection)"
+      ]
+    }
+  ]
+}

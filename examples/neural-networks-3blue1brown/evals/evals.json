@@ -1,0 +1,66 @@
+{
+  "skill_name": "neural-networks-3blue1brown",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "How big is the digit-recognition network in the course, and how accurate is it?",
+      "expected_output": "784 input neurons (28x28), two hidden layers of 16 neurons, 10 outputs, about 13,000 weights and biases; ~96% accuracy on new images, ~98% with a few tweaks.",
+      "files": [],
+      "expectations": [
+        "States 784 inputs and two hidden layers of 16 neurons (lesson 01 or 02)",
+        "States about 13,000 weights and biases (lesson 02 ~64s or lesson 01)",
+        "States ~96% accuracy, ~98% with tweaks (lesson 02 ~789-820s)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "How much text and compute went into training large language models, by the course's illustrations?",
+      "expected_output": "Reading GPT-3's training text non-stop would take a human over 2,600 years; at one billion operations per second, training the largest models would take well over 100 million years.",
+      "files": [],
+      "expectations": [
+        "States over 2,600 years of non-stop reading for GPT-3's text (lesson 05 ~99s)",
+        "States well over 100 million years at a billion operations per second (lesson 05 ~193-225s)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Why use mini-batches instead of the full gradient, and what does it cost?",
+      "expected_output": "Summing the influence of every training example per step is too slow; shuffle and split into mini-batches (e.g. 100 examples), step on each: not the exact gradient (a 'drunk man stumbling downhill') but a good approximation and a big speedup. This is stochastic gradient descent.",
+      "files": [],
+      "expectations": [
+        "Says computing over all examples per step is too slow and mini-batches give a significant speedup (lesson 03 ~573-605s)",
+        "Says the step is only an approximation of the true gradient / stochastic gradient descent (lesson 03 ~605-635s)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "What does raising or lowering the temperature do when sampling from GPT-3, and is there a cap?",
+      "expected_output": "Temperature T divides the exponents in softmax: larger T flattens the distribution (less likely words, more original but can degenerate into nonsense); T=0 always picks the most likely word (a trite Goldilocks story). The API does not allow T above 2, an arbitrary constraint.",
+      "files": [],
+      "expectations": [
+        "Says higher T makes the distribution more uniform and T=0 always picks the most predictable word (lesson 06 ~1435-1466s)",
+        "Says the API caps temperature at 2 (lesson 06 ~1498s)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Where do GPT-3's 175 billion parameters live: how much in attention vs the MLP blocks?",
+      "expected_output": "Attention: ~58B (about a third); MLPs: up and down projections ~604M each, ~1.2B per block, x96 = ~116B (about two thirds); the rest is embedding/unembedding.",
+      "files": [],
+      "expectations": [
+        "States ~58B in attention, about a third (lesson 07 ~1461s)",
+        "States ~116B in MLPs, about two thirds (lesson 08 ~963-994s)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Where in the course is superposition introduced, and what is the idea?",
+      "expected_output": "Lesson 08 (How might LLMs store facts) around 17:37 (1057 s): individual neurons rarely represent one clean feature; in high dimensions many nearly perpendicular directions fit (exponentially many), so a model can store far more features than dimensions.",
+      "files": [],
+      "expectations": [
+        "Points to lesson 08 at a timestamp within 60 s of 1057 s",
+        "Explains nearly perpendicular directions let a space hold many more features than dimensions (lesson 08 ~1091-1218s)"
+      ]
+    }
+  ]
+}
