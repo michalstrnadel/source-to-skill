@@ -4,8 +4,10 @@ Usage: python3 tools/validate_skill.py <skill-dir>
 
 Checks: SKILL.md exists with YAML frontmatter containing name (matching the
 directory) and description (<= 1024 chars); every relative .md link in
-SKILL.md resolves; no .md file in the skill is empty.
+SKILL.md resolves; no .md file in the skill is empty; evals/evals.json,
+when present, parses and gives every eval a prompt and expectations.
 """
+import json
 import re
 import sys
 from pathlib import Path
@@ -54,6 +56,36 @@ def validate(skill_dir: Path) -> list[str]:
     for md_file in sorted(skill_dir.rglob("*.md")):
         if not md_file.read_text(encoding="utf-8").strip():
             errors.append(f"empty file: {md_file.relative_to(skill_dir)}")
+    errors += _validate_evals(skill_dir)
+    return errors
+
+
+def _validate_evals(skill_dir: Path) -> list[str]:
+    """Check evals/evals.json (skill-creator format) when the skill has one."""
+    path = skill_dir / "evals" / "evals.json"
+    if not path.is_file():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except ValueError as err:
+        return [f"evals/evals.json: not valid JSON ({err})"]
+    if not isinstance(data, dict) or not isinstance(data.get("evals"), list):
+        return ["evals/evals.json: needs an \"evals\" list"]
+    errors = []
+    if data.get("skill_name") != skill_dir.name:
+        errors.append(
+            f"evals/evals.json: skill_name '{data.get('skill_name')}' "
+            f"!= directory '{skill_dir.name}'"
+        )
+    for index, item in enumerate(data["evals"], 1):
+        if not isinstance(item, dict):
+            errors.append(f"evals/evals.json: eval {index} is not an object")
+            continue
+        label = f"evals/evals.json: eval {item.get('id', index)}"
+        if not str(item.get("prompt", "")).strip():
+            errors.append(f"{label}: missing prompt")
+        if not item.get("expectations"):
+            errors.append(f"{label}: no expectations")
     return errors
 
 

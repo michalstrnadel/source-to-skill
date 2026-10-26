@@ -1,3 +1,5 @@
+import json
+
 import validate_skill
 
 
@@ -54,3 +56,41 @@ def test_missing_skill_md_is_fatal(tmp_path):
     empty_dir.mkdir()
     errors = validate_skill.validate(empty_dir)
     assert len(errors) == 1 and "SKILL.md" in errors[0]
+
+
+def _write_evals(skill_dir, data):
+    (skill_dir / "evals").mkdir()
+    (skill_dir / "evals" / "evals.json").write_text(
+        data if isinstance(data, str) else json.dumps(data), encoding="utf-8"
+    )
+
+
+def test_valid_evals_pass(tmp_path):
+    skill_dir = make_skill(tmp_path, "name: my-skill\ndescription: Does things")
+    _write_evals(skill_dir, {"skill_name": "my-skill", "evals": [
+        {"id": 1, "prompt": "Q?", "expected_output": "A",
+         "files": [], "expectations": ["Says A"]},
+    ]})
+    assert validate_skill.validate(skill_dir) == []
+
+
+def test_skill_without_evals_still_passes(tmp_path):
+    skill_dir = make_skill(tmp_path, "name: my-skill\ndescription: Does things")
+    assert validate_skill.validate(skill_dir) == []
+
+
+def test_bad_evals_fail(tmp_path):
+    skill_dir = make_skill(tmp_path, "name: my-skill\ndescription: Does things")
+    _write_evals(skill_dir, {"skill_name": "other", "evals": [
+        {"id": 1, "prompt": "", "expectations": []},
+    ]})
+    errors = validate_skill.validate(skill_dir)
+    assert any("skill_name 'other'" in e for e in errors)
+    assert any("eval 1: missing prompt" in e for e in errors)
+    assert any("eval 1: no expectations" in e for e in errors)
+
+
+def test_unparseable_evals_fail(tmp_path):
+    skill_dir = make_skill(tmp_path, "name: my-skill\ndescription: Does things")
+    _write_evals(skill_dir, "{nope")
+    assert any("evals.json" in e for e in validate_skill.validate(skill_dir))

@@ -83,11 +83,15 @@ yourself.
 Ask the user where to install (default first):
 
 1. `~/.claude/skills/<slug>/` (Claude Code, user-level)
-2. `~/.agents/skills/<slug>/` (cross-agent)
+2. `~/.agents/skills/<slug>/` (cross-agent: Codex, Cursor, Gemini CLI,
+   Copilot, Amp, OpenCode, Goose, Factory)
 3. `~/.copilot/skills/<slug>/` (GitHub Copilot CLI)
 4. `./.claude/skills/<slug>/` (this project only, Claude Code)
 5. `./.agents/skills/<slug>/` (this project only, cross-agent)
 6. `./.github/skills/<slug>/` (this project only, GitHub Copilot)
+
+Another folder the user names (`~/.gemini/skills/`, `~/.cursor/skills/`,
+`~/.kiro/skills/`, ...) is fine too.
 
 `<slug>` is the second argument if given, else slugified from the title.
 
@@ -198,6 +202,15 @@ For `source_type: repo`:
 Every single-source skill: copy `<work_dir>/source.json` into the skill
 directory unchanged, so it can be refreshed later.
 
+Every skill: while the source is still in context, write
+`evals/evals.json` — 6 questions the source answers, drafted from the
+source, not from what you wrote: 2 concrete facts or numbers, 2 decision
+rules, 1 that combines two segments, and for video or audio 1 that needs a
+timestamp. Each has `id`, `prompt`, `expected_output`, `files: []`, and
+1 to 3 checkable `expectations` naming the segment, under
+`{"skill_name": "<slug>", "evals": [...]}` (the skill-creator format).
+The skill-eval skill grades the skill against them later.
+
 ## Step 6 — Verify
 
 Do not trust that generation "looked done":
@@ -209,7 +222,9 @@ Do not trust that generation "looked done":
    metadata.json; for playlist skills, spot-check one lesson's video URL.
 
 Then tell the user the skill name, where it was installed, and one example
-question to try against it.
+question to try against it. Mention once that `/skill-eval <slug>` scores
+the skill against its `evals/evals.json` and `/skill-study <slug>` quizzes
+them on it, when those skills are installed.
 
 ## Several sources → one topic skill
 
