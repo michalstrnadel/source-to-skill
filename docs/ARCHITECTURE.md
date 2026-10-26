@@ -7,7 +7,8 @@ source-to-skill is split into two halves that never blur:
    override), parses it with the right tool (`yt-dlp` for YouTube videos,
    playlists, channels and podcast downloads, a local Whisper backend for
    audio and captionless videos, PyMuPDF for papers and PDF books, the
-   standard library for EPUBs, web articles, and GitHub repos), and
+   standard library for EPUBs, web articles, GitHub repos, documentation
+   sites (llms.txt) and local notes folders), and
    normalizes the result into files with a shared contract.
 2. **Generator** — the user's own agent following the skill's `SKILL.md`.
    It reads the normalized output and distills it into an installable skill.
@@ -22,8 +23,9 @@ agent's skills directory. All paths below are relative to that folder.
 
 ```
  <youtube-url> | <playlist-url> | <channel-url> | <podcast/media-url> |
- <arxiv-url> | <article-url> | <github-repo-url> | paper.pdf |
- book.epub | book.pdf --type book | episode.mp3 / talk.mp4
+ <arxiv-url> | <article-url> | <github-repo-url> | <llms.txt-url> |
+ <docs-site-url> --type docs | paper.pdf | book.epub |
+ book.pdf --type book | episode.mp3 / talk.mp4 | notes-folder/
         │
         ▼
 ┌────────────────────── EXTRACTOR (Python, deterministic) ─────────────────┐
@@ -63,11 +65,21 @@ agent's skills directory. All paths below are relative to that folder.
 │         ├─ article.py      stdlib fetch + HTMLParser extraction ·        │
 │         │                  article > main > body scoping · h1-h3         │
 │         │                  segment boundaries · og:title/author/date     │
-│         └─ repo.py         codeload tarball (no git clone) · README +    │
-│                            top-level *.md + docs/ (md, mdx, rst) in      │
-│                            toctree / mkdocs nav order · include and      │
-│                            literalinclude resolved · reST roles reduced  │
-│                            to text · safe tar extraction · ~2 MB cap     │
+│         ├─ repo.py         codeload tarball (no git clone) · README +    │
+│         │                  top-level *.md + docs/ (md, mdx, rst) in      │
+│         │                  toctree / mkdocs nav order · include and      │
+│         │                  literalinclude resolved · reST roles reduced  │
+│         │                  to text · safe tar extraction · ~2 MB cap     │
+│         ├─ docs.py         llms.txt convention: llms-full.txt split on   │
+│         │                  H1/H2 (fence-aware) or llms.txt index → each  │
+│         │                  linked page fetched (.md twin first, HTML via │
+│         │                  article.py) · sequential · 150-page / ~2 MB   │
+│         │                  caps · ## Optional only while docs are small  │
+│         └─ notes.py        local folder (Obsidian, Markdown, Logseq) ·   │
+│                            .md/.mdx/.txt/.rst, hidden + tool dirs        │
+│                            skipped · frontmatter title/tags · wikilinks  │
+│                            → text + per-note links · hub ranking ·       │
+│                            no symlinks out · ~2 MB cap                   │
 │                                                                          │
 │  output → <tempdir>/source_skill_work/ (or --work-dir)                   │
 │    full_text.txt    normalized text, segment-addressable by offset       │
@@ -118,10 +130,18 @@ agent's skills directory. All paths below are relative to that folder.
         ├─ article skill:
         │    SKILL.md           thesis + key claims, link to the original
         │    highlights.md      the passages worth keeping (short quotes)
-        └─ repo skill:
-             SKILL.md           what it does + install + usage + doc index
-             guides/*.md        distilled per doc area
-             cheatsheet.md      commands and snippets
+        ├─ repo skill:
+        │    SKILL.md           what it does + install + usage + doc index
+        │    guides/*.md        distilled per doc area
+        │    cheatsheet.md      commands and snippets
+        ├─ docs skill:
+        │    SKILL.md           what the product is + doc index (page URLs)
+        │    guides/*.md        distilled per llms.txt section / doc area
+        │    cheatsheet.md      commands, config keys, API calls
+        └─ notes skill:
+             SKILL.md           the user's frameworks + hub-note index
+             topics/*.md        distilled per hub / folder / tag cluster
+             decisions.md       decisions and open questions, with notes
 ```
 
 ## The shared metadata contract
@@ -132,7 +152,7 @@ source types cheap to add.
 
 ```json
 {
-  "source_type": "youtube | playlist | audio | paper | book | article | repo",
+  "source_type": "youtube | playlist | audio | paper | book | article | repo | docs | notes",
   "title": "...",
   "origin": "url or file path",
   "language": "en",
@@ -155,15 +175,25 @@ Per segment:
 - `offset` — character offset into `full_text.txt`. Each segment's text runs
   from its own offset to the next segment's offset, so the generator can read
   a large source one slice at a time.
-- `url` — playlist segments only: the video's URL, which generated lesson
-  files open with, plus `captions` (`manual`, `auto`, or `whisper`). Other
-  source types omit the keys.
+- `url` — playlist segments: the video's URL, which generated lesson
+  files open with, plus `captions` (`manual`, `auto`, or `whisper`); docs
+  segments: the page's URL (llms-full.txt pages only when the file names
+  it in a `Source:` line). Other source types omit the keys.
+
+A segment's identity across re-extractions (`source.json` keys, used by
+`tools/diff_source.py`) is its `url`, else an explicit `key`, else its
+title.
 
 Book and article text renders HTML tables as `| a | b |` rows and images
 as `[image: alt]` / `[figure] caption` lines. Repo segments carry `path`
 and, when true, `orphan` (a Sphinx `:orphan:` page) or `stub` (under ~200
 characters); book segments can carry `front_matter`; playlist segments
-carry a per-video `deep_link_template`.
+carry a per-video `deep_link_template`. Docs segments carry `section`
+(the llms.txt H2 they were listed under), `notes` (the link's
+description) and `optional` (the `## Optional` section). Notes segments
+carry `path` and `key` (the path relative to the folder), `tags` (from
+frontmatter) and `links` (outbound wikilink / relative Markdown link
+targets).
 
 Each parser also adds type-specific fields the templates use: video adds
 `channel`, `upload_date`, `duration_s`, `captions` (`manual`, `auto`, or
@@ -175,7 +205,13 @@ failed, each with title, url, and reason); paper adds `authors` (a list),
 `references` list (one entry per reference); book adds
 `author` (and `page_count` for PDF books); article adds `author`, `date`,
 and `language` when the page declares them; repo adds `owner`, `repo`, and
-`file_count`.
+`file_count`; docs adds `format` (`llms.txt` or `llms-full.txt`),
+`summary` (the llms.txt blockquote), `sections` (title, link count,
+optional), `page_count`, and when it applies `skipped` (pages that failed,
+each with title, url, and reason) and `optional_skipped`; notes adds
+`file_count`, `tags` (tag → note count) and `hubs` (the most-linked notes:
+title, path, inbound). Notes `origin` is the folder with the home
+directory shortened to `~`.
 
 ## Design principles
 
@@ -195,11 +231,15 @@ and `language` when the page declares them; repo adds `owner`, `repo`, and
    an EPUB chapter missing from the table of contents (or a whole
    malformed `toc.ncx`) is titled from its first `<h1>`, its `<title>`, or
    "Chapter N"; a repo over the ~2 MB text cap drops later doc files with
-   a warning; a missing optional dependency fails with the exact
+   a warning; a docs page that fails to fetch is skipped with a warning
+   and recorded in `skipped`, and a docs site over its page or text cap
+   drops later pages; a notes folder skips binary, oversized and empty
+   files; a missing optional dependency fails with the exact
    `pip install` hint. Hard errors are reserved for cases where output
    would be garbage: no captions at all (in a video, or across a whole
    playlist), a PDF with no text layer, a page with no readable article
-   text, or a repo with no README and no docs.
+   text, a repo with no README and no docs, a site with no llms.txt (or
+   none of its linked pages reachable), or a folder with no notes.
 4. **Verify artefacts, not exit codes.** A zero exit status proves nothing.
    The generator checks that every promised file exists and is non-empty,
    and `tools/validate_skill.py` must print `OK: skill is valid` before the
@@ -222,6 +262,8 @@ and `language` when the page declares them; repo adds `owner`, `repo`, and
 | `scripts/extractor/parsers/book.py` | EPUB chapters via stdlib zip/XML; PDF book chapters via outline |
 | `scripts/extractor/parsers/article.py` | web page fetch + readable-article extraction via stdlib HTMLParser |
 | `scripts/extractor/parsers/repo.py` | GitHub tarball download + README/docs selection, traversal-safe extract |
+| `scripts/extractor/parsers/docs.py` | llms.txt / llms-full.txt docs sites: index parsing, sequential page fetch, heading split |
+| `scripts/extractor/parsers/notes.py` | local notes folders: file walk, frontmatter, wikilinks, hub ranking |
 | `tools/validate_skill.py` | lints a generated skill (frontmatter, links, empty files) |
 | `tools/diff_source.py` | compares a skill's `source.json` with a fresh extraction (refresh) |
 | `src/source_to_skill/cli.py` | PyPI CLI: `install`, `extract`, `check`, `validate` around the bundled skill |

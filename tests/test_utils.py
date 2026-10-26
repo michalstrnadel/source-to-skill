@@ -175,3 +175,78 @@ def test_write_manifest_never_publishes_absolute_home_paths(tmp_path, monkeypatc
     assert manifest["origin"] == "~/books/progit.epub"
     assert manifest["est_tokens"] == 10
     assert manifest["options"] == {}
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        "https://docs.anthropic.com/llms.txt",
+        "https://svelte.dev/llms-full.txt",
+        "https://example.com/docs/llms.txt",
+        "http://example.com/LLMS.TXT",
+        "https://example.com/llms.txt?v=2",
+    ],
+)
+def test_detect_source_llms_txt_urls_are_docs(source):
+    assert utils.detect_source(source) == "docs"
+    assert utils.detect_source(source, "article") == "article"
+
+
+def test_detect_source_forced_docs_on_any_web_url():
+    assert utils.detect_source("https://example.com/docs/") == "article"
+    assert utils.detect_source("https://example.com/docs/", "docs") == "docs"
+    assert utils.detect_source("https://github.com/o/r/tree/main", "docs") == "docs"
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        "https://www.youtube.com/watch?v=abc",
+        "https://arxiv.org/abs/1706.03762",
+        "https://github.com/o/r",
+        "paper.pdf",
+    ],
+)
+def test_detect_source_docs_not_forceable_on_specific_sources(source):
+    with pytest.raises(utils.ExtractError, match="cannot be extracted as"):
+        utils.detect_source(source, "docs")
+
+
+def test_detect_source_local_directory_is_notes(tmp_path, monkeypatch):
+    vault = tmp_path / "vault.pdf"  # a folder, whatever its name says
+    vault.mkdir()
+    assert utils.detect_source(str(vault)) == "notes"
+    assert utils.detect_source(str(tmp_path), "notes") == "notes"
+    monkeypatch.setenv("HOME", str(tmp_path))
+    assert utils.detect_source("~/vault.pdf") == "notes"
+    with pytest.raises(utils.ExtractError, match="cannot be extracted as"):
+        utils.detect_source(str(tmp_path), "article")
+    with pytest.raises(utils.ExtractError, match="cannot be extracted as"):
+        utils.detect_source("https://example.com/post", "notes")
+
+
+def test_unsupported_source_message_lists_new_types():
+    with pytest.raises(utils.ExtractError) as err:
+        utils.detect_source("notes.txt")
+    assert "llms.txt" in str(err.value)
+    assert "notes folders" in str(err.value)
+
+
+def test_segment_key_prefers_url_then_key_then_title():
+    assert utils.segment_key({"title": "T", "url": "https://x/a"}) == "https://x/a"
+    assert utils.segment_key({"title": "T", "key": "notes/a.md"}) == "notes/a.md"
+    assert utils.segment_key({"title": "T"}) == "T"
+    # Repo segments keep their title keys (refresh manifests stay stable).
+    assert utils.segment_key({"title": "T", "path": "docs/a.md"}) == "T"
+
+
+def test_write_manifest_keys_notes_by_relative_path(tmp_path):
+    meta = {
+        "source_type": "notes", "title": "Vault", "origin": "~/Vault",
+        "est_tokens": 1,
+        "segments": [{"title": "A", "path": "a.md", "key": "a.md"}],
+    }
+    utils.write_manifest(tmp_path / "w", "~/Vault", meta, {"type": None})
+    manifest = json.loads((tmp_path / "w" / "source.json").read_text())
+    assert manifest["segments"] == [{"key": "a.md", "title": "A"}]
+    assert manifest["origin"] == "~/Vault"

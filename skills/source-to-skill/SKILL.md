@@ -55,6 +55,20 @@ Run from this skill's directory (the folder containing this SKILL.md —
   `SOURCE_TO_SKILL_WHISPER_MODEL` environment variable.
 - Bare `github.com/<owner>/<repo>` URLs are detected as repos (deeper
   paths are not); any other `http(s)` URL is treated as a web article.
+- Documentation sites: URLs ending in `/llms.txt` or `/llms-full.txt` are
+  detected as `docs`. For any other docs URL (`https://docs.example.com`),
+  add `--type docs` — the extractor looks for `llms-full.txt`, then
+  `llms.txt`, under the URL's path and at the site root, and fails with a
+  hint when the site publishes neither (then offer `--type article` for a
+  single page, or the docs' GitHub repo). Linked pages are fetched one by
+  one (up to 150); pages that fail are skipped with a stderr warning and
+  listed in `metadata.json` under `skipped` — report them to the user.
+- A local folder (an Obsidian vault, a Markdown notes or docs folder,
+  Logseq's `pages/`) is detected as `notes`. Hidden folders (`.obsidian`,
+  `.git`, `.trash`) and binary or oversized files are skipped. These are
+  the user's private notes: confirm the folder and what the skill is for
+  before generating, and keep the skill local (never suggest publishing
+  it) unless the user says otherwise.
 - On dependency errors, run `python3 scripts/extract.py --check` and show the
   user the install hints. Do not install anything without asking.
 - On any other ERROR, report it verbatim and stop.
@@ -198,6 +212,40 @@ For `source_type: repo`:
   file per source doc): setup, configuration, APIs, workflows — distilled,
   not a file dump.
 - `cheatsheet.md` — commands and code snippets from across the docs.
+
+For `source_type: docs` (a documentation site via llms.txt):
+
+- `SKILL.md` — frontmatter as above, what the product or library is (from
+  `summary` and the Overview segment), how to install or start, the core
+  concepts and usage patterns, then a doc index table: area, what it
+  covers, link `guides/<area>.md`, and the original page URLs (segment
+  `url`) so answers can cite the live docs.
+- `guides/<area>.md` — one per doc area (follow each segment's llms.txt
+  `section`, merging small sections and splitting very large ones by
+  topic): concepts, configuration, APIs, workflows — distilled, not a page
+  dump. Each guide lists the source page URLs it draws on. Segments marked
+  `"optional": true` are secondary: fold them in only where they add
+  something.
+- `cheatsheet.md` — commands, config keys, API calls and code snippets
+  from across the docs, each with its page URL.
+
+For `source_type: notes` (the user's own notes folder):
+
+- `SKILL.md` — frontmatter as above, the user's own frameworks, principles
+  and recurring ideas front-loaded (in their words, not generic advice),
+  then an index of hub notes (`hubs` in metadata.json, plus notes with
+  many `links`): title, one-line gist, link `topics/<slug>.md`.
+- `topics/<slug>.md` — one per hub note, folder, or tag cluster (`tags`),
+  loaded on demand: the ideas, how they connect (via `links`), and the
+  note paths (`path`) they come from — distilled, not copied.
+- `decisions.md` — decisions the user has recorded (with their reasons and
+  dates when the notes give them) and open questions still unresolved,
+  each with its note path.
+- Privacy: include only what serves the purpose the user stated. Never
+  copy credentials, personal data about other people, health, financial
+  or journal-style private entries, or long verbatim passages; when unsure
+  whether a note belongs in the skill, ask. Reference notes by relative
+  `path`, never by absolute path.
 
 Every single-source skill: copy `<work_dir>/source.json` into the skill
 directory unchanged, so it can be refreshed later.

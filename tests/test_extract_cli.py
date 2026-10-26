@@ -186,3 +186,40 @@ def test_main_stdout_is_pure_json_even_if_a_library_prints(
     captured = capsys.readouterr()
     assert json.loads(captured.out)["title"] == "Fake"
     assert "deprecated" in captured.err
+
+
+def test_main_llms_txt_url_routes_to_docs_parser(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(config, "work_dir", lambda: tmp_path / "work")
+    monkeypatch.setattr(extract.docs, "parse", make_fake_parse("docs"))
+    assert extract.main(["https://example.com/llms.txt"]) == 0
+    assert json.loads(capsys.readouterr().out)["source_type"] == "docs"
+
+
+def test_main_type_docs_routes_web_url_to_docs_parser(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(config, "work_dir", lambda: tmp_path / "work")
+    monkeypatch.setattr(extract.docs, "parse", make_fake_parse("docs"))
+    assert extract.main(["https://example.com/docs", "--type", "docs"]) == 0
+    assert json.loads(capsys.readouterr().out)["source_type"] == "docs"
+
+
+def test_main_directory_routes_to_notes_parser(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(config, "work_dir", lambda: tmp_path / "work")
+    monkeypatch.setattr(extract.notes, "parse", make_fake_parse("notes"))
+    vault = tmp_path / "vault"
+    vault.mkdir()
+    assert extract.main([str(vault)]) == 0
+    assert json.loads(capsys.readouterr().out)["source_type"] == "notes"
+
+
+def test_main_notes_end_to_end(tmp_path, capsys):
+    vault = tmp_path / "vault"
+    (vault / "sub").mkdir(parents=True)
+    (vault / "index.md").write_text("# Home\n\nSee [[Idea]].\n", encoding="utf-8")
+    (vault / "sub" / "Idea.md").write_text("An idea.\n", encoding="utf-8")
+    work = tmp_path / "work"
+    assert extract.main([str(vault), "--work-dir", str(work)]) == 0
+    meta = json.loads((work / "metadata.json").read_text(encoding="utf-8"))
+    assert [s["path"] for s in meta["segments"]] == ["index.md", "sub/Idea.md"]
+    manifest = json.loads((work / "source.json").read_text(encoding="utf-8"))
+    assert [s["key"] for s in manifest["segments"]] == ["index.md", "sub/Idea.md"]
+    assert "Home" in (work / "full_text.txt").read_text(encoding="utf-8")

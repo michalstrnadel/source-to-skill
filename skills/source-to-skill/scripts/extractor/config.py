@@ -7,6 +7,13 @@ WORK_DIR_NAME = "source_skill_work"
 # Valid values for --type / detect_source's forced parameter.
 SOURCE_TYPES = (
     "youtube", "playlist", "audio", "paper", "book", "article", "repo",
+    "docs", "notes",
+)
+
+# Documentation sites publishing the llms.txt convention (llmstxt.org):
+# the index (llms.txt) or the whole docs in one file (llms-full.txt).
+LLMS_TXT_URL_PATTERN = (
+    r"(?i)^https?://[^?#]*/llms(?:-full)?\.txt/?(?:[?#].*)?$"
 )
 
 YOUTUBE_URL_PATTERNS = (
@@ -89,6 +96,25 @@ ARTICLE_MIN_WORDS = 100
 # Cap on total text pulled from a GitHub repo's README + docs.
 REPO_TEXT_CAP_BYTES = 2_000_000
 
+# Docs sites: at most this many pages linked from an llms.txt are fetched
+# (one request each, sequentially), and at most this much text is kept
+# (also the size cap for a single llms-full.txt download).
+DOCS_MAX_PAGES = 150
+DOCS_TEXT_CAP_BYTES = 2_000_000
+
+# The llms.txt "## Optional" section is fetched only while the docs stay
+# under this size - it is the part the spec says can be skipped.
+DOCS_OPTIONAL_BUDGET_BYTES = 300_000
+
+# llms-full.txt splits on H1 headings when they average under this many
+# characters per segment; bigger H1 sections split on H2 as well.
+DOCS_H1_SEGMENT_CHARS = 60_000
+
+# Local notes folders: total text cap, and notes bigger than this are
+# skipped (exports, logs, pasted dumps - not notes).
+NOTES_TEXT_CAP_BYTES = 2_000_000
+NOTES_MAX_FILE_BYTES = 1_000_000
+
 # Playlists over this many videos get a stderr warning (still processed).
 PLAYLIST_WARN_VIDEOS = 30
 
@@ -96,7 +122,7 @@ PLAYLIST_WARN_VIDEOS = 30
 RATE_LIMIT_ABORT_AFTER = 3
 
 # Timeout (seconds) for network fetches: article pages, caption files,
-# repo tarballs. Without it a stalled server hangs the CLI forever.
+# repo tarballs, docs pages. Without it a stalled server hangs the CLI forever.
 FETCH_TIMEOUT_S = 30
 
 OPTIONAL_DEPS = {

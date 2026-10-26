@@ -25,13 +25,15 @@ def _is_media_path(source: str) -> bool:
 def _possible_types(source: str) -> tuple:
     """Source types this source can plausibly be, best guess first.
 
-    Detection order: youtube video -> channel -> playlist -> podcast RSS
-    feed (a playlist of episodes) -> podcast page
-    or direct media URL -> arxiv -> github repo -> generic http(s)
-    article -> .pdf -> .epub -> local audio/video file. Any http(s) URL
-    can also be forced to article or audio (yt-dlp downloads from 1000+
-    sites); a watch URL with a list= param can be forced to playlist
-    (and is playlist-only when it has no v= param).
+    Detection order: youtube video -> channel -> playlist -> llms.txt /
+    llms-full.txt docs -> podcast RSS feed (a playlist of episodes) ->
+    podcast page or direct media URL -> arxiv -> github repo -> generic
+    http(s) article -> local directory (notes) -> .pdf -> .epub -> local
+    audio/video file. Any http(s) URL can also be forced to article or
+    audio (yt-dlp downloads from 1000+ sites); a generic web URL can be
+    forced to docs (its llms.txt is looked up); a watch URL with a list=
+    param can be forced to playlist (and is playlist-only when it has no
+    v= param).
     """
     is_http = re.match(r"https?://", source) is not None
     as_other = ("article", "audio") if is_http else ()
@@ -54,6 +56,8 @@ def _possible_types(source: str) -> tuple:
         return with_others("playlist")
     if re.match(config.PLAYLIST_URL_PATTERN, source):
         return with_others("playlist")
+    if is_http and re.match(config.LLMS_TXT_URL_PATTERN, source):
+        return with_others("docs")
     if is_http and re.match(config.FEED_URL_PATTERN, source):
         return with_others("playlist")
     if is_http and (
@@ -66,7 +70,9 @@ def _possible_types(source: str) -> tuple:
     if re.match(config.GITHUB_REPO_PATTERN, source):
         return with_others("repo")
     if is_http:
-        return as_other
+        return as_other + ("docs",)
+    if Path(source).expanduser().is_dir():
+        return ("notes",)
     lowered = source.lower()
     if lowered.endswith(".pdf"):
         return ("paper", "book")
@@ -97,9 +103,10 @@ def detect_source(source: str, forced=None) -> str:
         raise ExtractError(
             f"Unsupported source: {source}\n"
             "Supported: YouTube video, playlist and channel URLs, podcast "
-            "and audio/video URLs, arXiv URLs, GitHub repo URLs, web "
-            "article URLs (http/https), local .pdf, .epub and audio/video "
-            "files."
+            "and audio/video URLs, arXiv URLs, GitHub repo URLs, docs "
+            "sites (llms.txt / llms-full.txt URLs), web article URLs "
+            "(http/https), local .pdf, .epub and audio/video files, local "
+            "notes folders (Obsidian vaults, Markdown folders)."
         )
     if forced is None:
         return possible[0]
@@ -125,8 +132,13 @@ def write_outputs(work_dir: Path, full_text: str, metadata: dict) -> None:
 
 
 def segment_key(segment: dict) -> str:
-    """Stable identity of a segment across re-extractions."""
-    return segment.get("url") or segment["title"]
+    """Stable identity of a segment across re-extractions.
+
+    Its URL when it has one, else an explicit `key` (notes: the relative
+    file path), else its title. Repo segments carry `path` too but stay
+    keyed by title so refresh manifests written earlier keep matching.
+    """
+    return segment.get("url") or segment.get("key") or segment["title"]
 
 
 def write_manifest(

@@ -5,14 +5,17 @@ Usage:
   python3 scripts/extract.py --check     # report optional dependencies
 
 Sources: YouTube video, playlist and channel URLs, podcast and audio/video
-URLs or local files, arXiv URLs, GitHub repo URLs, web article URLs, local
-.pdf files, local .epub books.
+URLs or local files, arXiv URLs, GitHub repo URLs, documentation sites
+(llms.txt / llms-full.txt URLs), web article URLs, local .pdf files, local
+.epub books, local notes folders (Obsidian vaults, Markdown folders).
 
 Options:
   --type T          override auto-detection: youtube|playlist|audio|paper|
-                    book|article|repo (e.g. `--type book` for a PDF book,
-                    `--type playlist` for a watch?v=...&list=... URL,
-                    `--type audio` for any page yt-dlp can download)
+                    book|article|repo|docs|notes (e.g. `--type book` for a
+                    PDF book, `--type playlist` for a watch?v=...&list=...
+                    URL, `--type audio` for any page yt-dlp can download,
+                    `--type docs` for a docs site URL: its llms-full.txt or
+                    llms.txt is looked up)
   --limit N         playlists and channels: only the first N videos
                     (channels default to the latest 20)
   --transcribe      YouTube: transcribe the audio with Whisper even when
@@ -30,7 +33,7 @@ from pathlib import Path
 
 from extractor import config, dependencies, utils
 from extractor.parsers import (
-    article, audio, book, paper, playlist, repo, youtube,
+    article, audio, book, docs, notes, paper, playlist, repo, youtube,
 )
 
 PARSERS = {
@@ -41,6 +44,8 @@ PARSERS = {
     "book": book,
     "article": article,
     "repo": repo,
+    "docs": docs,
+    "notes": notes,
 }
 
 
