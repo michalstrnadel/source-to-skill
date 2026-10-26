@@ -105,7 +105,19 @@ def test_install_dest(home, tmp_path):
     target = tmp_path / "custom" / "x"
     assert cli.main(["install", "--dest", str(target)]) == 0
     _assert_skill_installed(target)
-    assert (tmp_path / "custom" / "skill-eval" / "SKILL.md").is_file()
+    # --dest installs exactly PATH: no companions in its parent folder.
+    assert sorted(p.name for p in (tmp_path / "custom").iterdir()) == ["x"]
+
+
+def test_install_dest_force_never_touches_siblings(tmp_path):
+    for name in cli.COMPANIONS:
+        (tmp_path / name).mkdir()
+        (tmp_path / name / "keep.txt").write_text("mine", encoding="utf-8")
+    target = tmp_path / "x"
+    assert cli.main(["install", "--dest", str(target), "--force"]) == 0
+    _assert_skill_installed(target)
+    for name in cli.COMPANIONS:
+        assert (tmp_path / name / "keep.txt").read_text(encoding="utf-8") == "mine"
 
 
 def test_install_refuses_existing_target(tmp_path, capsys):
@@ -126,9 +138,28 @@ def test_install_force_replaces(tmp_path):
     _assert_skill_installed(target)
     assert not (target / "stale.txt").exists()
     # No staging leftovers next to the target.
-    assert sorted(p.name for p in tmp_path.iterdir()) == sorted(
-        ["x", *cli.COMPANIONS]
-    )
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["x"]
+
+
+def test_install_failed_swap_restores_the_old_copy(tmp_path, monkeypatch):
+    target = tmp_path / "x"
+    target.mkdir()
+    (target / "keep.txt").write_text("mine", encoding="utf-8")
+    rename = Path.rename
+    failed = []
+
+    def failing_rename(self, dst):
+        # The first move onto the target (new copy into place) fails.
+        if Path(dst) == target and not failed:
+            failed.append(self)
+            raise OSError("disk full")
+        return rename(self, dst)
+
+    monkeypatch.setattr(Path, "rename", failing_rename)
+    with pytest.raises(OSError):
+        cli.main(["install", "--dest", str(target), "--force"])
+    assert (target / "keep.txt").read_text(encoding="utf-8") == "mine"
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["x"]
 
 
 def test_install_force_replaces_symlink_without_touching_its_target(tmp_path):

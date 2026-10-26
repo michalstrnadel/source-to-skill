@@ -99,27 +99,36 @@ def _exists(path: Path) -> bool:
 def _copy_skill(source: Path, target: Path) -> None:
     """Copy one skill folder to target, replacing whatever is there."""
     target.parent.mkdir(parents=True, exist_ok=True)
-    # Copy into a sibling temp dir first so a failed copy never leaves a
-    # half-replaced skill behind.
+    # Copy into a sibling temp dir first, then swap: the old copy is moved
+    # aside into the staging dir (a symlink moves as a link, its target is
+    # never touched) and restored if the new one cannot take its place,
+    # so a failure never leaves a half-replaced or missing skill behind.
     staging = Path(tempfile.mkdtemp(prefix=f".{SKILL_NAME}-", dir=target.parent))
     try:
-        staged = staging / target.name
+        staged = staging / "new"
+        old = staging / "old"
         shutil.copytree(source, staged, ignore=IGNORE)
         if _exists(target):
-            if target.is_symlink() or target.is_file():
-                target.unlink()
-            else:
-                shutil.rmtree(target)
-        staged.rename(target)
+            target.rename(old)
+        try:
+            staged.rename(target)
+        except OSError:
+            if _exists(old):
+                old.rename(target)
+            raise
     finally:
+        # Deletes the old copy; rmtree removes a moved symlink as a link.
         shutil.rmtree(staging, ignore_errors=True)
 
 
 def run_install(args: argparse.Namespace) -> int:
     target = install_target(args.agent, args.project, args.dest)
+    # --dest names exactly one folder: installing companions into its
+    # parent could replace (with --force) unrelated folders there.
+    only = args.only or bool(args.dest)
     # Companions go next to source-to-skill, under their own names.
     plan = [(skill_dir(), target)]
-    if not args.only:
+    if not only:
         plan += [
             (skill_dir(name), target.parent / name) for name in COMPANIONS
         ]
@@ -138,7 +147,7 @@ def run_install(args: argparse.Namespace) -> int:
         _copy_skill(source, dest)
         print(f"{verb} {dest.name} {__version__} skill at {dest}")
     print("Next: in your agent, run  /source-to-skill <url-or-file>")
-    if not args.only:
+    if not only:
         print("Then:  /skill-study <skill>  ·  /skill-eval <skill>  ·  "
               "/skill-library")
     print("Optional extractors: pip install 'source-to-skill[all]'  "
@@ -182,8 +191,9 @@ def build_parser() -> argparse.ArgumentParser:
     install.add_argument(
         "--dest",
         metavar="PATH",
-        help="explicit target directory for source-to-skill "
-        "(companion skills go next to it)",
+        help="explicit target directory for source-to-skill; installs "
+        "only source-to-skill (implies --only - companion skills are not "
+        "installed with --dest)",
     )
     install.add_argument(
         "--only",
