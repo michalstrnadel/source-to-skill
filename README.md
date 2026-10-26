@@ -8,6 +8,7 @@
 One command in Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, Amp, or any [Agent Skills](https://github.com/agentskills/agentskills) host. Answers link to the exact second. Local Whisper, no API keys.
 
 [![CI](https://github.com/michalstrnadel/source-to-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/michalstrnadel/source-to-skill/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/source-to-skill?color=3775A9)](https://pypi.org/project/source-to-skill/)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 [![Claude Code plugin](https://img.shields.io/badge/Claude_Code-plugin-d97757)](#quick-start)
@@ -60,11 +61,11 @@ npx skills add michalstrnadel/source-to-skill
 **Or with [uv](https://docs.astral.sh/uv/)**, which also gives you the `source-to-skill` CLI:
 
 ```bash
-uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install                 # -> ~/.claude/skills/
-uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install --agent codex   # -> ~/.agents/skills/
+uvx source-to-skill install                 # -> ~/.claude/skills/
+uvx source-to-skill install --agent codex   # -> ~/.agents/skills/
 ```
 
-`--agent` takes `claude`, `agents`/`codex`, `copilot`, `gemini`, `cursor`, `opencode`, `kiro`, `windsurf`, or `factory`; add `--project` to install into the current repo. Once the package is on PyPI this shortens to `uvx source-to-skill install`.
+`--agent` takes `claude`, `agents`/`codex`, `copilot`, `gemini`, `cursor`, `opencode`, `kiro`, `windsurf`, or `factory`; add `--project` to install into the current repo.
 
 **Manual:** `git clone` this repo and symlink `skills/source-to-skill/` into your agent's skills folder ([details](#install-for-other-agents)).
 
@@ -236,7 +237,7 @@ extract.py --check
   - `PyMuPDF` for PDF papers and books
   - `mlx-whisper` (Apple Silicon) or `faster-whisper` for podcasts, audio files, and captionless videos; `mlx-whisper` also needs `ffmpeg`
 - EPUB books, web articles, GitHub repos, docs sites, notes folders, Word/PowerPoint files, threads, and `.srt`/`.vtt` transcripts need only the standard library
-- `pip install "source-to-skill[all] @ git+https://github.com/michalstrnadel/source-to-skill"` installs the CLI with every extractor for your platform
+- `pip install "source-to-skill[all]"` installs the CLI with every extractor for your platform
 
 ## Install for other agents
 

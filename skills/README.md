@@ -15,7 +15,7 @@ ways:
 - **Symlink** (updates via `git pull`): `ln -s "$PWD/skills/source-to-skill" ~/.claude/skills/source-to-skill`
 - **Copy** (frozen version): `cp -r skills/source-to-skill ~/.claude/skills/`
 - **Skills CLI:** `npx skills add michalstrnadel/source-to-skill` (any agent)
-- **uv:** `uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install` (`--agent claude|codex|copilot|gemini|cursor|...`, `--project`, `--only`)
+- **uv:** `uvx source-to-skill install` (`--agent claude|codex|copilot|gemini|cursor|...`, `--project`, `--only`)
 
 As a plugin, commands are namespaced: `/source-to-skill:skill-study`.
 

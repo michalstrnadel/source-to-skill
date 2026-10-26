@@ -2,7 +2,7 @@
 
 > Open-source tool (MIT) that turns YouTube videos, playlists and channels, podcasts and recordings (local Whisper), arXiv papers, PDF and EPUB books, web articles, GitHub repos, documentation sites (llms.txt), Obsidian or Markdown notes folders, Word and PowerPoint files, Hacker News and Reddit threads, and subtitle files into Agent Skills: a short SKILL.md an agent loads on demand plus support files it opens only when a question needs them. Works in Claude Code (plugin), Codex, Cursor, Gemini CLI, GitHub Copilot, Amp, OpenCode and any Agent Skills host. No API keys; extraction and transcription run locally.
 
-Install as a Claude Code plugin with `/plugin marketplace add michalstrnadel/source-to-skill` and `/plugin install source-to-skill@source-to-skill`, or for any agent with `npx skills add michalstrnadel/source-to-skill` or `uvx --from git+https://github.com/michalstrnadel/source-to-skill source-to-skill install --agent <claude|codex|copilot|gemini|cursor|...>`. Then run `/source-to-skill <url-or-file>`.
+Install as a Claude Code plugin with `/plugin marketplace add michalstrnadel/source-to-skill` and `/plugin install source-to-skill@source-to-skill`, or for any agent with `npx skills add michalstrnadel/source-to-skill` or `uvx source-to-skill install --agent <claude|codex|copilot|gemini|cursor|...>`. Then run `/source-to-skill <url-or-file>`.
 
 Video and audio skills cite the exact second (`&t=842s`). Every generated skill ships `evals/evals.json`, grounded questions drafted from the source, which the `skill-eval` companion skill scores. `skill-study` quizzes you with spaced repetition and exports Anki cards; `skill-library` lists, searches and refreshes every skill you made.
 
