@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
-  <!-- source-to-skill GitHub social preview (1280x640), v0.5.0 -->
+  <!-- source-to-skill GitHub social preview (1280x640), v0.7.0 -->
   <defs>
     <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
       <stop offset="0" stop-color="#7c3aed" stop-opacity="0.34"/>
@@ -44,50 +44,55 @@
 
   <!-- version badge -->
   <rect x="540" y="168" width="88" height="32" rx="16" fill="#7c3aed" fill-opacity="0.22" stroke="#a78bfa" stroke-opacity="0.5"/>
-  <text x="584" y="190" text-anchor="middle" font-family="Menlo, 'SF Mono', Consolas, monospace" font-size="16" font-weight="bold" fill="#c4b5fd">v0.5.0</text>
+  <text x="584" y="190" text-anchor="middle" font-family="Menlo, 'SF Mono', Consolas, monospace" font-size="16" font-weight="bold" fill="#c4b5fd">v0.7.0</text>
 
   <!-- wordmark and tagline -->
   <text x="536" y="282" font-family="Helvetica, Arial, sans-serif" font-size="76" font-weight="bold" fill="#ffffff" letter-spacing="-1.5">source-to-skill</text>
-  <text x="540" y="334" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#c9bcf2">Turn videos, podcasts, papers &amp; books</text>
-  <text x="540" y="370" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#c9bcf2">into skills your coding agent loads on demand</text>
+  <text x="540" y="334" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#c9bcf2">Turn videos, podcasts, docs &amp; notes into skills</text>
+  <text x="540" y="370" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#c9bcf2">for Claude Code, Codex, Cursor &amp; Gemini CLI</text>
 
   <!-- source chips -->
   <g font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#e9e3fb">
     <g transform="translate(540,410)">
-      <rect width="108" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
-      <text x="54" y="24" text-anchor="middle">YouTube</text>
+      <rect width="108" height="36" rx="10" fill="#7c3aed" fill-opacity="0.35" stroke="#c4b5fd" stroke-opacity="0.7"/>
+      <text x="54" y="24" text-anchor="middle" fill="#ffffff">YouTube</text>
     </g>
     <g transform="translate(658,410)">
-      <rect width="196" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
-      <text x="98" y="24" text-anchor="middle">Playlists &amp; channels</text>
-    </g>
-    <g transform="translate(864,410)">
       <rect width="112" height="36" rx="10" fill="#7c3aed" fill-opacity="0.35" stroke="#c4b5fd" stroke-opacity="0.7"/>
       <text x="56" y="24" text-anchor="middle" fill="#ffffff">Podcasts</text>
     </g>
-    <g transform="translate(986,410)">
-      <rect width="80" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
-      <text x="40" y="24" text-anchor="middle">arXiv</text>
+    <g transform="translate(780,410)">
+      <rect width="100" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="50" y="24" text-anchor="middle">Courses</text>
+    </g>
+    <g transform="translate(890,410)">
+      <rect width="108" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="54" y="24" text-anchor="middle">Meetings</text>
+    </g>
+    <g transform="translate(1008,410)">
+      <rect width="156" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="78" y="24" text-anchor="middle">Docs (llms.txt)</text>
     </g>
     <g transform="translate(540,456)">
-      <rect width="172" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
-      <text x="86" y="24" text-anchor="middle">PDF &amp; EPUB books</text>
+      <rect width="166" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="83" y="24" text-anchor="middle">Papers &amp; books</text>
     </g>
-    <g transform="translate(722,456)">
-      <rect width="100" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
-      <text x="50" y="24" text-anchor="middle">Articles</text>
+    <g transform="translate(716,456)">
+      <rect width="156" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="78" y="24" text-anchor="middle">Obsidian notes</text>
     </g>
-    <g transform="translate(832,456)">
-      <rect width="140" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
-      <text x="70" y="24" text-anchor="middle">GitHub repos</text>
+    <g transform="translate(882,456)">
+      <rect width="196" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="98" y="24" text-anchor="middle">Word &amp; PowerPoint</text>
     </g>
-    <g transform="translate(982,456)">
-      <rect width="114" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
-      <text x="57" y="24" text-anchor="middle">Audio files</text>
+    <g transform="translate(1088,456)">
+      <rect width="138" height="36" rx="10" fill="#ffffff" fill-opacity="0.06" stroke="#a78bfa" stroke-opacity="0.35"/>
+      <text x="69" y="24" text-anchor="middle">HN &amp; Reddit</text>
     </g>
   </g>
 
   <!-- footer -->
-  <text x="540" y="572" font-family="Menlo, 'SF Mono', Consolas, monospace" font-size="18" fill="#8d7fb8">uvx source-to-skill install</text>
-  <text x="540" y="600" font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#6f6193">Claude Code &#183; Copilot CLI &#183; Amp &#183; any Agent Skills host &#183; no API keys</text>
+  <text x="540" y="560" font-family="Helvetica, Arial, sans-serif" font-size="19" font-weight="bold" fill="#c4b5fd">Every skill ships an eval &#183; exact-second links &#183; local Whisper</text>
+  <text x="540" y="590" font-family="Menlo, 'SF Mono', Consolas, monospace" font-size="17" fill="#8d7fb8">npx skills add michalstrnadel/source-to-skill</text>
+  <text x="540" y="616" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#6f6193">also Copilot &#183; Amp &#183; OpenCode &#183; Kiro &#183; Windsurf &#183; Factory &#183; Goose &#183; no API keys</text>
 </svg>
