@@ -86,7 +86,8 @@ Documentation = "https://github.com/michalstrnadel/source-to-skill/blob/main/doc
 # The canonical agent skill lives in skills/source-to-skill/ (no __init__.py
 # there on purpose). It is mapped into the wheel as source_to_skill/skill/;
 # each folder holding .py files is listed explicitly so build_py copies its
-# modules, and SKILL.md ships as package data.
+# modules, and SKILL.md ships as package data. The companion skills in
+# skills/<name>/ map the same way to source_to_skill/companions/<name_>/.
 [tool.setuptools]
 include-package-data = false
 packages = [
@@ -96,14 +97,24 @@ packages = [
     "source_to_skill.skill.scripts.extractor",
     "source_to_skill.skill.scripts.extractor.parsers",
     "source_to_skill.skill.tools",
+    "source_to_skill.companions.skill_study",
+    "source_to_skill.companions.skill_eval",
+    "source_to_skill.companions.skill_library",
+    "source_to_skill.companions.skill_library.scripts",
 ]
 
 [tool.setuptools.package-dir]
 "" = "src"
 "source_to_skill.skill" = "skills/source-to-skill"
+"source_to_skill.companions.skill_study" = "skills/skill-study"
+"source_to_skill.companions.skill_eval" = "skills/skill-eval"
+"source_to_skill.companions.skill_library" = "skills/skill-library"
 
 [tool.setuptools.package-data]
 "source_to_skill.skill" = ["SKILL.md"]
+"source_to_skill.companions.skill_study" = ["SKILL.md"]
+"source_to_skill.companions.skill_eval" = ["SKILL.md"]
+"source_to_skill.companions.skill_library" = ["SKILL.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

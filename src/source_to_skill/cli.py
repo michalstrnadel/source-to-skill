@@ -3,6 +3,8 @@
 The agent skill itself lives in a self-contained folder (SKILL.md + scripts/
 + tools/). In a wheel it is bundled as ``source_to_skill/skill/``; in a
 source checkout / editable install it is read from ``skills/source-to-skill/``.
+The companion skills (skill-study, skill-eval, skill-library) ship the same
+way, as ``source_to_skill/companions/<name_with_underscores>/`` in a wheel.
 """
 from __future__ import annotations
 
@@ -17,22 +19,38 @@ from source_to_skill import __version__
 
 SKILL_NAME = "source-to-skill"
 
-# agent -> (user-level skills root relative to $HOME, project-level root relative to cwd)
+# Installed next to source-to-skill unless --only source-to-skill.
+COMPANIONS = ("skill-study", "skill-eval", "skill-library")
+
+# agent -> (user-level skills root relative to $HOME, project-level root
+# relative to cwd), from each agent's skills documentation. Codex, Amp,
+# Goose and most others read the shared .agents/skills folders.
 AGENT_DIRS = {
-    "claude": (Path(".claude") / "skills", Path(".claude") / "skills"),
-    "agents": (Path(".agents") / "skills", Path(".agents") / "skills"),
-    "copilot": (Path(".copilot") / "skills", Path(".github") / "skills"),
+    "claude": (Path(".claude/skills"), Path(".claude/skills")),
+    "agents": (Path(".agents/skills"), Path(".agents/skills")),
+    "codex": (Path(".agents/skills"), Path(".agents/skills")),
+    "copilot": (Path(".copilot/skills"), Path(".github/skills")),
+    "gemini": (Path(".gemini/skills"), Path(".gemini/skills")),
+    "cursor": (Path(".cursor/skills"), Path(".cursor/skills")),
+    "opencode": (Path(".config/opencode/skills"), Path(".opencode/skills")),
+    "kiro": (Path(".kiro/skills"), Path(".kiro/skills")),
+    "windsurf": (Path(".codeium/windsurf/skills"), Path(".windsurf/skills")),
+    "factory": (Path(".factory/skills"), Path(".factory/skills")),
 }
 
 IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo", ".DS_Store")
 
 
-def skill_dir() -> Path:
-    """Return the bundled skill folder (wheel install or source checkout)."""
+def skill_dir(name: str = SKILL_NAME) -> Path:
+    """Return a bundled skill folder (wheel install or source checkout)."""
     here = Path(__file__).resolve().parent
+    wheel = (
+        here / "skill" if name == SKILL_NAME
+        else here / "companions" / name.replace("-", "_")
+    )
     candidates = [
-        here / "skill",  # installed wheel
-        here.parent.parent / "skills" / SKILL_NAME,  # src/ checkout, editable install
+        wheel,  # installed wheel
+        here.parent.parent / "skills" / name,  # src/ checkout, editable install
     ]
     for candidate in candidates:
         if (candidate / "SKILL.md").is_file():
@@ -74,25 +92,20 @@ def install_target(agent: str, project: bool, dest: str | None) -> Path:
     return base / SKILL_NAME
 
 
-def run_install(args: argparse.Namespace) -> int:
-    source = skill_dir()
-    target = install_target(args.agent, args.project, args.dest)
-    exists = target.exists() or target.is_symlink()
-    if exists and not args.force:
-        print(
-            f"ERROR: {target} already exists. "
-            "Re-run with --force to replace it.",
-            file=sys.stderr,
-        )
-        return 1
+def _exists(path: Path) -> bool:
+    return path.exists() or path.is_symlink()
+
+
+def _copy_skill(source: Path, target: Path) -> None:
+    """Copy one skill folder to target, replacing whatever is there."""
     target.parent.mkdir(parents=True, exist_ok=True)
     # Copy into a sibling temp dir first so a failed copy never leaves a
     # half-replaced skill behind.
     staging = Path(tempfile.mkdtemp(prefix=f".{SKILL_NAME}-", dir=target.parent))
     try:
-        staged = staging / SKILL_NAME
+        staged = staging / target.name
         shutil.copytree(source, staged, ignore=IGNORE)
-        if exists:
+        if _exists(target):
             if target.is_symlink() or target.is_file():
                 target.unlink()
             else:
@@ -100,9 +113,34 @@ def run_install(args: argparse.Namespace) -> int:
         staged.rename(target)
     finally:
         shutil.rmtree(staging, ignore_errors=True)
-    verb = "Replaced" if exists else "Installed"
-    print(f"{verb} source-to-skill {__version__} skill at {target}")
+
+
+def run_install(args: argparse.Namespace) -> int:
+    target = install_target(args.agent, args.project, args.dest)
+    # Companions go next to source-to-skill, under their own names.
+    plan = [(skill_dir(), target)]
+    if not args.only:
+        plan += [
+            (skill_dir(name), target.parent / name) for name in COMPANIONS
+        ]
+    existing = [dest for _, dest in plan if _exists(dest)]
+    if existing and not args.force:
+        print(
+            "ERROR: already exists: "
+            + ", ".join(str(dest) for dest in existing)
+            + ". Re-run with --force to replace "
+            + ("it." if len(existing) == 1 else "them."),
+            file=sys.stderr,
+        )
+        return 1
+    for source, dest in plan:
+        verb = "Replaced" if _exists(dest) else "Installed"
+        _copy_skill(source, dest)
+        print(f"{verb} {dest.name} {__version__} skill at {dest}")
     print("Next: in your agent, run  /source-to-skill <url-or-file>")
+    if not args.only:
+        print("Then:  /skill-study <skill>  ·  /skill-eval <skill>  ·  "
+              "/skill-library")
     print("Optional extractors: pip install 'source-to-skill[all]'  "
           "(check with: source-to-skill check)")
     return 0
@@ -122,23 +160,35 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", metavar="COMMAND")
 
     install = sub.add_parser(
-        "install", help="copy the source-to-skill agent skill into a skills folder"
+        "install",
+        help="copy source-to-skill and its companion skills into a skills folder"
     )
     install.add_argument(
         "--agent",
         choices=sorted(AGENT_DIRS),
         default="claude",
-        help="target agent: claude (~/.claude/skills, default), "
-        "agents (~/.agents/skills), copilot (~/.copilot/skills)",
+        help="target agent: claude (~/.claude/skills, default); "
+        "agents or codex (~/.agents/skills, also read by Amp, Goose, Cursor, "
+        "Gemini CLI, OpenCode); copilot (~/.copilot/skills); gemini; cursor; "
+        "opencode; kiro; windsurf; factory",
     )
     install.add_argument(
         "--project",
         action="store_true",
         help="install into the current project (./.claude/skills, "
-        "./.agents/skills or ./.github/skills) instead of your home dir",
+        "./.agents/skills, ./.github/skills, ...) instead of your home dir",
     )
     install.add_argument(
-        "--dest", metavar="PATH", help="explicit full target directory"
+        "--dest",
+        metavar="PATH",
+        help="explicit target directory for source-to-skill "
+        "(companion skills go next to it)",
+    )
+    install.add_argument(
+        "--only",
+        action="store_true",
+        help="install only source-to-skill, without skill-study, "
+        "skill-eval and skill-library",
     )
     install.add_argument(
         "--force", action="store_true", help="replace an existing install"
