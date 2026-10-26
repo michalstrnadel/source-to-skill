@@ -7,7 +7,7 @@ WORK_DIR_NAME = "source_skill_work"
 # Valid values for --type / detect_source's forced parameter.
 SOURCE_TYPES = (
     "youtube", "playlist", "audio", "paper", "book", "article", "repo",
-    "docs", "notes",
+    "docs", "notes", "document", "thread", "transcript",
 )
 
 # Documentation sites publishing the llms.txt convention (llmstxt.org):
@@ -76,6 +76,36 @@ ARXIV_URL_PATTERN = (
     r"(?:https?://)?(?:www\.)?arxiv\.org/(?:abs|pdf)/"
     r"(?P<arxiv_id>\d{4}\.\d{4,5}(?:v\d+)?)"
 )
+
+# Local office documents: Word / PowerPoint and their OpenDocument twins,
+# read with the standard library (they are zip archives of XML).
+DOCUMENT_EXTENSIONS = (".docx", ".pptx", ".odt", ".odp")
+
+# Local subtitle / meeting transcript files (Zoom, Teams, Meet exports,
+# downloaded captions).
+TRANSCRIPT_EXTENSIONS = (".srt", ".vtt")
+
+# Discussion threads: Hacker News items and Reddit posts (incl. redd.it
+# short links). Each pattern captures the item/post id as `id`.
+HN_ITEM_PATTERN = (
+    r"(?i)^https?://news\.ycombinator\.com/item\?(?:[^#]*&)?id=(?P<id>\d+)"
+)
+REDDIT_POST_PATTERN = (
+    r"(?i)^https?://(?:(?:www|old|new|np|m|i)\.)?reddit\.com/"
+    r"(?:r/[\w-]+/)?comments/(?P<id>[a-z0-9]+)"
+)
+REDDIT_SHORT_PATTERN = r"(?i)^https?://redd\.it/(?P<id>[a-z0-9]+)/?(?:[?#].*)?$"
+
+# Reddit rejects requests without a descriptive User-Agent.
+THREAD_USER_AGENT = (
+    "source-to-skill/{version} (thread extractor; "
+    "+https://github.com/michalstrnadel/source-to-skill)"
+)
+
+# Threads stop after this many comments or this much comment text; a
+# stderr note says how much was left out.
+THREAD_MAX_COMMENTS = 1500
+THREAD_MAX_BYTES = 800_000
 
 # Segment window (seconds) for videos without chapters.
 DEFAULT_SEGMENT_WINDOW_S = 600

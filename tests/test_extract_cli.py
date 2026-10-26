@@ -35,7 +35,7 @@ def test_main_check_reports_dependencies(capsys):
 
 
 def test_main_unsupported_source_exits_1(capsys):
-    assert extract.main(["notes.docx"]) == 1
+    assert extract.main(["sheet.xlsx"]) == 1
     assert "Unsupported source" in capsys.readouterr().err
 
 

@@ -6,16 +6,18 @@ Usage:
 
 Sources: YouTube video, playlist and channel URLs, podcast and audio/video
 URLs or local files, arXiv URLs, GitHub repo URLs, documentation sites
-(llms.txt / llms-full.txt URLs), web article URLs, local .pdf files, local
-.epub books, local notes folders (Obsidian vaults, Markdown folders).
+(llms.txt / llms-full.txt URLs), Hacker News and Reddit thread URLs, web
+article URLs, local .pdf files, local .epub books, local
+.docx/.pptx/.odt/.odp documents, local .srt/.vtt transcripts, local notes
+folders (Obsidian vaults, Markdown folders).
 
 Options:
   --type T          override auto-detection: youtube|playlist|audio|paper|
-                    book|article|repo|docs|notes (e.g. `--type book` for a
-                    PDF book, `--type playlist` for a watch?v=...&list=...
-                    URL, `--type audio` for any page yt-dlp can download,
-                    `--type docs` for a docs site URL: its llms-full.txt or
-                    llms.txt is looked up)
+                    book|article|repo|docs|notes|document|thread|transcript
+                    (e.g. `--type book` for a PDF book, `--type playlist`
+                    for a watch?v=...&list=... URL, `--type audio` for any
+                    page yt-dlp can download, `--type docs` for a docs site
+                    URL: its llms-full.txt or llms.txt is looked up)
   --limit N         playlists and channels: only the first N videos
                     (channels default to the latest 20)
   --transcribe      YouTube: transcribe the audio with Whisper even when
@@ -33,7 +35,8 @@ from pathlib import Path
 
 from extractor import config, dependencies, utils
 from extractor.parsers import (
-    article, audio, book, docs, notes, paper, playlist, repo, youtube,
+    article, audio, book, docs, document, notes, paper, playlist, repo,
+    thread, transcript, youtube,
 )
 
 PARSERS = {
@@ -46,6 +49,9 @@ PARSERS = {
     "repo": repo,
     "docs": docs,
     "notes": notes,
+    "document": document,
+    "thread": thread,
+    "transcript": transcript,
 }
 
 

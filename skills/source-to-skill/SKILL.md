@@ -1,6 +1,6 @@
 ---
 name: source-to-skill
-description: Turn a YouTube video, playlist or channel, podcast or audio/video file (local Whisper), academic paper (PDF / arXiv URL), book (EPUB, or PDF book via --type book), web article, or GitHub repository - or several of them at once - into an installable agent skill, and refresh such skills later. Use when the user runs /source-to-skill, or asks to convert a video, talk, lecture, podcast, episode, recording, playlist, course, channel, paper, PDF, book, EPUB, article, blogpost, or GitHub repo into a skill / structured reference, to merge sources into one topic skill, or to update a skill made from a playlist or channel.
+description: Turn a YouTube video, playlist or channel, podcast or audio/video file (local Whisper), academic paper (PDF / arXiv URL), book (EPUB, or PDF book via --type book), web article, GitHub repository, documentation site (llms.txt), Obsidian or Markdown notes folder, Word or PowerPoint file, Hacker News or Reddit thread, or meeting transcript (.srt/.vtt) - or several of them at once - into an installable agent skill, and refresh such skills later. Use when the user runs /source-to-skill, or asks to convert a video, talk, lecture, podcast, episode, recording, playlist, course, channel, paper, PDF, book, EPUB, article, blogpost, GitHub repo, docs site, llms.txt, notes, vault, document, slide deck, discussion thread, or meeting transcript into a skill / structured reference, to merge sources into one topic skill, or to update a skill made from a playlist, channel, feed or docs site.
 ---
 
 # source-to-skill
@@ -9,8 +9,10 @@ Turn a knowledge source into a structured agent skill the user can load on
 demand. Supported sources: YouTube video, playlist and channel URLs,
 podcasts and audio/video (Apple Podcasts, direct media URLs, local files,
 any yt-dlp site via `--type audio`), arXiv URLs, local PDF papers, books
-(EPUB files, or PDF books via `--type book`), web article URLs, and GitHub
-repository URLs.
+(EPUB files, or PDF books via `--type book`), web article URLs, GitHub
+repository URLs, documentation sites (llms.txt), local notes folders,
+Word/PowerPoint/OpenDocument files, Hacker News and Reddit threads, and
+`.srt`/`.vtt` transcripts.
 
 Usage:
 
@@ -69,6 +71,17 @@ Run from this skill's directory (the folder containing this SKILL.md —
   the user's private notes: confirm the folder and what the skill is for
   before generating, and keep the skill local (never suggest publishing
   it) unless the user says otherwise.
+- Hacker News items (`news.ycombinator.com/item?id=N`) and Reddit posts
+  (`reddit.com/r/<sub>/comments/<id>/...`, `old.`/`np.` hosts,
+  `redd.it/<id>`) are detected as `thread`. Very large threads are cut at
+  a comment cap with a stderr note: say so, comparing `comments_extracted`
+  with `num_comments`. If Reddit answers HTTP 403 (some networks block
+  anonymous access), report the error verbatim and stop.
+- Local `.docx`, `.pptx`, `.odt` and `.odp` files are detected as
+  `document`; old binary `.doc`/`.ppt` files need re-saving first (the
+  error says so). Local `.srt` and `.vtt` files (Zoom/Teams/Meet meeting
+  exports, downloaded captions) are detected as `transcript` and need no
+  transcription.
 - On dependency errors, run `python3 scripts/extract.py --check` and show the
   user the install hints. Do not install anything without asking.
 - On any other ERROR, report it verbatim and stop.
@@ -246,6 +259,54 @@ For `source_type: notes` (the user's own notes folder):
   or journal-style private entries, or long verbatim passages; when unsure
   whether a note belongs in the skill, ask. Reference notes by relative
   `path`, never by absolute path.
+
+For `source_type: document` (`format` `docx`/`odt` is a written document,
+`pptx`/`odp` a slide deck):
+
+- `SKILL.md` — frontmatter as above, a byline (`author`, `date` when
+  known), what the document is for (decision memo, spec, handbook, pitch),
+  its key points, decisions and numbers front-loaded, then a section index
+  table: section (or slide range), one-line takeaway, link
+  `sections/NN-<slug>.md`. Under ~3k est_tokens, put everything here.
+- `sections/NN-<slug>.md` — one per section in document order. For decks,
+  group consecutive slides on one topic (cite each segment's `slide`).
+  `Notes:` lines are speaker notes and often hold the real argument behind
+  terse bullets: distill them with the slide, never drop them. Skip
+  segments flagged `"hidden": true` unless they carry unique content.
+
+For `source_type: thread` (a Hacker News or Reddit discussion):
+
+- `SKILL.md` — frontmatter as above (description = the question or topic
+  and when to load this skill), the post in one or two sentences linking
+  `origin` and `linked_url` (when not null), the consensus and how strong
+  it is, and the strongest arguments on each side, each attributed to its
+  commenter with a link to the comment (the segment's `url`). Votes and
+  reply depth show weight, not truth: a well-argued minority point
+  outranks a popular quip.
+- `tips.md` — concrete tips, numbers, benchmarks, tools and war stories,
+  each with the commenter and the segment `url`; mark claims disputed in
+  their replies.
+- `dissent.md` — minority views and objections as stated, with who holds
+  them — never averaged into the consensus; note disagreements the thread
+  never resolved.
+- Ignore jokes, meta-discussion and off-topic subthreads. Indented lines
+  are replies; a line without an `author:` prefix continues the comment
+  above it.
+
+For `source_type: transcript` (a local `.srt`/`.vtt`, usually a meeting;
+a talk or lecture gets the `audio` template instead):
+
+- `SKILL.md` — frontmatter as above (description = what the meeting
+  decided and when to load this skill), purpose and participants
+  (`speakers`), then decisions (who made or confirmed each, with its
+  `[hh:mm:ss]` from the `[t=Ns]` markers), action items (owner, task,
+  deadline when stated — otherwise "owner unclear", never invented), and
+  open questions.
+- `speakers.md` — each participant's positions, proposals, objections and
+  commitments with timestamps; disagreements stay attributed, not merged.
+- `segments/NN-<slug>.md` — only for meetings over ~30 minutes: one per
+  10-minute part, opening with its `[hh:mm:ss]` start. Machine transcripts
+  mishear names and jargon: fix only what the context makes certain.
 
 Every single-source skill: copy `<work_dir>/source.json` into the skill
 directory unchanged, so it can be refreshed later.

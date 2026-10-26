@@ -48,13 +48,14 @@ def _possible_types(source: str) -> tuple:
 
     Detection order: youtube video -> channel -> playlist -> llms.txt /
     llms-full.txt docs -> podcast RSS feed (a playlist of episodes) ->
-    podcast page or direct media URL -> arxiv -> github repo -> generic
-    http(s) article -> local directory (notes) -> .pdf -> .epub -> local
-    audio/video file. Any http(s) URL can also be forced to article or
-    audio (yt-dlp downloads from 1000+ sites); a generic web URL can be
-    forced to docs (its llms.txt is looked up); a watch URL with a list=
-    param can be forced to playlist (and is playlist-only when it has no
-    v= param).
+    podcast page or direct media URL -> arxiv -> github repo -> Hacker
+    News / Reddit thread -> generic http(s) article -> local directory
+    (notes) -> .pdf -> .epub -> local audio/video file ->
+    .docx/.pptx/.odt/.odp document -> .srt/.vtt transcript. Any http(s)
+    URL can also be forced to article or audio (yt-dlp downloads from
+    1000+ sites); a generic web URL can be forced to docs (its llms.txt is
+    looked up); a watch URL with a list= param can be forced to playlist
+    (and is playlist-only when it has no v= param).
     """
     is_http = re.match(r"https?://", source) is not None
     as_other = ("article", "audio") if is_http else ()
@@ -90,6 +91,8 @@ def _possible_types(source: str) -> tuple:
         return with_others("paper")
     if re.match(config.GITHUB_REPO_PATTERN, source):
         return with_others("repo")
+    if is_thread_url(source):
+        return with_others("thread")
     if is_http:
         return as_other + ("docs",)
     if Path(source).expanduser().is_dir():
@@ -101,6 +104,10 @@ def _possible_types(source: str) -> tuple:
         return ("book",)
     if _is_media_path(source):
         return ("audio",)
+    if lowered.endswith(config.DOCUMENT_EXTENSIONS):
+        return ("document",)
+    if lowered.endswith(config.TRANSCRIPT_EXTENSIONS):
+        return ("transcript",)
     return ()
 
 
@@ -110,6 +117,17 @@ def is_feed_url(source: str) -> bool:
 
 def is_channel_url(source: str) -> bool:
     return re.match(config.CHANNEL_URL_PATTERN, source) is not None
+
+
+def is_thread_url(source: str) -> bool:
+    return any(
+        re.match(pattern, source)
+        for pattern in (
+            config.HN_ITEM_PATTERN,
+            config.REDDIT_POST_PATTERN,
+            config.REDDIT_SHORT_PATTERN,
+        )
+    )
 
 
 def detect_source(source: str, forced=None) -> str:
@@ -125,8 +143,9 @@ def detect_source(source: str, forced=None) -> str:
             f"Unsupported source: {source}\n"
             "Supported: YouTube video, playlist and channel URLs, podcast "
             "and audio/video URLs, arXiv URLs, GitHub repo URLs, docs "
-            "sites (llms.txt / llms-full.txt URLs), web article URLs "
-            "(http/https), local .pdf, .epub and audio/video files, local "
+            "sites (llms.txt / llms-full.txt URLs), Hacker News and Reddit "
+            "thread URLs, web article URLs (http/https), local .pdf, .epub, "
+            "audio/video, .docx/.pptx/.odt/.odp and .srt/.vtt files, local "
             "notes folders (Obsidian vaults, Markdown folders)."
         )
     if forced is None:

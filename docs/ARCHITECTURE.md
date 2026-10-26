@@ -8,7 +8,8 @@ source-to-skill is split into two halves that never blur:
    playlists, channels and podcast downloads, a local Whisper backend for
    audio and captionless videos, PyMuPDF for papers and PDF books, the
    standard library for EPUBs, web articles, GitHub repos, documentation
-   sites (llms.txt) and local notes folders), and
+   sites (llms.txt), local notes folders, Word and PowerPoint documents,
+   Hacker News / Reddit threads, and .srt/.vtt transcripts), and
    normalizes the result into files with a shared contract.
 2. **Generator** — the user's own agent following the skill's `SKILL.md`.
    It reads the normalized output and distills it into an installable skill.
@@ -25,7 +26,8 @@ agent's skills directory. All paths below are relative to that folder.
  <youtube-url> | <playlist-url> | <channel-url> | <podcast/media-url> |
  <arxiv-url> | <article-url> | <github-repo-url> | <llms.txt-url> |
  <docs-site-url> --type docs | paper.pdf | book.epub |
- book.pdf --type book | episode.mp3 / talk.mp4 | notes-folder/
+ book.pdf --type book | episode.mp3 / talk.mp4 | notes-folder/ |
+ <hn-or-reddit-thread-url> | report.docx / deck.pptx | meeting.vtt / .srt
         │
         ▼
 ┌────────────────────── EXTRACTOR (Python, deterministic) ─────────────────┐
@@ -75,11 +77,20 @@ agent's skills directory. All paths below are relative to that folder.
 │         │                  linked page fetched (.md twin first, HTML via │
 │         │                  article.py) · sequential · 150-page / ~2 MB   │
 │         │                  caps · ## Optional only while docs are small  │
-│         └─ notes.py        local folder (Obsidian, Markdown, Logseq) ·   │
-│                            .md/.mdx/.txt/.rst, hidden + tool dirs        │
-│                            skipped · frontmatter title/tags · wikilinks  │
-│                            → text + per-note links · hub ranking ·       │
-│                            no symlinks out · ~2 MB cap                   │
+│         ├─ notes.py        local folder (Obsidian, Markdown, Logseq) ·   │
+│         │                  .md/.mdx/.txt/.rst, hidden + tool dirs        │
+│         │                  skipped · frontmatter title/tags · wikilinks  │
+│         │                  → text + per-note links · hub ranking ·       │
+│         │                  no symlinks out · ~2 MB cap                   │
+│         ├─ document.py     .docx/.pptx/.odt/.odp via stdlib zip + XML ·  │
+│         │                  Heading 1/2 (style or outline level) segments │
+│         │                  · one segment per slide in presentation order │
+│         │                  · speaker notes under `Notes:` · core.xml     │
+│         ├─ thread.py       Hacker News (Algolia tree, ranked by the      │
+│         │                  official API) · Reddit `.json` · post + one   │
+│         │                  segment per top-level subtree · comment caps  │
+│         └─ transcript.py   .srt/.vtt cues (YouTube VTT parser) · speaker │
+│                            labels (<v Name>, `Name:`) · 10-min windows   │
 │                                                                          │
 │  output → <tempdir>/source_skill_work/ (or --work-dir)                   │
 │    full_text.txt    normalized text, segment-addressable by offset       │
@@ -138,10 +149,21 @@ agent's skills directory. All paths below are relative to that folder.
         │    SKILL.md           what the product is + doc index (page URLs)
         │    guides/*.md        distilled per llms.txt section / doc area
         │    cheatsheet.md      commands, config keys, API calls
-        └─ notes skill:
-             SKILL.md           the user's frameworks + hub-note index
-             topics/*.md        distilled per hub / folder / tag cluster
-             decisions.md       decisions and open questions, with notes
+        ├─ notes skill:
+        │    SKILL.md           the user's frameworks + hub-note index
+        │    topics/*.md        distilled per hub / folder / tag cluster
+        │    decisions.md       decisions and open questions, with notes
+        ├─ document skill:
+        │    SKILL.md           purpose + key points + section/slide index
+        │    sections/NN-*.md   one per section (decks: per slide group)
+        ├─ thread skill:
+        │    SKILL.md           question + consensus + strongest arguments
+        │    tips.md            concrete tips and numbers, attributed
+        │    dissent.md         minority views - never averaged in
+        └─ transcript (meeting) skill:
+             SKILL.md           decisions + action items + open questions
+             speakers.md        who said what, per participant
+             segments/NN-*.md   long meetings: one per 10-min part
 ```
 
 ## The shared metadata contract
@@ -152,7 +174,8 @@ source types cheap to add.
 
 ```json
 {
-  "source_type": "youtube | playlist | audio | paper | book | article | repo | docs | notes",
+ "source_type": "youtube | playlist | audio | paper | book | article | repo |
+                  docs | notes | document | thread | transcript",
   "title": "...",
   "origin": "url or file path",
   "language": "en",
@@ -175,16 +198,19 @@ Per segment:
 - `offset` — character offset into `full_text.txt`. Each segment's text runs
   from its own offset to the next segment's offset, so the generator can read
   a large source one slice at a time.
-- `url` — playlist segments: the video's URL, which generated lesson
-  files open with, plus `captions` (`manual`, `auto`, or `whisper`); docs
-  segments: the page's URL (llms-full.txt pages only when the file names
-  it in a `Source:` line). Other source types omit the keys.
+- `url` — playlist, docs and thread segments. Playlist: the video's URL,
+  which generated lesson files open with, plus `captions` (`manual`,
+  `auto`, or `whisper`). Docs: the page's URL (llms-full.txt pages only
+  when the file names it in a `Source:` line). Thread: the permalink of
+  the segment's top comment (the first segment, the post, carries the
+  thread URL), so refresh diffs key on comments rather than on their
+  changing scores. Other source types omit the keys.
 
 A segment's identity across re-extractions (`source.json` keys, used by
 `tools/diff_source.py`) is its `url`, else an explicit `key`, else its
 title.
 
-Book and article text renders HTML tables as `| a | b |` rows and images
+Book, article and document text renders tables as `| a | b |` rows and images
 as `[image: alt]` / `[figure] caption` lines. Repo segments carry `path`
 and, when true, `orphan` (a Sphinx `:orphan:` page) or `stub` (under ~200
 characters); book segments can carry `front_matter`; playlist segments
@@ -211,7 +237,16 @@ optional), `page_count`, and when it applies `skipped` (pages that failed,
 each with title, url, and reason) and `optional_skipped`; notes adds
 `file_count`, `tags` (tag → note count) and `hubs` (the most-linked notes:
 title, path, inbound). Notes `origin` is the folder with the home
-directory shortened to `~`.
+directory shortened to `~`. Document adds `format`
+(`docx`, `pptx`, `odt`, `odp`), `author`, `date`, `language`, and for
+decks `slide_count` (segments carry `slide`, and `hidden` for hidden
+slides); thread adds `platform` (`hackernews` or `reddit`),
+`linked_url`, `author`, `points`, `date`, `num_comments` (the site's
+count), `comments_extracted`, and `subreddit`; transcript adds the
+audio fields `duration_s`, `language`, `captions` (`file`) and
+`deep_link_template` (`null`), plus `format` (`srt`/`vtt`) and
+`speakers` (names from `<v Name>` tags or recurring `Name:`
+prefixes).
 
 ## Design principles
 
@@ -234,7 +269,11 @@ directory shortened to `~`.
    a warning; a docs page that fails to fetch is skipped with a warning
    and recorded in `skipped`, and a docs site over its page or text cap
    drops later pages; a notes folder skips binary, oversized and empty
-   files; a missing optional dependency fails with the exact
+   files; a Word document without headings is one "Full text"
+   segment and an untitled slide is "Slide N"; a thread over the
+   comment caps (`THREAD_MAX_COMMENTS` / `THREAD_MAX_BYTES`) drops its
+   lowest-ranked comments with a stderr note, and deleted comments are
+   skipped with their replies kept; a missing optional dependency fails with the exact
    `pip install` hint. Hard errors are reserved for cases where output
    would be garbage: no captions at all (in a video, or across a whole
    playlist), a PDF with no text layer, a page with no readable article
@@ -264,6 +303,9 @@ directory shortened to `~`.
 | `scripts/extractor/parsers/repo.py` | GitHub tarball download + README/docs selection, traversal-safe extract |
 | `scripts/extractor/parsers/docs.py` | llms.txt / llms-full.txt docs sites: index parsing, sequential page fetch, heading split |
 | `scripts/extractor/parsers/notes.py` | local notes folders: file walk, frontmatter, wikilinks, hub ranking |
+| `scripts/extractor/parsers/document.py` | Word/PowerPoint/OpenDocument text, headings, slides and notes via stdlib zip/XML |
+| `scripts/extractor/parsers/thread.py` | Hacker News (Algolia) and Reddit (`.json`) threads → post + comment subtrees |
+| `scripts/extractor/parsers/transcript.py` | local .srt/.vtt cues with speaker labels in the audio/video contract |
 | `tools/validate_skill.py` | lints a generated skill (frontmatter, links, empty files) |
 | `tools/diff_source.py` | compares a skill's `source.json` with a fresh extraction (refresh) |
 | `src/source_to_skill/cli.py` | PyPI CLI: `install`, `extract`, `check`, `validate` around the bundled skill |
