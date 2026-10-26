@@ -51,7 +51,8 @@ every major coding agent.
 - **More agents** — `source-to-skill install --agent` now takes `codex`,
   `gemini`, `cursor`, `opencode`, `kiro`, `windsurf` and `factory`, and
   installs the companion skills next to `source-to-skill` (`--only` skips
-  them). The README documents `npx skills add`.
+  them; `--dest PATH` installs only `source-to-skill`, into exactly that
+  folder). The README documents `npx skills add`.
 - `docs/llms.txt` for the project site.
 
 ### Fixed
@@ -65,6 +66,25 @@ every major coding agent.
 - `--check` reported a Whisper backend that is installed but fails to
   import (a native wheel built for another OS release) as missing, and
   suggested installing it again; it now says `BROKEN` with the error.
+- Extraction no longer loses content silently: docs pages and notes left
+  out by the page, size or text caps are listed in the metadata
+  (`dropped`), a docs page too big to keep whole is skipped instead of
+  cut mid-text, and threads report `truncated`.
+- A note opening with a `---` horizontal rule lost everything up to the
+  next `---`; only YAML-looking blocks are treated as frontmatter.
+- A Reddit comment whose body is only whitespace entities crashed thread
+  extraction.
+- Transcript files kept only one of two identical consecutive lines
+  ("Yes." / "Yes."), and decoded non-UTF-8 files as Latin-1 instead of
+  Windows-1252.
+- A local media file with `#` or `?` in its name (`Meeting #4.mp4`) was
+  not recognised.
+- Repeated headings or slide titles in documents and llms-full.txt
+  collapsed into one segment in refresh diffs.
+- `install --force` could leave no skill behind if the final move
+  failed; the old copy is now restored.
+- `validate_skill.py` accepts no empty `evals` list, and the skill
+  library reads folded (`>`) and literal (`|`) descriptions.
 
 ## [0.6.0] - 2026-10-05
 

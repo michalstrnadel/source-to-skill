@@ -28,8 +28,9 @@ def _read(path: Path) -> str:
     try:
         return raw.decode("utf-8-sig")
     except UnicodeDecodeError:
-        # Older subtitle files are often Windows-1252 / Latin-1.
-        return raw.decode("latin-1")
+        # Older subtitle files are often Windows-1252 (a Latin-1
+        # superset); its few undefined bytes become U+FFFD.
+        return raw.decode("cp1252", errors="replace")
 
 
 def _speakers(cues, voiced) -> list:
@@ -68,7 +69,8 @@ def parse(source: str):
     text = _read(path)
     voiced = {" ".join(name.split()) for name in VOICE_RE.findall(text)}
     text = SSA_RE.sub("", VOICE_RE.sub(r"\1: ", text))
-    cues = parse_vtt(text)
+    # No dedupe: only auto-captions roll lines; a file's repeats are real.
+    cues = parse_vtt(text, dedupe=False)
     if not cues:
         raise ExtractError(
             f"{path} has no cues (no timestamped subtitle text found).\n"

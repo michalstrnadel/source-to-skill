@@ -208,7 +208,10 @@ Per segment:
 
 A segment's identity across re-extractions (`source.json` keys, used by
 `tools/diff_source.py`) is its `url`, else an explicit `key`, else its
-title.
+title. Notes key on the relative path; document segments and url-less
+llms-full.txt sections carry a `key` that is their title with an ordinal
+on repeats (`Summary`, `Summary (2)`), so same-titled parts never
+collapse in a diff.
 
 Book, article and document text renders tables as `| a | b |` rows and images
 as `[image: alt]` / `[figure] caption` lines. Repo segments carry `path`
@@ -233,16 +236,21 @@ failed, each with title, url, and reason); paper adds `authors` (a list),
 and `language` when the page declares them; repo adds `owner`, `repo`, and
 `file_count`; docs adds `format` (`llms.txt` or `llms-full.txt`),
 `summary` (the llms.txt blockquote), `sections` (title, link count,
-optional), `page_count`, and when it applies `skipped` (pages that failed,
-each with title, url, and reason) and `optional_skipped`; notes adds
-`file_count`, `tags` (tag → note count) and `hubs` (the most-linked notes:
-title, path, inbound). Notes `origin` is the folder with the home
+optional), `page_count`, `dropped` (pages left out by the page or text
+cap, each with title, url, and reason `over page cap` / `over text cap`;
+empty when nothing was dropped), and when it applies `skipped` (pages
+that failed, each with title, url, and reason - `over size cap` for a
+page too big to keep whole) and `optional_skipped`; notes adds
+`file_count`, `tags` (tag → note count), `hubs` (the most-linked notes:
+title, path, inbound) and `dropped` (notes left out, each with path and
+reason `over text cap` / `over file size limit`). Notes `origin` is the folder with the home
 directory shortened to `~`. Document adds `format`
 (`docx`, `pptx`, `odt`, `odp`), `author`, `date`, `language`, and for
 decks `slide_count` (segments carry `slide`, and `hidden` for hidden
 slides); thread adds `platform` (`hackernews` or `reddit`),
 `linked_url`, `author`, `points`, `date`, `num_comments` (the site's
-count), `comments_extracted`, and `subreddit`; transcript adds the
+count), `comments_extracted`, `truncated` (true when the comment caps
+cut the thread), and `subreddit`; transcript adds the
 audio fields `duration_s`, `language`, `captions` (`file`) and
 `deep_link_template` (`null`), plus `format` (`srt`/`vtt`) and
 `speakers` (names from `<v Name>` tags or recurring `Name:`

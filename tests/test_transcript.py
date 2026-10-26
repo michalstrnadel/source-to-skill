@@ -143,3 +143,26 @@ def test_cli_writes_outputs(tmp_path, capsys):
     assert meta["source_type"] == "transcript"
     assert "Erik: Budget is approved." in (work / "full_text.txt").read_text()
     assert json.loads(capsys.readouterr().out)["segments"] == 1
+
+
+def test_repeated_lines_in_a_transcript_file_are_kept(tmp_path):
+    # A real conversation repeats itself; only auto-captions roll lines.
+    path = _write(tmp_path, "call.srt", (
+        "1\n00:00:01,000 --> 00:00:02,000\nYes.\n\n"
+        "2\n00:00:03,000 --> 00:00:04,000\nYes.\n"
+    ))
+    full_text, _ = transcript.parse(str(path))
+    assert full_text.count("Yes.") == 2
+
+
+def test_cp1252_file_reads_windows_punctuation(tmp_path):
+    path = tmp_path / "win.srt"
+    path.write_bytes(
+        "1\n00:00:01,000 --> 00:00:02,000\nIt’s “quoted” – €5\n".encode(
+            "cp1252"
+        )
+        + b"\n2\n00:00:03,000 --> 00:00:04,000\nbad \x81 byte\n"
+    )
+    full_text, _ = transcript.parse(str(path))
+    assert "It’s “quoted” – €5" in full_text
+    assert "bad � byte" in full_text

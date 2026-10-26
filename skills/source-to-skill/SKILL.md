@@ -64,10 +64,12 @@ Run from this skill's directory (the folder containing this SKILL.md —
   hint when the site publishes neither (then offer `--type article` for a
   single page, or the docs' GitHub repo). Linked pages are fetched one by
   one (up to 150); pages that fail are skipped with a stderr warning and
-  listed in `metadata.json` under `skipped` — report them to the user.
+  listed in `metadata.json` under `skipped` — report them to the user,
+  and the pages listed under `dropped` (page or text cap) too.
 - A local folder (an Obsidian vault, a Markdown notes or docs folder,
   Logseq's `pages/`) is detected as `notes`. Hidden folders (`.obsidian`,
-  `.git`, `.trash`) and binary or oversized files are skipped. These are
+  `.git`, `.trash`) and binary or oversized files are skipped; report
+  notes listed under `dropped` in `metadata.json` to the user. These are
   the user's private notes: confirm the folder and what the skill is for
   before generating, and keep the skill local (never suggest publishing
   it) unless the user says otherwise.

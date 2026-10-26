@@ -501,3 +501,15 @@ def test_legacy_formats_reach_the_conversion_hint_from_the_cli(tmp_path, name):
     from extractor import utils
 
     assert utils.detect_source(str(tmp_path / name)) == "document"
+
+
+def test_repeated_headings_get_unique_segment_keys(tmp_path):
+    body = (
+        _p("Week 1", style="Heading1") + _p("Summary", style="Heading2")
+        + _p("one") + _p("Summary", style="Heading2") + _p("two")
+    )
+    _, meta = document.parse(str(_docx(tmp_path, body)))
+    keys = [utils.segment_key(s) for s in meta["segments"]]
+    assert [s["title"] for s in meta["segments"]][-2:] == ["Summary"] * 2
+    assert len(set(keys)) == len(keys)
+    assert keys[-2:] == ["Summary", "Summary (2)"]

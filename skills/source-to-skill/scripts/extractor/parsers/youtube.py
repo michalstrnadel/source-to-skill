@@ -12,10 +12,12 @@ HEADER_PREFIXES = ("WEBVTT", "Kind:", "Language:")
 BRACKET_ONLY_RE = re.compile(r"^\[[^\]]*\]$")
 
 
-def parse_vtt(vtt_text: str) -> list[dict]:
+def parse_vtt(vtt_text: str, dedupe: bool = True) -> list[dict]:
     """Return cues as [{'start_s': float, 'text': str}].
 
-    Auto-captions repeat lines across cues; consecutive duplicates are dropped.
+    Auto-captions repeat lines across cues; consecutive duplicates are
+    dropped unless `dedupe` is False (transcript files, where a repeated
+    "Yes." is really said twice).
     NOTE comment blocks and cue identifier lines are skipped.
     """
     cues = []
@@ -50,7 +52,7 @@ def parse_vtt(vtt_text: str) -> list[dict]:
         if not text or BRACKET_ONLY_RE.match(text):
             # [Music], [Applause], "[Submit subtitle corrections at ...]"
             continue
-        if cues and cues[-1]["text"] == text:
+        if dedupe and cues and cues[-1]["text"] == text:
             continue
         cues.append({"start_s": current_start, "text": text})
     return cues

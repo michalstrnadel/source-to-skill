@@ -5,7 +5,7 @@ import urllib.error
 
 import pytest
 
-from extractor import config
+from extractor import config, utils
 from extractor.parsers import docs
 from extractor.utils import ExtractError
 
@@ -184,6 +184,10 @@ def test_page_count_cap_drops_the_rest_with_a_warning(monkeypatch, capsys):
     assert [s["title"] for s in meta["segments"]] == ["P0", "P1"]
     assert f"{BASE}/p2.md" not in calls
     assert "page cap" in capsys.readouterr().err
+    assert meta["dropped"] == [
+        {"title": f"P{i}", "url": f"{BASE}/p{i}.md", "reason": "over page cap"}
+        for i in (2, 3)
+    ]
 
 
 def test_text_cap_drops_later_pages(monkeypatch, capsys):
@@ -194,13 +198,15 @@ def test_text_cap_drops_later_pages(monkeypatch, capsys):
             "- [Big](https://docs.example.com/big.md)\n"
             "- [More](https://docs.example.com/more.md)\n"
         ),
-        f"{BASE}/big.md": "x " * 200,
-        f"{BASE}/more.md": "y " * 200,
+        f"{BASE}/big.md": "x " * 100,
+        f"{BASE}/more.md": "y " * 100,
     })
     _, meta = docs.parse(f"{BASE}/llms.txt")
-    # The first page is always kept so a huge page never yields nothing.
     assert [s["title"] for s in meta["segments"]] == ["Big"]
     assert "text cap" in capsys.readouterr().err
+    assert meta["dropped"] == [{
+        "title": "More", "url": f"{BASE}/more.md", "reason": "over text cap",
+    }]
 
 
 def test_optional_section_skipped_when_docs_are_large(monkeypatch, capsys):
@@ -362,3 +368,51 @@ def test_get_sends_user_agent_timeout_and_caps_size(monkeypatch):
     assert content_type == "text/plain"
     assert "Mozilla" in seen["ua"]
     assert seen["timeout"] == config.FETCH_TIMEOUT_S
+
+
+def test_page_over_the_size_cap_is_skipped_not_cut(monkeypatch, capsys):
+    monkeypatch.setattr(config, "DOCS_TEXT_CAP_BYTES", 300)
+    # _get reads at most cap + 1 bytes; a page that fills them is cut.
+    calls = _install(monkeypatch, {
+        f"{BASE}/llms.txt": (
+            "# Docs\n\n## Docs\n\n"
+            "- [Huge](https://docs.example.com/huge.md)\n"
+            "- [Small](https://docs.example.com/small.md)\n"
+        ),
+        f"{BASE}/huge.md": "é" * 151,
+        f"{BASE}/small.md": "small page",
+    })
+    full_text, meta = docs.parse(f"{BASE}/llms.txt")
+    assert [s["title"] for s in meta["segments"]] == ["Small"]
+    assert "é" not in full_text
+    assert meta["skipped"] == [{
+        "title": "Huge", "url": f"{BASE}/huge.md", "reason": "over size cap",
+    }]
+    assert f"{BASE}/huge" not in calls  # no HTML retry of a too-big page
+    assert "Huge" in capsys.readouterr().err
+
+
+def test_no_dropped_pages_is_an_empty_list(monkeypatch):
+    _install(monkeypatch, {f"{BASE}/llms-full.txt": LLMS_FULL})
+    assert docs.parse(f"{BASE}/llms-full.txt")[1]["dropped"] == []
+
+
+def test_llms_full_over_the_cap_records_dropped(monkeypatch):
+    monkeypatch.setattr(config, "DOCS_TEXT_CAP_BYTES", 100)
+    _install(monkeypatch, {f"{BASE}/llms-full.txt": LLMS_FULL})
+    meta = docs.parse(f"{BASE}/llms-full.txt")[1]
+    assert meta["dropped"] == [{
+        "title": "llms-full.txt", "url": f"{BASE}/llms-full.txt",
+        "reason": "over text cap",
+    }]
+
+
+def test_llms_full_repeated_titles_get_unique_keys(monkeypatch):
+    text = (
+        f"# Setup\n{_words(20, 'a')}\n\n# Setup\n{_words(20, 'b')}\n\n"
+        f"# Use\nSource: {BASE}/use\n{_words(20, 'c')}\n"
+    )
+    _install(monkeypatch, {f"{BASE}/llms-full.txt": text})
+    meta = docs.parse(f"{BASE}/llms-full.txt")[1]
+    keys = [utils.segment_key(s) for s in meta["segments"]]
+    assert keys == ["Setup", "Setup (2)", f"{BASE}/use"]

@@ -181,12 +181,23 @@ def _count(nodes) -> int:
 
 
 def _hn_rank(item_id) -> dict:
-    """{comment id: rank} of an item's direct replies, {} if unavailable."""
+    """{comment id: rank} of an item's direct replies, {} if unavailable
+    (with a stderr warning: the comments then keep Algolia's id order)."""
     try:
-        kids = (_fetch_json(HN_RANK_API.format(id=item_id)) or {}).get("kids")
-    except ExtractError:
-        return {}
-    return {kid: rank for rank, kid in enumerate(kids or [])}
+        item = _fetch_json(HN_RANK_API.format(id=item_id))
+    except ExtractError as err:
+        item, reason = None, str(err).splitlines()[0]
+    else:
+        reason = "unexpected response"
+    kids = item.get("kids") if isinstance(item, dict) else None
+    if isinstance(item, dict) and (kids is None or isinstance(kids, list)):
+        return {kid: rank for rank, kid in enumerate(kids or [])}
+    print(
+        f"WARNING: Hacker News rank order unavailable ({reason}); top-level "
+        "comments keep Algolia's id order.",
+        file=sys.stderr,
+    )
+    return {}
 
 
 def _hn_node(item) -> dict:
@@ -247,13 +258,15 @@ def _reddit_node(child) -> dict:
         replies.get("data", {}).get("children", [])
         if isinstance(replies, dict) else []
     )
+    # A body that is only whitespace entities ("&nbsp;") has no lines.
+    lines = _plain_text(body)
     return {
         "author": data.get("author"),
-        "lines": _plain_text(body),
+        "lines": lines,
         "score": data.get("score"),
         "url": REDDIT_BASE + (data.get("permalink") or ""),
         "deleted": (
-            body in REMOVED_BODIES or not body or not data.get("author")
+            body in REMOVED_BODIES or not lines or not data.get("author")
         ),
         "children": [
             _reddit_node(c) for c in children if c.get("kind") == "t1"
@@ -317,7 +330,7 @@ def _render(node, depth, budget, out) -> bool:
         budget["truncated"] = True
         return False
     indent = "  " * depth
-    lines = node["lines"]
+    lines = node["lines"] or [""]
     if lines[0][:1].isspace():
         rendered = [f"{indent}{_label(node)}:"]
         rendered += [indent + line for line in lines]
@@ -334,7 +347,7 @@ def _render(node, depth, budget, out) -> bool:
 
 
 def _snippet(node) -> str:
-    first = " ".join(node["lines"][0].split())
+    first = " ".join((node["lines"] or [""])[0].split())
     if len(first) > TITLE_SNIPPET_CHARS:
         first = first[:TITLE_SNIPPET_CHARS].rsplit(" ", 1)[0] + "..."
     return f"{node['author']}: {first}"
@@ -427,6 +440,7 @@ def parse(source: str):
         "date": post["date"],
         "num_comments": post["num_comments"],
         "comments_extracted": budget["comments"],
+        "truncated": budget["truncated"],
         "words": words,
         "est_tokens": utils.estimate_tokens(words),
         "segments": segments,

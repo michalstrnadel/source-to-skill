@@ -41,6 +41,12 @@ MD_LINK_RE = re.compile(
 )
 YAML_KEY_RE = re.compile(r"^([A-Za-z_][\w-]*):[ \t]*(.*)$")
 YAML_ITEM_RE = re.compile(r"^[ \t]+-[ \t]*(.*)$|^-[ \t]+(.*)$")
+# A frontmatter line: `key:` / `key: value`, a `- item`, an indented
+# continuation or a `# comment`. Anything else means the leading `---`
+# was a horizontal rule, not frontmatter.
+YAML_LINE_RE = re.compile(
+    r"^(?:[A-Za-z_][\w-]*:(?:[ \t].*)?|-(?:[ \t].*)?|[ \t].*|#.*)$"
+)
 
 
 def _warn(message: str) -> None:
@@ -113,7 +119,10 @@ def _unquote(value: str) -> str:
 def _frontmatter(text: str):
     """(fields, body): a tiny YAML subset - scalars and string lists."""
     match = FRONTMATTER_RE.match(text)
-    if not match:
+    if not match or not all(
+        YAML_LINE_RE.match(line)
+        for line in (match.group(1) or "").splitlines() if line.strip()
+    ):
         return {}, text
     fields = {}
     key = None
@@ -214,14 +223,18 @@ def _title(fields: dict, body: str, rel_path: str) -> str:
     return Path(rel_path).stem
 
 
-def _read(path: Path, rel_path: str):
-    """File text, or None (with a warning) for huge or binary files."""
+def _read(path: Path, rel_path: str, dropped: list):
+    """File text, or None (with a warning) for huge or binary files;
+    huge ones are also recorded in `dropped`."""
     try:
         size = path.stat().st_size
         if size > config.NOTES_MAX_FILE_BYTES:
             _warn(
                 f"skipped {rel_path}: {size} bytes is over the "
                 f"{config.NOTES_MAX_FILE_BYTES}-byte note limit"
+            )
+            dropped.append(
+                {"path": rel_path, "reason": "over file size limit"}
             )
             return None
         raw = path.read_bytes()
@@ -278,13 +291,14 @@ def parse(source: str):
     files = _collect(root)
     chunks = []
     segments = []
-    dropped = []
+    dropped = []  # over the text cap
+    skipped = []  # over the per-file size limit
     tag_counts = Counter()
     offset = 0
     total_bytes = 0
     for path in files:
         rel_path = path.relative_to(root).as_posix()
-        text = _read(path, rel_path)
+        text = _read(path, rel_path, skipped)
         if text is None:
             continue
         fields, body = ({}, text)
@@ -342,6 +356,10 @@ def parse(source: str):
         "hubs": _hubs(segments),
         "words": words,
         "est_tokens": utils.estimate_tokens(words),
+        "dropped": (
+            [{"path": p, "reason": "over text cap"} for p in dropped]
+            + skipped
+        ),
         "segments": segments,
     }
     return full_text, metadata

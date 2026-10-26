@@ -250,3 +250,15 @@ def test_write_manifest_keys_notes_by_relative_path(tmp_path):
     manifest = json.loads((tmp_path / "w" / "source.json").read_text())
     assert manifest["segments"] == [{"key": "a.md", "title": "A"}]
     assert manifest["origin"] == "~/Vault"
+
+
+@pytest.mark.parametrize("name", ["Meeting #4.mp4", "What?.mp3"])
+def test_local_media_names_with_query_or_fragment_chars(name):
+    # `?` and `#` are only URL syntax for http(s) sources; a local file
+    # name may contain them.
+    assert utils.detect_source(f"/tmp/{name}") == "audio"
+    assert not utils._is_media_path("/tmp/Meeting #4.mp4#t=1")
+
+
+def test_http_media_url_query_and_fragment_are_ignored():
+    assert utils._is_media_path("https://cdn.example.com/ep.mp3?sig=1#t=5")

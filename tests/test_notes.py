@@ -176,3 +176,41 @@ def test_crlf_frontmatter_is_stripped(tmp_path):
     full_text, meta = notes.parse(str(tmp_path))
     assert meta["segments"][0]["title"] == "Win note"
     assert "title:" not in full_text
+
+
+def test_leading_horizontal_rule_is_not_frontmatter(tmp_path):
+    _write(tmp_path, "a.md", (
+        "---\nIntro paragraph that must survive.\n\n## Heading\n---\nrest\n"
+    ))
+    full_text, _ = notes.parse(str(tmp_path))
+    assert "Intro paragraph that must survive." in full_text
+    assert "## Heading" in full_text and "rest" in full_text
+
+
+def test_frontmatter_with_comments_lists_and_continuations(tmp_path):
+    _write(tmp_path, "a.md", (
+        "---\n# a comment\ntitle: Real\ntags:\n- one\n  - two\n"
+        "summary: >\n  folded line\n\naliases: [x]\n---\nbody\n"
+    ))
+    full_text, meta = notes.parse(str(tmp_path))
+    assert meta["segments"][0]["title"] == "Real"
+    assert meta["segments"][0]["tags"] == ["one", "two"]
+    assert "summary" not in full_text and "body" in full_text
+
+
+def test_dropped_notes_are_recorded_in_metadata(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "NOTES_TEXT_CAP_BYTES", 50)
+    monkeypatch.setattr(config, "NOTES_MAX_FILE_BYTES", 150)
+    _write(tmp_path, "a.md", "a " * 40)
+    _write(tmp_path, "b.md", "b " * 40)
+    _write(tmp_path, "c.md", "c " * 100)
+    _, meta = notes.parse(str(tmp_path))
+    assert meta["dropped"] == [
+        {"path": "b.md", "reason": "over text cap"},
+        {"path": "c.md", "reason": "over file size limit"},
+    ]
+
+
+def test_no_dropped_notes_is_an_empty_list(tmp_path):
+    _write(tmp_path, "a.md", "# A\n\ncontent\n")
+    assert notes.parse(str(tmp_path))[1]["dropped"] == []

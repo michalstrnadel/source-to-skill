@@ -30,6 +30,10 @@ MARKDOWN_SUFFIXES = (".md", ".mdx", ".markdown", ".txt")
 OPTIONAL_SECTION = "optional"
 
 
+class _OverCap(Exception):
+    """A page longer than DOCS_TEXT_CAP_BYTES: skipped, never cut."""
+
+
 def _warn(message: str) -> None:
     print(f"WARNING: {message}", file=sys.stderr)
 
@@ -52,6 +56,8 @@ def _get(url: str):
 
 
 def _reason(err: Exception) -> str:
+    if isinstance(err, _OverCap):
+        return "over size cap"
     if isinstance(err, urllib.error.HTTPError):
         return f"HTTP {err.code}"
     if isinstance(err, urllib.error.URLError):
@@ -66,9 +72,15 @@ def _looks_html(text: str, media_type: str) -> bool:
     return head.startswith(("<!doctype html", "<html", "<head", "<body"))
 
 
-def _fetch_text(url: str):
-    """(text, is_html) for `url`; raises on HTTP/network errors."""
+def _fetch_text(url: str, whole: bool = False):
+    """(text, is_html) for `url`; raises on HTTP/network errors.
+
+    With `whole`, a body cut at DOCS_TEXT_CAP_BYTES raises _OverCap
+    instead of returning a truncated (maybe mid-character) text.
+    """
     raw, charset, media_type = _get(url)
+    if whole and len(raw) > config.DOCS_TEXT_CAP_BYTES:
+        raise _OverCap(url)
     text = article._decode(raw, charset)
     return text, _looks_html(text, media_type)
 
@@ -277,12 +289,15 @@ def _page_urls(url: str) -> list[str]:
 
 
 def _fetch_page(url: str) -> str:
-    """Page text, Markdown preferred; raises the last fetch error."""
+    """Page text, Markdown preferred; raises the last fetch error, or
+    _OverCap at once for a page too big to keep whole."""
     last_err = None
     candidates = _page_urls(url)
     for n, candidate in enumerate(candidates):
         try:
-            text, is_html = _fetch_text(candidate)
+            text, is_html = _fetch_text(candidate, whole=True)
+        except _OverCap:
+            raise
         except Exception as err:  # noqa: BLE001 - try the next form
             last_err = err
             continue
@@ -295,12 +310,15 @@ def _fetch_page(url: str) -> str:
 
 
 def _from_full(url: str, text: str):
+    dropped = []
     if len(text.encode("utf-8")) > config.DOCS_TEXT_CAP_BYTES:
         _warn(
             f"{url} is over the text cap of {config.DOCS_TEXT_CAP_BYTES} "
             "bytes - the extracted docs are cut short. Extract its "
             "llms.txt index instead for page-by-page docs."
         )
+        dropped.append({"title": "llms-full.txt", "url": url,
+                        "reason": "over text cap"})
     parts = _segments_from_full(text)
     if not parts or not any(body for _, body, _ in parts):
         raise ExtractError(f"{url} is empty - nothing to extract.")
@@ -309,6 +327,7 @@ def _from_full(url: str, text: str):
     meta = {
         "title": doc_title[1] if doc_title else urlsplit(url).netloc,
         "format": "llms-full.txt", "summary": None, "sections": [],
+        "dropped": dropped,
     }
     entries = [
         {"title": t, "body": body, "url": seg_url, "extra": {}}
@@ -342,15 +361,20 @@ def _from_index(url: str, text: str):
             unique.append({**page, "url": key})
     required = [p for p in unique if not p["optional"]]
     optional = [p for p in unique if p["optional"]]
+    # Pages left out by the page or text cap: {title, url, reason}.
+    dropped = []
     if len(required) > config.DOCS_MAX_PAGES:
         _warn(
             f"{url} links {len(required)} pages - page cap of "
             f"{config.DOCS_MAX_PAGES} reached, the rest are not fetched."
         )
+        dropped += [
+            {"title": p["name"], "url": p["url"], "reason": "over page cap"}
+            for p in required[config.DOCS_MAX_PAGES:]
+        ]
         required = required[:config.DOCS_MAX_PAGES]
     skipped = []
     total = sum(len(e["body"].encode("utf-8")) for e in entries)
-    dropped = []
     fetched = 0
 
     def fetch(page) -> bool:
@@ -371,7 +395,8 @@ def _from_index(url: str, text: str):
             return False
         size = len(body.encode("utf-8"))
         if fetched and total + size > config.DOCS_TEXT_CAP_BYTES:
-            dropped.append(page["name"])
+            dropped.append({"title": page["name"], "url": page["url"],
+                            "reason": "over text cap"})
             return False
         total += size
         fetched += 1
@@ -397,10 +422,11 @@ def _from_index(url: str, text: str):
             )
             break
         fetch(page)
-    if dropped:
+    over_text = [d["title"] for d in dropped if d["reason"] == "over text cap"]
+    if over_text:
         _warn(
             f"{url}: text cap of {config.DOCS_TEXT_CAP_BYTES} bytes reached "
-            f"- dropped {len(dropped)} page(s): {', '.join(dropped)}.\n"
+            f"- dropped {len(over_text)} page(s): {', '.join(over_text)}.\n"
             "The extracted docs are incomplete."
         )
     if unique and not fetched:
@@ -425,6 +451,7 @@ def _from_index(url: str, text: str):
             }
             for s in index["sections"]
         ],
+        "dropped": dropped,
     }
     if optional_skipped:
         meta["optional_skipped"] = optional_skipped
@@ -440,7 +467,8 @@ def parse(source: str):
     chunks = []
     segments = []
     offset = 0
-    for entry in entries:
+    keys = utils.unique_keys(entry["title"] for entry in entries)
+    for entry, key in zip(entries, keys):
         chunk = f"=== {entry['title']} ===\n{entry['body']}\n\n"
         segment = {
             "title": entry["title"], "start_s": None, "pages": None,
@@ -448,6 +476,9 @@ def parse(source: str):
         }
         if entry["url"]:
             segment["url"] = entry["url"]
+        else:
+            # llms-full.txt sections without a Source: line repeat titles.
+            segment["key"] = key
         segment.update(entry["extra"])
         segments.append(segment)
         chunks.append(chunk)
@@ -462,6 +493,7 @@ def parse(source: str):
         "summary": meta["summary"],
         "sections": meta["sections"],
         "page_count": len(segments),
+        "dropped": meta["dropped"],
         "words": words,
         "est_tokens": utils.estimate_tokens(words),
         "segments": segments,

@@ -680,11 +680,14 @@ def parse(source: str):
             "supported - export the text and retry."
         )
     chunks, segments, offset = [], [], 0
+    # Headings and slide titles repeat ("Summary", "Questions?"); the
+    # key keeps each segment distinct for refresh diffs.
+    keys = utils.unique_keys(seg_title for seg_title, _ in sections)
     for index, (seg_title, body) in enumerate(sections):
         chunk = f"=== {seg_title} ===\n{body}\n\n"
         segment = {
             "title": seg_title, "start_s": None, "pages": None,
-            "offset": offset,
+            "offset": offset, "key": keys[index],
         }
         segment.update(flags.get(index, {}))
         segments.append(segment)

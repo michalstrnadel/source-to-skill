@@ -38,8 +38,15 @@ def slugify(title: str) -> str:
 
 
 def _is_media_path(source: str) -> bool:
-    """True when a URL path or file name ends in an audio/video extension."""
-    path = re.split(r"[?#]", source, maxsplit=1)[0].lower()
+    """True when a URL path or file name ends in an audio/video extension.
+
+    Only http(s) URLs lose their ?query and #fragment: a local file name
+    may contain `?` or `#` ("Meeting #4.mp4").
+    """
+    path = source
+    if re.match(r"https?://", source, re.I):
+        path = re.split(r"[?#]", source, maxsplit=1)[0]
+    path = path.lower()
     return path.endswith(config.MEDIA_EXTENSIONS)
 
 
@@ -181,6 +188,17 @@ def segment_key(segment: dict) -> str:
     keyed by title so refresh manifests written earlier keep matching.
     """
     return segment.get("url") or segment.get("key") or segment["title"]
+
+
+def unique_keys(titles) -> list:
+    """Titles made unique for segment keys: a repeat gets an ordinal
+    ("Setup", "Setup (2)"), so diffs never collapse same-titled parts."""
+    seen = {}
+    keys = []
+    for title in titles:
+        seen[title] = seen.get(title, 0) + 1
+        keys.append(title if seen[title] == 1 else f"{title} ({seen[title]})")
+    return keys
 
 
 def write_manifest(

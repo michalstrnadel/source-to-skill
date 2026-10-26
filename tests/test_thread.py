@@ -347,3 +347,37 @@ def test_cli_writes_outputs(monkeypatch, tmp_path, capsys):
     manifest = json.loads((work / "source.json").read_text())
     assert manifest["segments"][1]["key"] == "https://news.ycombinator.com/item?id=1"
     assert json.loads(capsys.readouterr().out)["segments"] == 4
+
+
+def test_reddit_comment_with_blank_body_is_skipped(monkeypatch):
+    # "&nbsp;" unescapes to whitespace: no lines left, so the comment is
+    # treated as deleted (replies promoted) instead of crashing _render.
+    data = json.loads(json.dumps(REDDIT_JSON))
+    data[1]["data"]["children"].insert(0, _c(
+        "c9", "blank", "&nbsp;", 999, [_c("c10", "kid", "Still here.", 2)],
+    ))
+    _install_fetch(monkeypatch, data)
+    full_text, meta = thread.parse(REDDIT_URL)
+    assert "blank" not in full_text
+    assert "kid (+2): Still here." in full_text
+    assert meta["comments_extracted"] == 5
+
+
+def test_truncated_flag_in_metadata(monkeypatch):
+    _install_fetch(monkeypatch, REDDIT_JSON)
+    assert thread.parse(REDDIT_URL)[1]["truncated"] is False
+    monkeypatch.setattr(config, "THREAD_MAX_COMMENTS", 2)
+    assert thread.parse(REDDIT_URL)[1]["truncated"] is True
+
+
+def test_hn_rank_fallback_warns(monkeypatch, capsys):
+    _install_fetch(monkeypatch, HN_ITEM)
+    thread.parse(HN_URL)
+    assert "WARNING" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("payload", [None, [1, 2], "kids", {"kids": "x"}])
+def test_hn_rank_tolerates_non_dict_json(monkeypatch, capsys, payload):
+    monkeypatch.setattr(thread, "_fetch_json", lambda url: payload)
+    assert thread._hn_rank(4242) == {}
+    assert "WARNING" in capsys.readouterr().err
