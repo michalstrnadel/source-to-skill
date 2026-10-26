@@ -1,0 +1,67 @@
+{
+  "skill_name": "uv",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "In CI, which uv command should I run at the end of the job to keep the uv cache small, and what exactly does it remove and keep?",
+      "expected_output": "uv cache prune --ci. It removes all pre-built wheels and unzipped source distributions from the cache but keeps wheels that were built from source, because re-downloading pre-built wheels is often faster than restoring them while building from source is expensive.",
+      "files": [],
+      "expectations": [
+        "Names uv cache prune --ci (Caching page, Caching in continuous integration; or GitHub Actions / GitLab guides)",
+        "Says it removes pre-built wheels and unzipped source distributions but retains wheels built from source (Caching page)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "By default, how long will `uv cache` commands wait for other running uv processes before giving up, and how do I change or bypass that?",
+      "expected_output": "5 minutes by default; change it with UV_LOCK_TIMEOUT, or pass --force to ignore the lock when no other uv process is using the cache.",
+      "files": [],
+      "expectations": [
+        "States the 5 minute default timeout (Caching page)",
+        "Mentions UV_LOCK_TIMEOUT and/or --force (Caching page)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I added an internal package index with [[tool.uv.index]]. A package with the same name also exists on PyPI with a newer version. Which one will uv install, why, and how could I change that behavior?",
+      "expected_output": "The internal one: uv's default index strategy is first-index, which stops at the first index containing the package and only uses versions from that index. This prevents dependency confusion attacks (e.g. the torchtriton attack). The strategy can be changed with --index-strategy (unsafe-first-match, unsafe-best-match); unsafe-best-match is closest to pip but exposes you to dependency confusion.",
+      "files": [],
+      "expectations": [
+        "Says uv uses the first index containing the package (first-index default), so the internal package wins (Package indexes page)",
+        "Gives dependency confusion attacks as the reason (Package indexes page)",
+        "Mentions the alternative strategies via index-strategy, with unsafe-best-match closest to pip but risky (Package indexes page)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "When should I use `uv run --locked` versus `uv run --frozen`?",
+      "expected_output": "--locked: do not update the lockfile automatically; error if uv.lock is out of date with the project metadata (good for CI to assert it is current; same as uv lock --check). --frozen: use the lockfile as-is without checking whether it is up to date. (--no-sync additionally skips checking the environment.)",
+      "files": [],
+      "expectations": [
+        "Says --locked raises an error instead of updating when the lockfile is out of date (Locking and syncing page)",
+        "Says --frozen uses the lockfile without checking whether it is up to date (Locking and syncing page)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "How should I structure a Dockerfile for a uv project so that dependency installs are cached across builds and code changes don't reinstall all dependencies?",
+      "expected_output": "Install dependencies in an intermediate layer with uv sync --no-install-project (mounting only uv.lock, plus a cache mount at /root/.cache/uv), then COPY the project and run uv sync --locked. Set UV_LINK_MODE=copy with the cache mount to silence link warnings because cache and target are on different filesystems. --no-install-project still installs all of the project's dependencies; only the project itself is omitted (partial installations).",
+      "files": [],
+      "expectations": [
+        "Describes the two-step sync: uv sync --no-install-project first, then copy the project and sync again (Docker guide, Intermediate layers)",
+        "Uses a cache mount for the uv cache and/or UV_LINK_MODE=copy (Docker guide, Caching)",
+        "Notes that --no-install-project still installs the dependencies, only omitting the project (Locking and syncing, Partial installations)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "My uv project has a `dev` dependency group and an optional extra `foo`. What does a plain `uv sync` install, and how do I include the extra or leave out dev dependencies?",
+      "expected_output": "uv sync installs the project and its dependencies plus the dev group (special-cased, synced by default) but not extras. Add the extra with --extra foo (or --all-extras); exclude dev with --no-dev (--only-dev installs only the dev group). uv sync is exact by default and removes extraneous packages (--inexact keeps them).",
+      "files": [],
+      "expectations": [
+        "Says the dev group is synced by default and extras are not (Locking and syncing page)",
+        "Gives --extra foo / --all-extras and --no-dev (Locking and syncing page)"
+      ]
+    }
+  ]
+}

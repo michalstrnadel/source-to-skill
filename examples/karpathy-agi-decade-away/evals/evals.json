@@ -1,0 +1,69 @@
+{
+  "skill_name": "karpathy-agi-decade-away",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "How big is nanochat, what does it cover, and how does Karpathy say you should learn from it?",
+      "expected_output": "About 8,000 lines of code; the simplest complete repository covering the whole end-to-end pipeline of building a ChatGPT clone. Put it on the right monitor and rebuild it from scratch yourself: referencing is allowed, copy-pasting is not. The repo alone hides the chunk-by-chunk building process.",
+      "files": [],
+      "expectations": [
+        "States about 8,000 lines of code covering the full ChatGPT-clone pipeline (segment Part 3, ~27:00-28:00)",
+        "Says to rebuild it from scratch with it as reference but without copy-pasting (segment Part 3, ~28:03-28:37)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What did Karpathy learn from re-implementing Yann LeCun's 1989 convolutional network with modern knowledge?",
+      "expected_output": "Time-travelling 33 years of algorithmic progress halved the error; further gains required about 10x more training data and more compute (training much longer, dropout and other regularization). Conclusion: data, hardware, kernels/software and algorithms all have to improve together and contribute surprisingly equally; none dominates.",
+      "files": [],
+      "expectations": [
+        "Says 33 years of algorithms halved the error (segment Part 3, ~24:49-25:21)",
+        "Mentions needing ~10x more data and more compute/regularization (segment Part 3, ~25:21)",
+        "Draws the conclusion that all factors improve together, roughly equally (segment Part 3, ~25:51)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "According to Karpathy, when are coding agents useful and when should you stick to autocomplete? Why did agents fail him on nanochat?",
+      "expected_output": "Agents are good for boilerplate and code that is common on the internet (lots of training examples), and for less familiar languages when you have a reference implementation and tests (Rust tokenizer). For novel, intellectually intense, precisely arranged code like nanochat use autocomplete - his sweet spot - staying the architect. Agents misunderstood his custom code (pushed DDP when he wrote his own gradient sync), added defensive try/catch, made it production-style, bloated it and used deprecated APIs.",
+      "files": [],
+      "expectations": [
+        "Says agents suit boilerplate / common internet patterns while autocomplete is his sweet spot for novel code (segment Part 4, ~30:32-31:05 and ~36:33)",
+        "Gives the DDP example: models pushed PyTorch DDP while he wrote his own gradient synchronization (segment Part 4, ~31:38-32:09)",
+        "Mentions at least one other failure mode: try/catch over-defensiveness, bloat, or deprecated APIs (segment Part 4, ~32:09-32:41)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Which jobs does Karpathy expect AI to automate first, what properties make them suitable, and what shape will the automation take?",
+      "expected_output": "Call center work: a sequence of similar, short tasks (~10 minute calls, editing database entries), little context, closed and purely digital - unlike radiology, which is messy (Hinton's radiologist prediction was wrong; radiologists are growing). Even there it's an autonomy slider, not full replacement: AIs handle 80% of the volume, delegate 20% to humans, humans supervise teams of five AIs.",
+      "files": [],
+      "expectations": [
+        "Names call center employees and their properties: repetitive short tasks, little context, purely digital (segment Part 7-8, ~1:09:49-1:10:30)",
+        "Describes the 80%/20% split with humans supervising teams of five AIs (segment Part 8, ~1:10:30)",
+        "Notes radiology is a bad example / Hinton's prediction was wrong (segment Part 7-8, ~1:08:47 or ~1:12:32)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Why does Karpathy want a 'cognitive core' with less memory, and how does that connect to his views on human memory and on how big such a model should be?",
+      "expected_output": "Pre-training gives both knowledge and intelligence; the knowledge makes models rely on memory and do badly off the data manifold, so strip knowledge and keep the algorithms (cognitive core). Humans are bad at memorizing (can't recite random numbers after one read, LLMs can after one or two passes), which is a feature that forces generalization. He predicts a cognitive core of about 1 billion parameters, because the internet training data is mostly garbage so big models do memory work; models should look facts up.",
+      "files": [],
+      "expectations": [
+        "Says pre-training knowledge holds models back and the goal is to strip knowledge and keep the algorithms (segment Part 2, ~13:18-13:50)",
+        "Says human bad memory is a feature forcing generalization, contrasted with LLMs memorizing random sequences (segment Part 6, ~55:19-56:20)",
+        "Gives the ~1 billion parameter prediction (segment Part 6-7, ~59:10-1:00:00)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Where in the episode does Karpathy tell the story of an RL run whose reward jumped to 100% because of a hacked LLM judge, and what happened?",
+      "expected_output": "Around 46:30-47:34 (about 2790-2854 s) in the 'RL is terrible' chapter: training against an LLM-judge reward, the reward suddenly jumped to perfect; the completions degenerated into nonsense like 'da-da-da-da' which was an adversarial example the judge scored 100%.",
+      "files": [],
+      "expectations": [
+        "Gives a timestamp within 60 seconds of 46:30-47:34 (~2790-2854 s) (segment Part 5)",
+        "Explains the nonsense 'da-da-da' output was an adversarial example the LLM judge rated 100% (segment Part 5, ~47:02)"
+      ]
+    }
+  ]
+}

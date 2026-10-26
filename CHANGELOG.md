@@ -39,8 +39,12 @@ every major coding agent.
   `skill-library` (inventory, search and refresh of every skill made).
 - **Grounded evals in every skill** — generation writes
   `evals/evals.json` (skill-creator format) from the source while it is in
-  context; `validate_skill.py` checks it. All seven gallery skills now
-  carry one plus a blind run: 97 of 98 expectations pass.
+  context; `validate_skill.py` checks it. Every gallery skill now carries
+  one plus a blind run: 127 of 128 expectations pass.
+- **Gallery: a podcast and a docs site** — `karpathy-agi-decade-away`
+  (Dwarkesh Patel with Andrej Karpathy, 2h25m, transcribed locally) and
+  `uv` (Astral's docs via llms.txt, 244k source tokens to a 1.7k
+  `SKILL.md`).
 - **Plugin eval suite** — `evals/` holds 12 `claude plugin eval` cases
   that check the right skill loads for real requests (and stays out of
   unrelated ones); a manual `Plugin evals` workflow runs them in CI.
@@ -52,6 +56,9 @@ every major coding agent.
 
 ### Fixed
 
+- A direct podcast `.mp3` link that redirects to a signed CDN URL kept
+  the signed URL as `origin` and deep-link base, so links expired within
+  a day; the URL you passed is kept instead.
 - Articles behind an HTTP 308 redirect failed on Python 3.10, whose
   urllib does not follow 308 (Anthropic's engineering posts moved that
   way).

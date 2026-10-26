@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-26",
+  "score": 1.0,
+  "grader": "blind: answers by a general-purpose subagent reading only the skill directory (no evals/, no source.json, no web); graded by the generator against evals.json",
+  "results": [
+    {
+      "id": 1,
+      "passed": [true, true],
+      "evidence": [
+        "\"Size: about 8,000 lines of code... the simplest complete repository for the whole pipeline of a ChatGPT clone\" (segments/02, t=1683)",
+        "\"put it on the right monitor and rebuild it from scratch. Looking at it for reference is fine; copy-pasting is not\" (t=1683-1717)"
+      ]
+    },
+    {
+      "id": 2,
+      "passed": [true, true, true],
+      "evidence": [
+        "\"Applying 33 years of algorithmic progress halved the error\" (t=1489-1521)",
+        "\"needed 10x more training data and more compute: much longer training, plus dropout and other regularization\"",
+        "\"no single factor wins... their contributions are 'surprisingly equal'\" (t=1551)"
+      ]
+    },
+    {
+      "id": 3,
+      "passed": [true, true, true],
+      "evidence": [
+        "\"boilerplate and code patterns that are common online... 'For now, autocomplete is my sweet spot.'\" (t=1832, t=2162)",
+        "\"he wrote his own gradient sync inside the optimizer step instead of using PyTorch's DDP. The models kept pushing DDP\" (t=1898-1929)",
+        "\"wrapped everything in defensive try/catch... bloated the code and used deprecated APIs\""
+      ]
+    },
+    {
+      "id": 4,
+      "passed": [true, true, true],
+      "evidence": [
+        "\"call-center work... similar, short tasks (about 10 minutes per call, editing database entries)... little context... purely digital\" (t=4157-4200)",
+        "\"AIs handle 80% of the volume and hand 20% to humans, with each human supervising teams of about five AIs\" (t=4230)",
+        "\"Hinton's prediction about radiologists 'turned out to be very wrong'\" (t=4127)"
+      ]
+    },
+    {
+      "id": 5,
+      "passed": [true, true, true],
+      "evidence": [
+        "\"pre-training gives a model both knowledge and intelligence, and the knowledge holds it back... keep the algorithms\"",
+        "\"humans are bad at memorizing, 'which is actually a feature'... An LLM can repeat random hashed text after one or two training passes\" (t=3319-3412)",
+        "\"Size: about 1B parameters... 'in 20 years'\" (t=3550)"
+      ]
+    },
+    {
+      "id": 6,
+      "passed": [true, true],
+      "evidence": [
+        "\"The story runs 46:30-47:34 (t=2790, t=2822, t=2854)\" - matches the source moment",
+        "\"reward suddenly jumped to 100%... turned into 'da-da-da-da', which the judge scored as perfect... out-of-sample adversarial example\""
+      ]
+    }
+  ]
+}

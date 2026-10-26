@@ -1,0 +1,236 @@
+{
+  "source": "https://docs.astral.sh/uv/llms.txt",
+  "origin": "https://docs.astral.sh/uv/llms.txt",
+  "source_type": "docs",
+  "title": "uv",
+  "est_tokens": 243569,
+  "extracted_at": "2026-10-26T09:18:25Z",
+  "extractor_version": "0.6.0",
+  "options": {},
+  "segments": [
+    {
+      "key": "https://docs.astral.sh/uv/llms.txt",
+      "title": "Overview"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/getting-started/features/index.md",
+      "title": "Features"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/getting-started/first-steps/index.md",
+      "title": "First steps"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/getting-started/installation/index.md",
+      "title": "Installation"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/install-python/index.md",
+      "title": "Installing Python"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/package/index.md",
+      "title": "Publishing packages"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/projects/index.md",
+      "title": "Working on projects"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/scripts/index.md",
+      "title": "Running scripts"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/tools/index.md",
+      "title": "Using tools"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/aws-lambda/index.md",
+      "title": "AWS Lambda"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/aws/index.md",
+      "title": "AWS CodeArtifact"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/azure/index.md",
+      "title": "Azure Artifacts"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/bazel/index.md",
+      "title": "Bazel"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/coiled/index.md",
+      "title": "Coiled"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/dependabot/index.md",
+      "title": "Dependabot"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/docker/index.md",
+      "title": "Docker"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/fastapi/index.md",
+      "title": "FastAPI"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/github/index.md",
+      "title": "GitHub Actions"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/gitlab/index.md",
+      "title": "GitLab CI/CD"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/google/index.md",
+      "title": "Google Artifact Registry"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/jfrog/index.md",
+      "title": "JFrog Artifactory"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/jupyter/index.md",
+      "title": "Jupyter"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/marimo/index.md",
+      "title": "marimo"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/pre-commit/index.md",
+      "title": "Pre-commit"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/pytorch/index.md",
+      "title": "PyTorch"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/guides/integration/renovate/index.md",
+      "title": "Renovate"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/projects/build/index.md",
+      "title": "Building distributions"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/projects/config/index.md",
+      "title": "Configuring projects"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/projects/dependencies/index.md",
+      "title": "Managing dependencies"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/projects/export/index.md",
+      "title": "Exporting lockfiles"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/projects/init/index.md",
+      "title": "Creating projects"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/projects/layout/index.md",
+      "title": "Structure and files"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/projects/run/index.md",
+      "title": "Running commands"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/projects/sync/index.md",
+      "title": "Locking and syncing"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/projects/workspaces/index.md",
+      "title": "Using workspaces"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/build-backend/index.md",
+      "title": "Build backend"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/cache/index.md",
+      "title": "Caching"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/configuration-files/index.md",
+      "title": "Configuration files"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/indexes/index.md",
+      "title": "Package indexes"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/preview/index.md",
+      "title": "Preview features"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/python-versions/index.md",
+      "title": "Python versions"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/resolution/index.md",
+      "title": "Resolution"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/tools/index.md",
+      "title": "Tools"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/concepts/authentication/index.md",
+      "title": "Authentication"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/pip/compatibility/index.md",
+      "title": "Compatibility with pip"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/pip/compile/index.md",
+      "title": "Locking environments"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/pip/dependencies/index.md",
+      "title": "Declaring dependencies"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/pip/environments/index.md",
+      "title": "Using environments"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/pip/inspection/index.md",
+      "title": "Inspecting environments"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/pip/packages/index.md",
+      "title": "Managing packages"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/reference/cli/index.md",
+      "title": "Commands"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/reference/contributing/index.md",
+      "title": "Contributing"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/reference/environment/index.md",
+      "title": "Environment variables"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/reference/installer/index.md",
+      "title": "Installer options"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/reference/settings/index.md",
+      "title": "Settings"
+    },
+    {
+      "key": "https://docs.astral.sh/uv/reference/storage/index.md",
+      "title": "Storage"
+    }
+  ]
+}

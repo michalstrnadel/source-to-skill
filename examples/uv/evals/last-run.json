@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-26",
+  "score": 1.0,
+  "grader": "blind: answers by a general-purpose subagent reading only the skill directory (no evals/, no source.json, no web); graded by the generator against evals.json",
+  "results": [
+    {
+      "id": 1,
+      "passed": [true, true],
+      "evidence": [
+        "\"Run `uv cache prune --ci` at the end of the job\" (cache-config-and-build.md, CI caching)",
+        "\"It removes pre-built wheels and unzipped sdists. It keeps wheels built from source.\""
+      ]
+    },
+    {
+      "id": 2,
+      "passed": [true, true],
+      "evidence": [
+        "\"wait for other uv processes for 5 minutes (300 s) by default\"",
+        "\"set `UV_LOCK_TIMEOUT` (in seconds)... pass `--force`\""
+      ]
+    },
+    {
+      "id": 3,
+      "passed": [true, true, true],
+      "evidence": [
+        "\"the default `first-index` strategy stops at the first index that has the package\" - internal package installed",
+        "\"This prevents dependency confusion attacks, such as the `torchtriton` attack\"",
+        "\"`unsafe-best-match`: picks the best version across all indexes. It is the most pip-like and is exposed to dependency confusion\""
+      ]
+    },
+    {
+      "id": 4,
+      "passed": [true, true],
+      "evidence": [
+        "\"`uv run --locked` does not update `uv.lock` and errors if the lock is out of date\"",
+        "\"`uv run --frozen` uses the lockfile as-is without checking whether it is up to date\""
+      ]
+    },
+    {
+      "id": 5,
+      "passed": [true, true, true],
+      "evidence": [
+        "Dockerfile with `uv sync --frozen --no-install-project`, then `COPY . /app` and `uv sync --locked` (integrations-ci-and-deploy.md, Intermediate layers)",
+        "\"--mount=type=cache,target=/root/.cache/uv\" and \"Set `ENV UV_LINK_MODE=copy` when using the cache mount\"",
+        "\"Install dependencies in their own layer, then add the project\" with --no-install-project in the first layer (implicit rather than stated as a partial-installation rule)"
+      ]
+    },
+    {
+      "id": 6,
+      "passed": [true, true],
+      "evidence": [
+        "\"installs the project's dependencies plus the `dev` group... The extra `foo` is not installed\"",
+        "\"`uv sync --extra foo`, or `--all-extras`... `uv sync --no-dev`\""
+      ]
+    }
+  ]
+}
