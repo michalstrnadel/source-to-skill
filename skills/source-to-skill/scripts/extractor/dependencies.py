@@ -75,6 +75,14 @@ def _yt_dlp_freshness():
 def _transcription_lines():
     backend = transcribe.available_backend()
     if backend is None:
+        broken = transcribe.broken_backends()
+        if broken:
+            return [
+                f"BROKEN  {config.WHISPER_BACKENDS[module]['pip']} is installed "
+                f"but fails to import ({error[:160]})  -> reinstall it, or "
+                "use a Python whose native wheels match this OS"
+                for module, error in broken
+            ]
         return [
             "MISSING Whisper (podcasts, audio files, captionless videos)"
             "  -> pip install mlx-whisper (Apple Silicon) or "

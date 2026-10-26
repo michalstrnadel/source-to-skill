@@ -4,6 +4,7 @@ Everything runs on the user's machine - no API keys. The first backend
 that imports wins (see config.WHISPER_BACKENDS for the order and models).
 """
 import importlib
+import importlib.util
 import os
 import shutil
 import sys
@@ -21,6 +22,24 @@ def available_backend():
             continue
         return module
     return None
+
+
+def broken_backends() -> list:
+    """(backend, error) for backends that are installed but fail to import.
+
+    A broken native wheel (numpy, scipy, torch built for another OS
+    release) looks like a missing package to available_backend(); this
+    tells the two apart so --check does not suggest reinstalling it.
+    """
+    broken = []
+    for module in config.WHISPER_BACKENDS:
+        if importlib.util.find_spec(module) is None:
+            continue
+        try:
+            importlib.import_module(module)
+        except Exception as err:
+            broken.append((module, f"{type(err).__name__}: {err}"))
+    return broken
 
 
 def install_hint() -> str:
